@@ -11,10 +11,10 @@
         android:icon="@drawable/ic_search_icon"
         android:title="@string/title_discovery" />
 
-    <item
-        android:id="@+id/navigation_add"
-        android:enabled="false"
-        android:title="@null" />
+<!--    <item-->
+<!--        android:id="@+id/navigation_add"-->
+<!--        android:enabled="false"-->
+<!--        android:title="@null" />-->
 
     <item
         android:id="@+id/navigation_inbox"

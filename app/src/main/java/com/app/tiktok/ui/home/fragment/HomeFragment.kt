@@ -36,7 +36,13 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
                 is ResultData.Success -> {
                     if (!value.data.isNullOrEmpty()) {
                         val dataList = value.data
-                        storiesPagerAdapter = StoriesPagerAdapter(this, dataList)
+
+                        //We add a filter here to get posts that have parentId = 0; meaning they have no parents
+                        //and that they are the parent posts
+                        val parentPostsList = dataList.filter { it.parentId == 0L }
+                        if(parentPostsList is MutableList){
+                            storiesPagerAdapter = StoriesPagerAdapter(this, parentPostsList)
+                        }
                         view_pager_stories.adapter = storiesPagerAdapter
 
                         startPreCaching(dataList)
