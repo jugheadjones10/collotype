@@ -38,18 +38,14 @@ public class StoryBunchFragment extends Fragment {
     private StoryBunchPagerAdapter pagerAdapter;
     private LayoutManager layoutManager;
 
-    private int positionInBigDaddyDataList;
     private StoriesDataModel parentPost;
     private List<StoriesDataModel> childrenPosts;
 
-    public static StoryBunchFragment newInstance(StoriesDataModel storiesDataModel, int position) {
+    public static StoryBunchFragment newInstance(StoriesDataModel storiesDataModel) {
         StoryBunchFragment storyBunchFragment = new StoryBunchFragment();
 
         Bundle args = new Bundle();
-
         args.putParcelable(Constants.KEY_STORY_DATA, storiesDataModel);
-        args.putInt(Constants.POSITION_INT, position);
-
         storyBunchFragment.setArguments(args);
 
         return storyBunchFragment;
@@ -61,21 +57,32 @@ public class StoryBunchFragment extends Fragment {
         public void onPageSelected(int position) {
             super.onPageSelected(position);
 
+//            binding.thumbnailsRecyclerView.postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    binding.thumbnailsRecyclerView.smoothScrollToPosition(position);
+//                }
+//            }, 1_000);
 
-            //binding.thumbnailsRecyclerView.smoothScrollToPosition(position);
+            binding.thumbnailsRecyclerView.smoothScrollToPosition(position);
             //layoutManager.smoothScrollToPosition(binding.thumbnailsRecyclerView, layoutManager.onSaveInstanceState().);
 
             binding.thumbnailsRecyclerView.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    if(binding.thumbnailsRecyclerView.findViewHolderForAdapterPosition(position) != null ) {
+//                    if(binding.thumbnailsRecyclerView.findViewHolderForAdapterPosition(position) != null ) {
                         View view = binding.thumbnailsRecyclerView.findViewHolderForAdapterPosition(position).itemView;
                         view.callOnClick();
-                    }
+//                    }
                 }
             }, 50);
+        }
+    };
 
-
+    private final OnBottomItemClickListener recyclerViewClickCallback = new OnBottomItemClickListener() {
+        @Override
+        public void onBottomItemClicked(int position) {
+            binding.postsViewPager.setCurrentItem(position);
         }
     };
 
@@ -90,7 +97,6 @@ public class StoryBunchFragment extends Fragment {
 
         //Get Arguments
         parentPost = getArguments().getParcelable(Constants.KEY_STORY_DATA);
-        positionInBigDaddyDataList = getArguments().getInt(Constants.POSITION_INT);
 
         //Initialize View Model
         viewModel = new ViewModelProvider(this).get(StoryBunchViewModel.class);
@@ -104,7 +110,6 @@ public class StoryBunchFragment extends Fragment {
 //        });
 
         setChildrenPosts();
-
         initializeRecyclerView();
         initializeViewPager();
         setData();
@@ -121,12 +126,7 @@ public class StoryBunchFragment extends Fragment {
     private void initializeRecyclerView(){
         layoutManager = new LinearLayoutManagerWithSmoothScroller(getContext(), LinearLayoutManager.HORIZONTAL ,false);
         binding.thumbnailsRecyclerView.setLayoutManager(layoutManager);
-        binding.thumbnailsRecyclerView.setAdapter(new BottomPostsAdapter(childrenPosts, getContext(), new OnBottomItemClickListener() {
-            @Override
-            public void onBottomItemClicked(int position) {
-                binding.postsViewPager.setCurrentItem(position);
-            }
-        }));
+        binding.thumbnailsRecyclerView.setAdapter(new BottomPostsAdapter(childrenPosts, getContext(), recyclerViewClickCallback));
 
         //This removes recyclerView blinking on selected item change
         binding.thumbnailsRecyclerView.getItemAnimator().setChangeDuration(0);

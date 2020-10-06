@@ -12,6 +12,6 @@ class StoriesPagerAdapter(fragment: Fragment, val dataList: MutableList<StoriesD
     }
 
     override fun createFragment(position: Int): Fragment {
-        return StoryBunchFragment.newInstance(dataList[position], position);
+        return StoryBunchFragment.newInstance(dataList[position]);
     }
 }

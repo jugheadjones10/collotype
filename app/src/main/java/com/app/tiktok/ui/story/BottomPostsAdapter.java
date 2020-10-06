@@ -102,17 +102,6 @@ class BottomPostsAdapter extends RecyclerView.Adapter<BottomPostsAdapter.BottomP
 
             itemClickListener.onBottomItemClicked(position);
         });
-
-//        holder.binding.bottomPlayerViewStory.setOnClickListener(view -> {
-//            itemClickListener.onBottomItemClicked(position, view);
-//        });
-//        holder.binding.bottomPostImage.setOnClickListener(view -> {
-//            notifyItemChanged(selectedPos);
-//            selectedPos = holder.getLayoutPosition();
-//            notifyItemChanged(selectedPos);
-//
-//            itemClickListener.onBottomItemClicked(position, view);
-//        });
     }
 
     @Override
@@ -121,7 +110,6 @@ class BottomPostsAdapter extends RecyclerView.Adapter<BottomPostsAdapter.BottomP
     }
 
     //ExoPlayer stuff
-
     private Player.EventListener playerCallback = new Player.EventListener(){
         @Override
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
