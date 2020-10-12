@@ -1,9 +1,14 @@
 package com.app.tiktok.ui.home.fragment
 
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
+import android.view.MotionEvent
 import android.view.View
+import android.view.View.OnTouchListener
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.viewpager2.widget.ViewPager2
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
@@ -24,10 +29,19 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
 
     private lateinit var storiesPagerAdapter: StoriesPagerAdapter
 
+
+    companion object{
+        var viewPager2: ViewPager2? = null
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val storiesData = homeViewModel.getDataList()
+        Log.d("HEY", "we are in home view")
+
+        viewPager2 = view_pager_stories
 
         storiesData.observe(viewLifecycleOwner, Observer { value ->
             when(value) {

@@ -1,7 +1,7 @@
 package com.app.tiktok.ui.story
 
-import android.content.Context
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -10,20 +10,18 @@ import androidx.fragment.app.activityViewModels
 import com.app.tiktok.R
 import com.app.tiktok.app.MyApp
 import com.app.tiktok.model.StoriesDataModel
-import com.app.tiktok.ui.main.activity.MainActivity
 import com.app.tiktok.ui.main.viewmodel.MainViewModel
 import com.app.tiktok.utils.*
+import com.bumptech.glide.Glide
 import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import com.google.android.exoplayer2.ui.PlayerView
-import com.google.android.exoplayer2.upstream.*
-import com.google.android.exoplayer2.upstream.cache.CacheDataSink
-import com.google.android.exoplayer2.upstream.cache.CacheDataSource
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory
-import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.google.android.exoplayer2.util.Util
 import kotlinx.android.synthetic.main.layout_story_view.*
 
@@ -46,9 +44,14 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
     private var playbackPosition: Long = 0
     private var playbackStateListener: PlaybackStateListener? = null
 
+    private var volumeState: VolumeState? = null
+    private enum class VolumeState {
+        ON, OFF
+    }
+
 
     class PlaybackStateListener : Player.EventListener {
-        override fun onPlaybackStateChanged(playbackState: Int) {
+        override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
             val stateString: String
             stateString = when (playbackState) {
                 ExoPlayer.STATE_IDLE -> "ExoPlayer.STATE_IDLE      -"
@@ -79,8 +82,10 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
 
         playbackStateListener = PlaybackStateListener()
 
-        //Make bottom bar invisible
-        MainActivity.bottomNavBar?.visibility = View.GONE
+        options_container.setOnClickListener {
+            Log.d("volume", "options container on click listener")
+            toggleVolume()
+        }
 
         storiesDataModel = arguments?.getParcelable(Constants.KEY_STORY_DATA)
 
@@ -126,10 +131,14 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
             player_view_story.visibility = View.VISIBLE
 
             //Loading video content from url
-            initializePlayer()
-            storyUrl?.let { initializeMedia(it) }
-//            player_view_story.player = simplePlayer
-//            storyUrl?.let { prepareMedia(it) }
+
+            val simplePlayer = getPlayer()
+
+            setVolumeControl(VolumeState.OFF)
+            player_view_story.player = simplePlayer
+
+            storyUrl = storiesDataModel?.storyUrl
+            storyUrl?.let { prepareMedia(it) }
         }
 
         //image_view_group_pic?.loadCenterCropImageFromUrl(storiesDataModel?.storyThumbUrl)
@@ -170,34 +179,35 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
 //        storyUrl?.let { prepareMedia(it) }
     }
 
-//    override fun onPause() {
-//        pauseVideo()
-//        super.onPause()
-//    }
-//
-//    override fun onResume() {
-//        restartVideo()
-//        super.onResume()
-//    }
-//
-//    override fun onDestroy() {
-//        releasePlayer()
-//        super.onDestroy()
-//    }
-
-
     override fun onPause() {
+        pauseVideo()
         super.onPause()
-        if (Util.SDK_INT < 24) {
-            releasePlayer()
-        }
     }
 
-    override fun onStop() {
-        super.onStop()
-        if (Util.SDK_INT >= 24) {
-            releasePlayer()
+    override fun onResume() {
+        restartVideo()
+        super.onResume()
+    }
+
+    override fun onDestroy() {
+        releasePlayer()
+        super.onDestroy()
+    }
+
+    private fun getPlayer(): SimpleExoPlayer? {
+        if (simplePlayer == null) {
+            prepareVideoPlayer()
         }
+        return simplePlayer
+    }
+
+    private fun prepareVideoPlayer() {
+        simplePlayer = ExoPlayerFactory.newSimpleInstance(context)
+        cacheDataSourceFactory = CacheDataSourceFactory(simpleCache,
+            DefaultHttpDataSourceFactory(
+                Util.getUserAgent(context,
+                    "exo"))
+        )
     }
 
 
@@ -207,51 +217,51 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
         }
     }
 
-    private fun initializePlayer() {
-
-        simplePlayer = context?.let { SimpleExoPlayer.Builder(it).build() }
-        simplePlayer!!.playWhenReady = playWhenReady
-        simplePlayer!!.seekTo(currentWindow, playbackPosition)
-        playbackStateListener?.let { simplePlayer!!.addListener(it) }
-        simplePlayer!!.prepare()
-
-        player_view_story.player = simplePlayer
+//    private fun initializePlayer() {
+//
+//        simplePlayer = context?.let { SimpleExoPlayer.Builder(it).build() }
+//        simplePlayer!!.playWhenReady = playWhenReady
+//        simplePlayer!!.seekTo(currentWindow, playbackPosition)
+//        playbackStateListener?.let { simplePlayer!!.addListener(it) }
+//        simplePlayer!!.prepare()
+//
+//        player_view_story.player = simplePlayer
 
 //        cacheDataSourceFactory = CacheDataSource.Factory(simpleCache,
 //            DefaultHttpDataSourceFactory(
 //                Util.getUserAgent(context,
 //                "exo"))
 //        )
-    }
+//    }
 
-    private val cacheDataSink: CacheDataSink = this!!.simpleCache?.let { CacheDataSink(it, 1000) }!!
-    private val fileDataSource: FileDataSource = FileDataSource()
-    private val defaultDataSourceFactory: DefaultDataSourceFactory
-
-    init {
-        val bandwidthMeter = DefaultBandwidthMeter()
+//    private val cacheDataSink: CacheDataSink = this!!.simpleCache?.let { CacheDataSink(it, 1000) }!!
+//    private val fileDataSource: FileDataSource = FileDataSource()
+//    private val defaultDataSourceFactory: DefaultDataSourceFactory
+//
+//    init {
+//        val bandwidthMeter = DefaultBandwidthMeter()
+////        defaultDataSourceFactory = DefaultDataSourceFactory(
+////            requireContext(),
+////            bandwidthMeter,
+////            DefaultHttpDataSourceFactory(Util.getUserAgent(this.requireContext(), "exo"))
+//
 //        defaultDataSourceFactory = DefaultDataSourceFactory(
 //            requireContext(),
 //            bandwidthMeter,
-//            DefaultHttpDataSourceFactory(Util.getUserAgent(this.requireContext(), "exo"))
+//            DefaultHttpDataSourceFactory(
+//                Util.getUserAgent(this.requireContext(), "exo"),
+//                bandwidthMeter
+//            )
+//        )
+//    }
 
-        defaultDataSourceFactory = DefaultDataSourceFactory(
-            requireContext(),
-            bandwidthMeter,
-            DefaultHttpDataSourceFactory(
-                Util.getUserAgent(this.requireContext(), "exo"),
-                bandwidthMeter
-            )
-        )
-    }
-
-    private fun initializeMedia(storyUrl: String) {
-
-        val cacheDataSourceFactory = CacheDataSource.Factory()
-            .setCache(simpleCache!!)
-            .setUpstreamDataSourceFactory(defaultDataSourceFactory)
-            .setCacheWriteDataSinkFactory(null)
-            .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
+//    private fun initializeMedia(storyUrl: String) {
+//
+//        val cacheDataSourceFactory = CacheDataSource.Factory()
+//            .setCache(simpleCache!!)
+//            .setUpstreamDataSourceFactory(defaultDataSourceFactory)
+//            .setCacheWriteDataSinkFactory(null)
+//            .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
 
 //        (
 //            simpleCache!!,
@@ -266,38 +276,28 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
 //        val dataSourceFactory: DataSource.Factory = DefaultHttpDataSourceFactory()
 
         // Create a progressive media source pointing to a stream uri.
-        val mediaSource: ProgressiveMediaSource =
-            ProgressiveMediaSource.Factory(cacheDataSourceFactory)
-                .createMediaSource(MediaItem.fromUri(storyUrl))
-
-        // Set the media source to be played.
-        simplePlayer?.setMediaSource(mediaSource)
-    }
-
-//    private fun  prepareMedia(linkUrl: String) {
-//        logError("prepareMedia linkUrl: $linkUrl")
+//        val mediaSource: ProgressiveMediaSource =
+//            ProgressiveMediaSource.Factory(cacheDataSourceFactory)
+//                .createMediaSource(MediaItem.fromUri(storyUrl))
 //
-//        val uri = Uri.parse(linkUrl)
-//
-//        val mediaSource = ProgressiveMediaSource.Factory(cacheDataSourceFactory).createMediaSource(uri)
-//
-//        simplePlayer?.prepare(mediaSource, true, true)
-//        simplePlayer?.repeatMode = Player.REPEAT_MODE_ONE
-//        simplePlayer?.playWhenReady = true
-//        simplePlayer?.addListener(playerCallback)
-//
-//        toPlayVideoPosition = -1
+//        // Set the media source to be played.
+//        simplePlayer?.setMediaSource(mediaSource)
 //    }
 
-    private fun releasePlayer() {
-        if (simplePlayer != null) {
-            playWhenReady = simplePlayer!!.playWhenReady
-            playbackPosition = simplePlayer!!.currentPosition
-            currentWindow = simplePlayer!!.currentWindowIndex
-            simplePlayer!!.removeListener(playbackStateListener!!)
-            simplePlayer!!.release()
-            simplePlayer = null
-        }
+    private fun  prepareMedia(linkUrl: String) {
+        logError("prepareMedia linkUrl: $linkUrl")
+
+        val uri = Uri.parse(linkUrl)
+
+        val mediaSource = ProgressiveMediaSource.Factory(cacheDataSourceFactory).createMediaSource(uri)
+
+        simplePlayer?.prepare(mediaSource, true, true)
+        simplePlayer?.repeatMode = Player.REPEAT_MODE_ONE
+        simplePlayer?.playWhenReady = true
+
+        simplePlayer?.addListener(playerCallback)
+
+        toPlayVideoPosition = -1
     }
 
     private fun setArtwork(drawable: Drawable, playerView: PlayerView) {
@@ -310,52 +310,65 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
     }
 
     private fun restartVideo() {
-//        if (simplePlayer == null) {
-//            storyUrl?.let { prepareMedia(it) }
-//        } else {
-//            simplePlayer?.seekToDefaultPosition()
-//            simplePlayer?.playWhenReady = true
-//        }
-//    }
-//
-//    private fun pauseVideo() {
-//        simplePlayer?.playWhenReady = false
-//    }
+        if (simplePlayer == null) {
+            storyUrl?.let { prepareMedia(it) }
+        } else {
+            simplePlayer?.seekToDefaultPosition()
+            simplePlayer?.playWhenReady = true
+        }
+    }
 
-//    private fun releasePlayer() {
-//        simplePlayer?.stop(true)
-//        simplePlayer?.release()
-//    }
+    private fun pauseVideo() {
+        simplePlayer?.playWhenReady = false
+    }
 
+    private fun releasePlayer() {
+        simplePlayer?.stop(true)
+        simplePlayer?.release()
+    }
 
-        class CacheDataSourceFactory(
-            private val context: Context,
-            private val maxFileSize: Long,
-            private val simpleCache: SimpleCache
-        ) : DataSource.Factory {
-
-            private val defaultDatasourceFactory: DefaultDataSourceFactory
-
-            init {
-                val userAgent = Util.getUserAgent(context, context.packageName)
-                val bandwidthMeter = DefaultBandwidthMeter()
-                defaultDatasourceFactory = DefaultDataSourceFactory(
-                    context,
-                    bandwidthMeter,
-                    DefaultHttpDataSourceFactory(userAgent, bandwidthMeter)
+    private fun toggleVolume() {
+        if (simplePlayer != null) {
+            if (volumeState == VolumeState.OFF) {
+                Log.d(
+                    "volume",
+                    "togglePlaybackState: enabling volume."
                 )
-            }
-
-            override fun createDataSource(): DataSource {
-                return CacheDataSource(
-                    simpleCache,
-                    defaultDatasourceFactory.createDataSource(),
-                    FileDataSource(),
-                    CacheDataSink(simpleCache, maxFileSize),
-                    CacheDataSource.FLAG_BLOCK_ON_CACHE or CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR,
-                    null
+                setVolumeControl(VolumeState.ON)
+            } else if (volumeState == VolumeState.ON) {
+                Log.d(
+                    "volume",
+                    "togglePlaybackState: disabling volume."
                 )
+                setVolumeControl(VolumeState.OFF)
             }
+        }
+    }
+
+    private fun setVolumeControl(state: VolumeState) {
+        volumeState = state
+        if (state == VolumeState.OFF) {
+            simplePlayer?.volume = 0f
+            animateVolumeControl()
+        } else if (state == VolumeState.ON) {
+            simplePlayer?.volume = 1f
+            animateVolumeControl()
+        }
+    }
+
+    private fun animateVolumeControl() {
+        if (volume_control != null) {
+            volume_control.bringToFront()
+            if (volumeState == VolumeState.OFF) {
+                Glide.with(this).load(R.drawable.ic_volume_off).into(volume_control)
+            } else if (volumeState == VolumeState.ON) {
+                Glide.with(this).load(R.drawable.ic_volume_on).into(volume_control)
+            }
+            volume_control.animate().cancel()
+            volume_control.setAlpha(1f)
+            volume_control.animate()
+                .alpha(0f)
+                .setDuration(600).setStartDelay(1000)
         }
     }
 }

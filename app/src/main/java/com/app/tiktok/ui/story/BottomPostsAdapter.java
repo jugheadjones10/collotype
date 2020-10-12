@@ -19,11 +19,13 @@ import com.app.tiktok.app.MyApp;
 import com.app.tiktok.databinding.BottomPostItemBinding;
 import com.app.tiktok.model.StoriesDataModel;
 import com.bumptech.glide.Glide;
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory;
 import com.google.android.exoplayer2.upstream.cache.SimpleCache;
@@ -69,9 +71,11 @@ class BottomPostsAdapter extends RecyclerView.Adapter<BottomPostsAdapter.BottomP
         return new BottomPostViewHolder(binding);
     }
 
+
     @Override
     public void onBindViewHolder(@NonNull BottomPostViewHolder holder, int position) {
         holder.itemView.setSelected(selectedPos == position);
+
 
         String storyUrl = storiesDataModels.get(position).getStoryUrl();
         String storyType = storyUrl.substring(storyUrl.length() - 3);
@@ -89,7 +93,10 @@ class BottomPostsAdapter extends RecyclerView.Adapter<BottomPostsAdapter.BottomP
             holder.binding.bottomPlayerViewStory.setVisibility(View.VISIBLE);
             holder.binding.bottomPostImage.setVisibility(View.GONE);
 
+            holder.binding.bottomPlayerViewStory.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_ZOOM);
+
             SimpleExoPlayer simplePlayer = getPlayer();
+//            simplePlayer.setVideoScalingMode(C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
             holder.binding.bottomPlayerViewStory.setPlayer(simplePlayer);
 
             prepareMedia(storyUrl);
@@ -130,6 +137,7 @@ class BottomPostsAdapter extends RecyclerView.Adapter<BottomPostsAdapter.BottomP
         simplePlayer.prepare(mediaSource, true, true);
         simplePlayer.setRepeatMode(Player.REPEAT_MODE_ONE);
         simplePlayer.setPlayWhenReady(true);
+        simplePlayer.setVolume(0f);
         simplePlayer.addListener(playerCallback);
     }
 

@@ -1,6 +1,8 @@
 package com.app.tiktok.ui.main.activity
 
 import android.os.Bundle
+import android.view.MotionEvent
+import android.view.View
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
@@ -27,6 +29,7 @@ class MainActivity: BaseActivity(), NavController.OnDestinationChangedListener {
         setContentView(R.layout.activity_main)
 
         bottomNavBar = nav_view
+        nav_view.visibility = View.GONE
 
         val navController = findNavController(R.id.nav_host_fragment)
         nav_view.setupWithNavController(navController)
