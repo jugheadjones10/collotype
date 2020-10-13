@@ -29,7 +29,6 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
 
     private lateinit var storiesPagerAdapter: StoriesPagerAdapter
 
-
     companion object{
         var viewPager2: ViewPager2? = null
     }
@@ -38,10 +37,9 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val storiesData = homeViewModel.getDataList()
-        Log.d("HEY", "we are in home view")
-
         viewPager2 = view_pager_stories
+
+        val storiesData = homeViewModel.getDataList()
 
         storiesData.observe(viewLifecycleOwner, Observer { value ->
             when(value) {

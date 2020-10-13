@@ -2,6 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 <androidx.constraintlayout.widget.ConstraintLayout
+    android:scaleType="centerCrop"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
@@ -11,7 +12,6 @@
         android:layout_height="100dp"
         android:background="@color/colorBlack"
         app:layout_constraintDimensionRatio="1:1"
-        android:scaleType="centerCrop"
         app:use_controller="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

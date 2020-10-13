@@ -18,7 +18,6 @@ import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory
@@ -93,6 +92,16 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
     }
 
     private fun setData() {
+
+        if(storiesDataModel?.storyUrl == "https://media.giphy.com/media/3oriO6qJiXajN0TyDu/giphy.gif"){
+            val layoutInflator = requireActivity().layoutInflater
+            val view = layoutInflator.inflate(
+                R.layout.include_price_tag,
+                options_container,
+                false
+            )
+            options_container.addView(view)
+        }
 
         //Group members
 //        group_member_one?.setImageResource(R.drawable.profile_scarlett)
@@ -209,7 +218,6 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
                     "exo"))
         )
     }
-
 
     private val playerCallback: Player.EventListener? = object : Player.EventListener {
         override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {

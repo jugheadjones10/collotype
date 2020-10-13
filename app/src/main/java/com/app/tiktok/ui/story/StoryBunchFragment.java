@@ -10,6 +10,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -36,6 +37,7 @@ import com.app.tiktok.utils.ImageExtensionsKt;
 import com.app.tiktok.utils.Utility;
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.imageview.ShapeableImageView;
 
 import java.util.List;
 import java.util.Objects;
@@ -44,6 +46,13 @@ import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class StoryBunchFragment extends Fragment {
+
+    float y1 = 0;
+    float y2 = 0;
+    float dy = 0;
+    String direction;
+
+    int squareLength;
 
     private FragmentStoryBunchBinding binding;
     private StoryBunchViewModel viewModel;
@@ -63,7 +72,7 @@ public class StoryBunchFragment extends Fragment {
         return storyBunchFragment;
     }
 
-        // Listeners
+    // Listeners
     private final ViewPager2.OnPageChangeCallback viewPagerChangeCallback = new ViewPager2.OnPageChangeCallback() {
         @Override
         public void onPageSelected(int position) {
@@ -76,18 +85,19 @@ public class StoryBunchFragment extends Fragment {
 //                }
 //            }, 1_000);
 
-            binding.thumbnailsRecyclerView.smoothScrollToPosition(position);
+            binding.layoutBotSheet.thumbnailsRecyclerView.smoothScrollToPosition(position);
             //layoutManager.smoothScrollToPosition(binding.thumbnailsRecyclerView, layoutManager.onSaveInstanceState().);
 
 
             //This thing crashes if recycler view hasn't loaded yet/5555
-            binding.thumbnailsRecyclerView.postDelayed(new Runnable() {
+            binding.layoutBotSheet.thumbnailsRecyclerView.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-//                    if(binding.thumbnailsRecyclerView.findViewHolderForAdapterPosition(position) != null ) {
-                        View view = binding.thumbnailsRecyclerView.findViewHolderForAdapterPosition(position).itemView;
+                    //DOES THIS CHECK ACTUALLY HAVE ANY EFFECT
+                    if(binding.layoutBotSheet.thumbnailsRecyclerView.findViewHolderForAdapterPosition(position) != null ) {
+                        View view = binding.layoutBotSheet.thumbnailsRecyclerView.findViewHolderForAdapterPosition(position).itemView;
                         view.callOnClick();
-//                    }
+                    }
                 }
             }, 50);
         }
@@ -121,6 +131,9 @@ public class StoryBunchFragment extends Fragment {
         setChildrenPosts();
         initializeRecyclerView();
         initializeViewPager();
+
+        initializeNestedScrollViewBehaviour();
+
         setData();
 
         return binding.getRoot();
@@ -131,20 +144,65 @@ public class StoryBunchFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
     }
 
+    private void populateBottomSheetGrid(int squareLength){
+        LayoutInflater layoutInflator = getActivity().getLayoutInflater();
+
+        for (int i = 0; i < childrenPosts.size(); i++) {
+            StoriesDataModel storiesDataModel = childrenPosts.get(i);
+
+            ImageView view = (ImageView)layoutInflator.inflate(R.layout.include_bottom_sheet_grid_image, binding.layoutBotSheet.postsGridLayout, false);
+
+            ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+
+            if(i % 7 == 0){
+
+                GridLayout.LayoutParams gridLayoutParams = new GridLayout.LayoutParams();
+                gridLayoutParams.rowSpec = GridLayout.spec(GridLayout.UNDEFINED, 2);
+                gridLayoutParams.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 2);
+                gridLayoutParams.height = squareLength*2;
+                gridLayoutParams.width = squareLength*2;
+
+                view.setLayoutParams(gridLayoutParams);
+            }else{
+                layoutParams.height = squareLength;
+                layoutParams.width = squareLength;
+
+                view.setLayoutParams(layoutParams);
+            }
+
+            Glide.with(this)
+                    .load(storiesDataModel.getStoryUrl())
+                    .into(view);
+
+            binding.layoutBotSheet.postsGridLayout.addView(view);
+        }
+    }
+
     private void setBottomSheetHeight(){
 
-        final ViewTreeObserver observer= binding.botSheet.getViewTreeObserver();
+        final ViewTreeObserver observer= binding.layoutBotSheet.botSheet.getViewTreeObserver();
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 int botSheetHeight = binding.heightMeasurer.getHeight();
                 Log.d("bot", " " + botSheetHeight);
 
-                ViewGroup.LayoutParams layoutParams = binding.botSheet.getLayoutParams();
-                layoutParams.height = botSheetHeight;
-                binding.botSheet.setLayoutParams(layoutParams);
+                ViewGroup.LayoutParams botSheetLayoutParams = binding.layoutBotSheet.botSheet.getLayoutParams();
+                botSheetLayoutParams.height = botSheetHeight;
+                binding.layoutBotSheet.botSheet.setLayoutParams(botSheetLayoutParams);
 
-                ViewTreeObserver innerObserver = binding.botSheet.getViewTreeObserver();
+                // I don't understand onGlobalLayout. What exactly does it listen for?
+                BottomSheetBehavior behavior = BottomSheetBehavior.from(binding.layoutBotSheet.botSheet);
+                squareLength = binding.layoutBotSheet.thumbnailsRecyclerView.getWidth()/4;
+                behavior.setPeekHeight(squareLength);
+
+                ViewGroup.LayoutParams bottomPlaceholderLayoutParams = binding.bottomPlaceholder.getLayoutParams();
+                bottomPlaceholderLayoutParams.height = squareLength;
+                binding.bottomPlaceholder.setLayoutParams(bottomPlaceholderLayoutParams);
+
+                populateBottomSheetGrid(squareLength);
+
+                ViewTreeObserver innerObserver = binding.layoutBotSheet.botSheet.getViewTreeObserver();
                 innerObserver.removeOnGlobalLayoutListener(this);
             }
         });
@@ -156,18 +214,82 @@ public class StoryBunchFragment extends Fragment {
         childrenPosts.add(0, parentPost);
     }
 
+    private void initializeNestedScrollViewBehaviour(){
+
+        binding.layoutBotSheet.nestedScrollView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(binding.layoutBotSheet.botSheet);
+
+                switch(motionEvent.getAction()) {
+                    case (MotionEvent.ACTION_DOWN):
+                        y1 = motionEvent.getY();
+                        break;
+                    case (MotionEvent.ACTION_MOVE): {
+                        y2 = motionEvent.getY();
+
+                        dy = y2 - y1;
+
+                        y1 = y2;
+
+                        // Use dx and dy to determine the direction of the move
+                        if (dy > 0)
+                            direction = "down";
+                        else
+                            direction = "up";
+
+                        Log.d("scroller", direction);
+                        Log.d("scroller", "" + view.getScrollY());
+
+                        if (direction.equals("up") || (direction.equals("down") && view.getScrollY() != 0)) {
+                            Log.d("scroller", "A");
+
+                            bottomSheetBehavior.setDraggable(false);
+                            //binding.layoutBotSheet.nestedScrollView.getParent().requestDisallowInterceptTouchEvent(true);
+                        }
+
+                        if(direction.equals("down") && view.getScrollY() == 0){
+                            Log.d("scroller", "B");
+                            bottomSheetBehavior.setDraggable(true);
+                        }
+
+                        break;
+                    }
+                    case (MotionEvent.ACTION_UP):
+                        bottomSheetBehavior.setDraggable(true);
+                        break;
+                }
+                return false;
+
+            }
+        });
+
+    }
+
     private void initializeRecyclerView(){
-        layoutManager = new LinearLayoutManagerWithSmoothScroller(getContext(), LinearLayoutManager.HORIZONTAL ,false);
-        binding.thumbnailsRecyclerView.setLayoutManager(layoutManager);
-        binding.thumbnailsRecyclerView.setAdapter(new BottomPostsAdapter(childrenPosts, getContext(), recyclerViewClickCallback));
+        layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL ,false){
+            @Override
+            public boolean checkLayoutParams(RecyclerView.LayoutParams lp) {
+                // force height of viewHolder here, this will override layout_height from xml
+                int squareSide = getWidth() / 4;
+                lp.width = squareSide;
+                lp.height = squareSide;
+
+                return true;
+            }
+        };
+
+        binding.layoutBotSheet.thumbnailsRecyclerView.setLayoutManager(layoutManager);
+        binding.layoutBotSheet.thumbnailsRecyclerView.setAdapter(new BottomPostsAdapter(childrenPosts, getContext(), recyclerViewClickCallback));
 
         //This removes recyclerView blinking on selected item change
-        binding.thumbnailsRecyclerView.getItemAnimator().setChangeDuration(0);
+        binding.layoutBotSheet.thumbnailsRecyclerView.getItemAnimator().setChangeDuration(0);
 
-        BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(binding.botSheet);
+
+        BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(binding.layoutBotSheet.botSheet);
         bottomSheetBehavior.setGestureInsetBottomIgnored(true);
 
-        binding.thumbnailsRecyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+        binding.layoutBotSheet.thumbnailsRecyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
             @Override
             public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
                 if (e.getAction() == MotionEvent.ACTION_DOWN) {
@@ -201,7 +323,16 @@ public class StoryBunchFragment extends Fragment {
 
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-                binding.thumbnailsRecyclerView.setTranslationY(slideOffset * dpToPx(100));
+//                binding.layoutBotSheet.thumbnailsRecyclerView.setTranslationY(slideOffset * squareLength);
+                ViewGroup.LayoutParams recyclerViewLayoutParans = binding.layoutBotSheet.thumbnailsRecyclerView.getLayoutParams();
+                recyclerViewLayoutParans.height = (int) (squareLength* (1 - slideOffset));
+                binding.layoutBotSheet.thumbnailsRecyclerView.setLayoutParams(recyclerViewLayoutParans);
+
+
+                ViewGroup.LayoutParams tabLayoutParams = binding.layoutBotSheet.tab.getLayoutParams();
+                tabLayoutParams.height = (int) (squareLength*slideOffset);
+                binding.layoutBotSheet.tab.setLayoutParams(tabLayoutParams);
+
                 transitionBottomSheetBackgroundColor(slideOffset);
             }
         });
@@ -254,9 +385,16 @@ public class StoryBunchFragment extends Fragment {
     }
 
     private void setData(){
-        binding.groupMemberOne.setImageResource(R.drawable.profile_scarlett);
-        binding.groupMemberTwo.setImageResource(R.drawable.profile_victoria);
-        binding.groupMemberThree.setImageResource(R.drawable.profile_chris);
+
+        //Set data for member profile images
+        LayoutInflater layoutInflator = getActivity().getLayoutInflater();
+        parentPost.getMembersThumbUrls().forEach(profileUrl -> {
+            ShapeableImageView view = (ShapeableImageView)layoutInflator.inflate(R.layout.include_member_profile, binding.groupMembers, false);
+            Glide.with(this)
+                    .load(profileUrl)
+                    .into(view);
+            binding.groupMembers.addView(view);
+        });
 
         Glide.with(this)
                 .load(parentPost.getStoryThumbUrl())
