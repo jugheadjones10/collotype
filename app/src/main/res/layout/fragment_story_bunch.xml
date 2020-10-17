@@ -19,10 +19,38 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" >
-
             </androidx.viewpager2.widget.ViewPager2>
 
             <!-- Top bar bg and height measurer all depend on container profile -->
+            <View
+                android:id="@+id/height_measurer"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- View pager images turn white if this linear layout isn't here. No idea why.-->
+            <LinearLayout
+                android:id="@+id/bottom_placeholder"
+                 android:background="@color/colorBlack"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <include
+            android:id="@+id/layout_bot_sheet"
+            layout="@layout/layout_bottom_sheet" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
             <View
                 android:id="@+id/top_bar_bg"
                 android:layout_width="0dp"
@@ -30,15 +58,7 @@
                 app:layout_constraintBottom_toBottomOf="@+id/container_profile"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/posts_view_pager" />
-
-            <View
-                android:id="@+id/height_measurer"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/container_profile" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/container_profile"
@@ -85,54 +105,7 @@
                 android:layout_marginStart="8dp"
                 android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="@+id/container_profile"
-                app:layout_constraintStart_toEndOf="@+id/container_profile">
-
-<!--                <com.google.android.material.imageview.ShapeableImageView-->
-<!--                    android:id="@+id/group_member_one"-->
-<!--                    android:layout_width="25dp"-->
-<!--                    android:layout_height="25dp"-->
-<!--                    android:layout_marginEnd="5dp"-->
-<!--                    android:adjustViewBounds="true"-->
-<!--                    android:padding="1dp"-->
-<!--                    android:scaleType="centerCrop"-->
-<!--                    app:layout_constraintEnd_toStartOf="@id/group_member_two"-->
-<!--                    app:layout_constraintHorizontal_chainStyle="spread"-->
-<!--                    app:layout_constraintStart_toStartOf="parent"-->
-<!--                    app:layout_constraintTop_toTopOf="parent"-->
-<!--                    app:shapeAppearance="@style/RoundedImageViewShape"-->
-<!--                    app:strokeColor="@color/colorWhite"-->
-<!--                    app:strokeWidth="1dp" />-->
-
-<!--                <com.google.android.material.imageview.ShapeableImageView-->
-<!--                    android:id="@+id/group_member_two"-->
-<!--                    android:layout_width="25dp"-->
-<!--                    android:layout_height="25dp"-->
-<!--                    android:layout_marginEnd="5dp"-->
-<!--                    android:adjustViewBounds="true"-->
-<!--                    android:padding="1dp"-->
-<!--                    android:scaleType="centerCrop"-->
-<!--                    app:layout_constraintEnd_toStartOf="@id/group_member_three"-->
-<!--                    app:layout_constraintStart_toEndOf="@id/group_member_one"-->
-<!--                    app:layout_constraintTop_toTopOf="parent"-->
-<!--                    app:shapeAppearance="@style/RoundedImageViewShape"-->
-<!--                    app:strokeColor="@color/colorWhite"-->
-<!--                    app:strokeWidth="1dp" />-->
-
-<!--                <com.google.android.material.imageview.ShapeableImageView-->
-<!--                    android:id="@+id/group_member_three"-->
-<!--                    android:layout_width="25dp"-->
-<!--                    android:layout_height="25dp"-->
-<!--                    android:adjustViewBounds="true"-->
-<!--                    android:padding="1dp"-->
-<!--                    android:scaleType="centerCrop"-->
-<!--                    app:layout_constraintEnd_toEndOf="parent"-->
-<!--                    app:layout_constraintStart_toEndOf="@id/group_member_two"-->
-<!--                    app:layout_constraintTop_toTopOf="parent"-->
-<!--                    app:shapeAppearance="@style/RoundedImageViewShape"-->
-<!--                    app:strokeColor="@color/colorWhite"-->
-<!--                    app:strokeWidth="1dp" />-->
-
-            </LinearLayout>
+                app:layout_constraintStart_toEndOf="@+id/container_profile"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/materialButton"
@@ -187,22 +160,7 @@
                 android:src="@drawable/ic_options_more"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-
-            <!-- View pager images turn white if this linear layout isn't here. No idea why.-->
-            <LinearLayout
-                android:id="@+id/bottom_placeholder"
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:orientation="vertical"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <include
-            android:id="@+id/layout_bot_sheet"
-            layout="@layout/layout_bottom_sheet" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

@@ -17,7 +17,6 @@
             android:id="@+id/tab"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:background="@color/colorBlack"
             android:gravity="center_horizontal"
             android:orientation="horizontal">
 
@@ -67,11 +66,13 @@
             android:id="@+id/thumbnails_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="100dp"
+            android:background="@color/colorBlack"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
         <androidx.core.widget.NestedScrollView
+            android:background="@color/colorBlack"
             android:id="@+id/nested_scroll_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent">

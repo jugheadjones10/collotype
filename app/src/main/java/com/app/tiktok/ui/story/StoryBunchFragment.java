@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.MarginLayoutParams;
 import android.view.ViewTreeObserver;
 import android.widget.GridLayout;
 import android.widget.ImageView;
@@ -323,15 +324,16 @@ public class StoryBunchFragment extends Fragment {
 
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-//                binding.layoutBotSheet.thumbnailsRecyclerView.setTranslationY(slideOffset * squareLength);
                 ViewGroup.LayoutParams recyclerViewLayoutParans = binding.layoutBotSheet.thumbnailsRecyclerView.getLayoutParams();
                 recyclerViewLayoutParans.height = (int) (squareLength* (1 - slideOffset));
                 binding.layoutBotSheet.thumbnailsRecyclerView.setLayoutParams(recyclerViewLayoutParans);
 
-
                 ViewGroup.LayoutParams tabLayoutParams = binding.layoutBotSheet.tab.getLayoutParams();
                 tabLayoutParams.height = (int) (squareLength*slideOffset);
                 binding.layoutBotSheet.tab.setLayoutParams(tabLayoutParams);
+
+                MarginLayoutParams tabMarginParams = (MarginLayoutParams)binding.layoutBotSheet.tab.getLayoutParams();
+                tabMarginParams.topMargin = (int) (binding.topBarBg.getHeight()*slideOffset);
 
                 transitionBottomSheetBackgroundColor(slideOffset);
             }
@@ -341,7 +343,7 @@ public class StoryBunchFragment extends Fragment {
     private void transitionBottomSheetBackgroundColor(float slideOffset) {
         int colorFrom = getResources().getColor(R.color.colorTransparent);
         int colorTo = getResources().getColor(R.color.colorBlack);
-        binding.topBarBg.setBackgroundColor(interpolateColor(slideOffset,
+        binding.layoutBotSheet.botSheet.setBackgroundColor(interpolateColor(slideOffset,
                 colorFrom, colorTo));
     }
 

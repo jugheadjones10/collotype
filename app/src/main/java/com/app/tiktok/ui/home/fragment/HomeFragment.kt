@@ -17,6 +17,7 @@ import com.app.tiktok.base.BaseFragment
 import com.app.tiktok.model.ResultData
 import com.app.tiktok.model.StoriesDataModel
 import com.app.tiktok.ui.home.adapter.StoriesPagerAdapter
+import com.app.tiktok.ui.home.adapter.VerticalCubeTransformer
 import com.app.tiktok.ui.main.viewmodel.MainViewModel
 import com.app.tiktok.utils.Constants
 import com.app.tiktok.work.PreCachingService
@@ -38,6 +39,8 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
         super.onViewCreated(view, savedInstanceState)
 
         viewPager2 = view_pager_stories
+        viewPager2?.setPageTransformer(VerticalCubeTransformer())
+        viewPager2?.offscreenPageLimit = 1
 
         val storiesData = homeViewModel.getDataList()
 
