@@ -15,6 +15,10 @@ android {
         versionCode 1
         versionName "1.0"
 
+        //Below is for adding shadows to ImageViews
+        renderscriptTargetApi 18
+        renderscriptSupportModeEnabled true
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -77,6 +81,8 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.6'
 
     implementation "androidx.work:work-runtime-ktx:2.4.0-beta01"
+
+    implementation 'com.qhutch.elevationimageview:elevationimageview:2.4'
 }
 
 kapt {

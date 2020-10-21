@@ -31,14 +31,6 @@ public class StoryBunchViewModel extends ViewModel {
         this.dataRepository = dataRepository;
     }
 
-//    public LiveData<Integer> getPosition() {
-//        return position;
-//    }
-//
-//    public void setPosition(int position) {
-//        this.position.setValue(position);
-//    }
-
     public List<StoriesDataModel> getDataList(long storyId){
         return dataRepository.getStoriesData()
             .stream()

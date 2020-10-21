@@ -8,7 +8,7 @@ import com.app.tiktok.model.StoriesDataModel;
 
 import java.util.List;
 
-class StoryBunchPagerAdapter extends FragmentStateAdapter {
+public class StoryBunchPagerAdapter extends FragmentStateAdapter {
 
     private List<StoriesDataModel> mPostData;
 
@@ -20,7 +20,7 @@ class StoryBunchPagerAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        return StoryViewFragment.Companion.newInstance(mPostData.get(position));
+        return StoryViewFragment.Companion.newInstance(mPostData.get(position), mPostData.get(0));
     }
 
     @Override

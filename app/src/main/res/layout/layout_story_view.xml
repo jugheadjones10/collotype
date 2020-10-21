@@ -36,173 +36,53 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <!--        <androidx.constraintlayout.widget.ConstraintLayout-->
-        <!--            android:id="@+id/container_profile"-->
-        <!--            android:layout_width="wrap_content"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            app:layout_constraintStart_toStartOf="parent"-->
-        <!--            app:layout_constraintTop_toTopOf="parent">-->
-
-        <!--            <com.google.android.material.imageview.ShapeableImageView-->
-        <!--                android:id="@+id/image_view_group_pic"-->
-        <!--                android:layout_width="50dp"-->
-        <!--                android:layout_height="50dp"-->
-        <!--                android:padding="1dp"-->
-        <!--                android:adjustViewBounds="true"-->
-        <!--                android:scaleType="centerCrop"-->
-        <!--                app:layout_constraintEnd_toEndOf="parent"-->
-        <!--                app:layout_constraintHorizontal_bias="0.0"-->
-        <!--                app:layout_constraintStart_toStartOf="parent"-->
-        <!--                app:layout_constraintTop_toTopOf="parent"-->
-        <!--                app:shapeAppearance="@style/RoundedImageViewShape"-->
-        <!--                app:strokeColor="@color/colorWhite"-->
-        <!--                app:strokeWidth="1dp" />-->
-
-        <!--        </androidx.constraintlayout.widget.ConstraintLayout>-->
-
-        <!--        <TextView-->
-        <!--            android:id="@+id/group_name"-->
-        <!--            android:layout_width="wrap_content"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:layout_marginStart="8dp"-->
-        <!--            android:text="Iron Man X"-->
-        <!--            android:textColor="@color/colorWhite"-->
-        <!--            android:textSize="20sp"-->
-        <!--            app:layout_constraintStart_toEndOf="@+id/container_profile"-->
-        <!--            app:layout_constraintTop_toTopOf="parent" />-->
-
-        <!--        <com.google.android.material.button.MaterialButton-->
-        <!--            android:layout_width="wrap_content"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:layout_marginStart="16dp"-->
-        <!--            android:insetTop="0dp"-->
-        <!--            android:insetBottom="0dp"-->
-        <!--            android:minWidth="0dp"-->
-        <!--            android:minHeight="0dp"-->
-        <!--            android:paddingLeft="5dp"-->
-        <!--            android:paddingTop="2dp"-->
-        <!--            android:paddingRight="5dp"-->
-        <!--            android:paddingBottom="2dp"-->
-        <!--            android:text="follow"-->
-        <!--            android:textAllCaps="false"-->
-        <!--            android:textColor="@color/colorWhite"-->
-        <!--            android:textSize="10sp"-->
-        <!--            app:backgroundTint="#AB808080"-->
-        <!--            app:layout_constraintBottom_toBottomOf="@+id/group_name"-->
-        <!--            app:layout_constraintStart_toEndOf="@+id/group_name"-->
-        <!--            app:layout_constraintTop_toTopOf="@+id/group_name" />-->
-
-        <!--        <TextView-->
-        <!--            android:id="@+id/followers_count"-->
-        <!--            android:layout_width="wrap_content"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:text="21,432"-->
-        <!--            android:textColor="@color/colorWhite"-->
-        <!--            android:textStyle="bold"-->
-        <!--            app:layout_constraintEnd_toEndOf="@+id/textView2"-->
-        <!--            app:layout_constraintStart_toStartOf="@+id/textView2"-->
-        <!--            app:layout_constraintTop_toTopOf="parent" />-->
-
-        <!--        <TextView-->
-        <!--            android:id="@+id/textView2"-->
-        <!--            android:layout_width="wrap_content"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:text="Followers"-->
-        <!--            android:textColor="@color/colorWhite"-->
-        <!--            android:textSize="10sp"-->
-        <!--            app:layout_constraintEnd_toEndOf="parent"-->
-        <!--            app:layout_constraintTop_toBottomOf="@+id/followers_count" />-->
-
-
-        <!--        <androidx.constraintlayout.widget.ConstraintLayout-->
-        <!--            android:id="@+id/group_members"-->
-        <!--            android:layout_width="wrap_content"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:layout_marginStart="8dp"-->
-        <!--            app:layout_constraintStart_toEndOf="@+id/container_profile"-->
-        <!--            app:layout_constraintTop_toBottomOf="@+id/group_name">-->
-
-        <!--            <com.google.android.material.imageview.ShapeableImageView-->
-        <!--                android:id="@+id/group_member_one"-->
-        <!--                android:layout_width="25dp"-->
-        <!--                android:layout_height="25dp"-->
-        <!--                android:layout_marginEnd="5dp"-->
-        <!--                android:padding="1dp"-->
-        <!--                android:adjustViewBounds="true"-->
-        <!--                android:scaleType="centerCrop"-->
-        <!--                app:layout_constraintEnd_toStartOf="@id/group_member_two"-->
-        <!--                app:layout_constraintHorizontal_chainStyle="spread"-->
-        <!--                app:layout_constraintStart_toStartOf="parent"-->
-        <!--                app:layout_constraintTop_toTopOf="parent"-->
-        <!--                app:shapeAppearance="@style/RoundedImageViewShape"-->
-        <!--                app:strokeColor="@color/colorWhite"-->
-        <!--                app:strokeWidth="1dp" />-->
-
-        <!--            <com.google.android.material.imageview.ShapeableImageView-->
-        <!--                android:id="@+id/group_member_two"-->
-        <!--                android:layout_width="25dp"-->
-        <!--                android:layout_height="25dp"-->
-        <!--                android:layout_marginEnd="5dp"-->
-        <!--                android:padding="1dp"-->
-        <!--                android:adjustViewBounds="true"-->
-        <!--                android:scaleType="centerCrop"-->
-        <!--                app:layout_constraintEnd_toStartOf="@id/group_member_three"-->
-        <!--                app:layout_constraintStart_toEndOf="@id/group_member_one"-->
-        <!--                app:layout_constraintTop_toTopOf="parent"-->
-        <!--                app:shapeAppearance="@style/RoundedImageViewShape"-->
-        <!--                app:strokeColor="@color/colorWhite"-->
-        <!--                app:strokeWidth="1dp" />-->
-
-        <!--            <com.google.android.material.imageview.ShapeableImageView-->
-        <!--                android:id="@+id/group_member_three"-->
-        <!--                android:layout_width="25dp"-->
-        <!--                android:layout_height="25dp"-->
-        <!--                android:padding="1dp"-->
-        <!--                android:adjustViewBounds="true"-->
-        <!--                android:scaleType="centerCrop"-->
-        <!--                app:layout_constraintEnd_toEndOf="parent"-->
-        <!--                app:layout_constraintStart_toEndOf="@id/group_member_two"-->
-        <!--                app:layout_constraintTop_toTopOf="parent"-->
-        <!--                app:shapeAppearance="@style/RoundedImageViewShape"-->
-        <!--                app:strokeColor="@color/colorWhite"-->
-        <!--                app:strokeWidth="1dp" />-->
-
-
-        <!--        </androidx.constraintlayout.widget.ConstraintLayout>-->
-
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_view_video_description"
             android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginEnd="15dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
             android:ellipsize="end"
-            android:lines="2"
-            android:maxLines="5"
+            android:maxLines="2"
             android:textColor="@color/colorStoryDescription"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/recycler_view_options"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@+id/caption_profile"
+            app:layout_constraintEnd_toStartOf="@+id/date"
             app:layout_constraintHeight_default="wrap"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/caption_profile"
+            app:layout_constraintTop_toTopOf="@+id/caption_profile"
             tools:text="@tools:sample/lorem/random" />
+
+        <TextView
+            android:id="@+id/date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="15dp"
+            android:text="08.15.19"
+            android:textColor="@color/colorStoryDescription"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toBottomOf="@+id/text_view_video_description"
+            app:layout_constraintEnd_toStartOf="@+id/recycler_view_options"
+            app:layout_constraintStart_toEndOf="@+id/text_view_video_description" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/recycler_view_options"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
+            android:clipChildren="false"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_default="wrap">
 
-            <androidx.appcompat.widget.AppCompatImageView
+            <com.qhutch.elevationimageview.ElevationImageView
                 android:id="@+id/image_view_option_like"
+                android:elevation="10dp"
                 android:layout_width="28dp"
                 android:layout_height="28dp"
                 android:layout_marginTop="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_heart_icon" />
+                android:src="@drawable/ic_heart_icon"/>
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/image_view_option_like_title"
@@ -220,8 +100,9 @@
                 app:layout_constraintTop_toBottomOf="@+id/image_view_option_like"
                 tools:text="10.1k" />
 
-            <androidx.appcompat.widget.AppCompatImageView
+            <com.qhutch.elevationimageview.ElevationImageView
                 android:id="@+id/image_view_option_comment"
+                android:elevation="10dp"
                 android:layout_width="28dp"
                 android:layout_height="28dp"
                 android:layout_marginTop="8dp"
@@ -246,8 +127,9 @@
                 app:layout_constraintTop_toBottomOf="@+id/image_view_option_comment"
                 tools:text="30.1k" />
 
-            <androidx.appcompat.widget.AppCompatImageView
+            <com.qhutch.elevationimageview.ElevationImageView
                 android:id="@+id/image_view_option_share"
+                android:elevation="10dp"
                 android:layout_width="28dp"
                 android:layout_height="28dp"
                 android:layout_marginTop="8dp"
@@ -273,6 +155,15 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <include
+            android:id="@+id/caption_profile"
+            layout="@layout/include_member_profile"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginBottom="5dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
         <ImageView
             android:id="@+id/volume_control"
             android:layout_width="25dp"
@@ -282,7 +173,7 @@
             android:animateLayoutChanges="true"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_volume_on"
-            app:layout_constraintBottom_toTopOf="@+id/text_view_video_description"
+            app:layout_constraintBottom_toTopOf="@+id/caption_profile"
             app:layout_constraintStart_toStartOf="parent" />
 
         <ProgressBar

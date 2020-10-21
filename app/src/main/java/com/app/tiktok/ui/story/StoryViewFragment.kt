@@ -1,10 +1,19 @@
 package com.app.tiktok.ui.story
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.GestureDetector
+import android.view.MotionEvent
 import android.view.View
+import android.view.View.OnTouchListener
+import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.core.view.GestureDetectorCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.app.tiktok.R
@@ -22,6 +31,7 @@ import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory
 import com.google.android.exoplayer2.util.Util
+import kotlinx.android.synthetic.main.fragment_story_bunch.*
 import kotlinx.android.synthetic.main.layout_story_view.*
 
 
@@ -29,9 +39,11 @@ import kotlinx.android.synthetic.main.layout_story_view.*
 //https://media.giphy.com/media/7JHtlG3rEkyLLZ1JCs/giphy.gif
 //Sample mp4 of my face
 
+private const val DEBUG_TAG = "Gestures"
 class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
     private var storyUrl: String? = null
     private var storiesDataModel: StoriesDataModel? = null
+    private var parentPost: StoriesDataModel? = null
 
     private var simplePlayer: SimpleExoPlayer? = null
     private val simpleCache = MyApp.simpleCache
@@ -42,6 +54,9 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
     private var currentWindow = 0
     private var playbackPosition: Long = 0
     private var playbackStateListener: PlaybackStateListener? = null
+
+    var parent: StoryBunchFragment? = null
+
 
     private var volumeState: VolumeState? = null
     private enum class VolumeState {
@@ -66,10 +81,11 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
     }
 
     companion object {
-        fun newInstance(storiesDataModel: StoriesDataModel) = StoryViewFragment()
+        fun newInstance(storiesDataModel: StoriesDataModel, parentPost: StoriesDataModel) = StoryViewFragment()
             .apply {
                 arguments = Bundle().apply {
                     putParcelable(Constants.KEY_STORY_DATA, storiesDataModel)
+                    putParcelable(Constants.KEY_PARENT_STORY, parentPost)
                 }
             }
     }
@@ -79,6 +95,8 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        parent = parentFragment as StoryBunchFragment
+
         playbackStateListener = PlaybackStateListener()
 
         options_container.setOnClickListener {
@@ -87,9 +105,139 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
         }
 
         storiesDataModel = arguments?.getParcelable(Constants.KEY_STORY_DATA)
+        parentPost = arguments?.getParcelable(Constants.KEY_PARENT_STORY)
+
+        val myGestureListener = GestureDetectorCompat(context, MyGestureListener(parent))
+        options_container.setOnTouchListener(OnTouchListener { view, motionEvent ->
+            myGestureListener.onTouchEvent(motionEvent)
+            false
+        })
 
         setData()
     }
+
+    inner class MyGestureListener constructor(val parentFragment: StoryBunchFragment?) : GestureDetector.SimpleOnGestureListener() {
+
+        override fun onDoubleTap(event: MotionEvent): Boolean {
+            Log.d(
+                DEBUG_TAG,
+                "onDoubleTap: $event"
+            )
+
+            //Top Bar
+            Log.d("check", parentFragment?.top_bar_container?.translationY.toString())
+            if(parentFragment?.top_bar_container?.translationY == 0f){
+
+                ObjectAnimator.ofFloat(parentFragment?.top_bar_container, "translationY", -300f).apply {
+                    duration = 600
+                    start()
+                }
+
+                ObjectAnimator.ofFloat(parentFragment?.layout_bot_sheet, "translationY", 300f).apply {
+                    duration = 600
+                    start()
+                }
+
+                ValueAnimator.ofFloat(parentFragment!!.bigSquareLength?.toFloat(), 0f).apply {
+                    duration = 600
+                    start()
+                    addUpdateListener { updatedAnimation ->
+                        // You can use the animated value in a property that uses the
+                        // same type as the animation. In this case, you can use the
+                        // float value in the translationX property.
+
+                        val viewPagerMarginParams = parentFragment?.posts_view_pager.getLayoutParams() as ViewGroup.MarginLayoutParams
+                        viewPagerMarginParams.bottomMargin = (updatedAnimation.animatedValue as Float).toInt()
+                        parentFragment?.posts_view_pager.setLayoutParams(viewPagerMarginParams)
+                    }
+                }
+
+                ObjectAnimator.ofFloat(recycler_view_options, "translationY", 400f).apply {
+                    duration = 600
+                    start()
+                }
+
+                ObjectAnimator.ofFloat(recycler_view_options, "translationY", 400f).apply {
+                    duration = 600
+                    start()
+                }
+
+                val animX = ObjectAnimator.ofFloat(caption_profile, "translationY", 300f)
+                val animY = ObjectAnimator.ofFloat(text_view_video_description, "translationY", 300f)
+                val animZ = ObjectAnimator.ofFloat(date, "translationY", 300f)
+
+                AnimatorSet().apply {
+                    playTogether(animX, animY, animZ)
+                    start()
+                }
+
+            }else{
+                ObjectAnimator.ofFloat(parentFragment?.top_bar_container, "translationY", 0f).apply {
+                    duration = 600
+                    start()
+                }
+
+                ObjectAnimator.ofFloat(parentFragment?.layout_bot_sheet, "translationY", 0f).apply {
+                    duration = 600
+                    start()
+                }
+
+                ValueAnimator.ofFloat(0f, parentFragment!!.bigSquareLength?.toFloat()).apply {
+                    duration = 600
+                    start()
+                    addUpdateListener { updatedAnimation ->
+                        // You can use the animated value in a property that uses the
+                        // same type as the animation. In this case, you can use the
+                        // float value in the translationX property.
+
+                        val viewPagerMarginParams = parentFragment?.posts_view_pager.getLayoutParams() as ViewGroup.MarginLayoutParams
+                        viewPagerMarginParams.bottomMargin = (updatedAnimation.animatedValue as Float).toInt()
+                        parentFragment?.posts_view_pager.setLayoutParams(viewPagerMarginParams)
+                    }
+                }
+
+                ObjectAnimator.ofFloat(recycler_view_options, "translationY", 0f).apply {
+                    duration = 600
+                    start()
+                }
+
+                val animX = ObjectAnimator.ofFloat(caption_profile, "translationY", 0f)
+                val animY = ObjectAnimator.ofFloat(text_view_video_description, "translationY", 0f)
+                val animZ = ObjectAnimator.ofFloat(date, "translationY", 0f)
+
+                AnimatorSet().apply {
+                    playTogether(animX, animY, animZ)
+                    start()
+                }
+            }
+
+            return true
+        }
+
+    }
+
+
+//    internal class MyGestureListener : SimpleOnGestureListener() {
+////        private val storyBunchFragment: StoryBunchFragment = parentFragment
+//
+//        override fun onDoubleTap(event: MotionEvent): Boolean {
+//            Log.d(
+//                DEBUG_TAG,
+//                "onDoubleTap: $event"
+//            )
+//
+//            ObjectAnimator.ofFloat(parent.topView, "translationY", -100f).apply {
+//                duration = 1000
+//                start()
+//            }
+//
+//            return true
+//        }
+//
+//        companion object {
+//            private const val DEBUG_TAG = "Gestures"
+//        }
+//    }
 
     private fun setData() {
 
@@ -157,6 +305,10 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
             storiesDataModel?.likesCount?.formatNumberAsReadableFormat()
         image_view_option_comment_title?.text =
             storiesDataModel?.commentsCount?.formatNumberAsReadableFormat()
+
+        Glide.with(this)
+            .load(parentPost?.membersThumbUrls?.get(0))
+            .into(caption_profile as ImageView)
 
         //group_name?.text =storiesDataModel?.groupName
         //followers_count?.text = storiesDataModel?.followersCount?.formatNumberAsReadableFormat()
