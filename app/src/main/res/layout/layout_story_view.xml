@@ -14,7 +14,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:use_controller="false" />
+        app:use_controller="false" >
+
+    </com.google.android.exoplayer2.ui.PlayerView>
 
     <ImageView
         android:id="@+id/post_image"
@@ -40,29 +42,39 @@
             android:id="@+id/text_view_video_description"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
             android:ellipsize="end"
             android:maxLines="2"
             android:textColor="@color/colorStoryDescription"
             android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="@+id/caption_profile"
-            app:layout_constraintEnd_toStartOf="@+id/date"
+            app:layout_constraintBottom_toBottomOf="@+id/date"
+            app:layout_constraintEnd_toStartOf="@+id/recycler_view_options"
             app:layout_constraintHeight_default="wrap"
-            app:layout_constraintStart_toEndOf="@+id/caption_profile"
-            app:layout_constraintTop_toTopOf="@+id/caption_profile"
+            app:layout_constraintStart_toEndOf="@+id/date"
+            app:layout_constraintTop_toTopOf="@+id/username"
             tools:text="@tools:sample/lorem/random" />
 
         <TextView
             android:id="@+id/date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="15dp"
+            android:layout_marginStart="8dp"
             android:text="08.15.19"
             android:textColor="@color/colorStoryDescription"
             android:textSize="10sp"
-            app:layout_constraintBottom_toBottomOf="@+id/text_view_video_description"
-            app:layout_constraintEnd_toStartOf="@+id/recycler_view_options"
-            app:layout_constraintStart_toEndOf="@+id/text_view_video_description" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/caption_profile" />
+
+        <TextView
+            android:id="@+id/username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="sheryl99"
+            android:textColor="@color/colorStoryDescription"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toTopOf="@+id/date"
+            app:layout_constraintStart_toStartOf="@+id/date" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/recycler_view_options"
@@ -75,14 +87,14 @@
 
             <com.qhutch.elevationimageview.ElevationImageView
                 android:id="@+id/image_view_option_like"
-                android:elevation="10dp"
                 android:layout_width="28dp"
                 android:layout_height="28dp"
                 android:layout_marginTop="8dp"
+                android:elevation="10dp"
+                android:src="@drawable/ic_heart_icon"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:src="@drawable/ic_heart_icon"/>
+                app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/image_view_option_like_title"
@@ -102,10 +114,10 @@
 
             <com.qhutch.elevationimageview.ElevationImageView
                 android:id="@+id/image_view_option_comment"
-                android:elevation="10dp"
                 android:layout_width="28dp"
                 android:layout_height="28dp"
                 android:layout_marginTop="8dp"
+                android:elevation="10dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/image_view_option_like_title"
@@ -129,10 +141,10 @@
 
             <com.qhutch.elevationimageview.ElevationImageView
                 android:id="@+id/image_view_option_share"
-                android:elevation="10dp"
                 android:layout_width="28dp"
                 android:layout_height="28dp"
                 android:layout_marginTop="8dp"
+                android:elevation="10dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/image_view_option_comment_title"
@@ -160,9 +172,9 @@
             layout="@layout/include_member_profile"
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:layout_marginBottom="5dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintBottom_toBottomOf="@+id/date"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/username" />
 
         <ImageView
             android:id="@+id/volume_control"

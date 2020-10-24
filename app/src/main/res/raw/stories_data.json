@@ -67,7 +67,11 @@
       "https://dl.dropboxusercontent.com/s/0fhek70zxmnabbo/07%20Jamie%20Summer.jpg",
       "https://dl.dropboxusercontent.com/s/ywwl6dq51pc04an/Kimberly%20Alula.jpg"
     ],
-    "sameGroupPostIds" : [2, 3, 4]
+    "sameGroupPostIds" : [2, 3, 4],
+
+    "productPrice" : 15,
+    "productName" : "Gnome Knit",
+    "productThumb" : "https://dl.dropboxusercontent.com/s/o1b663ln9ivvjw7/05%20Jessenia%20Solorio.jpg"
   },
   {
     "parentId": 0,
@@ -1210,7 +1214,18 @@
     "groupName" : "Iron Man X",
     "followersCount" : 1235,
     "membersThumbUrls" : [],
-    "sameGroupPostIds" : [2, 3, 4]
+    "sameGroupPostIds" : [2, 3, 4],
+
+    "processPostUrls" : [
+      "https://dl.dropboxusercontent.com/s/m5uhnklv6rcwonf/01.jpg",
+      "https://dl.dropboxusercontent.com/s/484ye7m63ww70f5/02.gif",
+      "https://dl.dropboxusercontent.com/s/fol9brugv4pjzea/00.jpeg"
+    ],
+    "processPostCaptions" : [
+      "First I bought some blue-tinted materials to start making my stuff",
+      "Then we start sowing the cloth together, creating a beautiful tapestry of clothing",
+      "I let the kids have a go with it before putting in the finishing touches :)"
+    ]
   },
   {
     "parentId": 3,
@@ -1227,7 +1242,16 @@
     "groupName" : "Iron Man X",
     "followersCount" : 1235,
     "membersThumbUrls" : [],
-    "sameGroupPostIds" : [2, 3, 4]
+    "sameGroupPostIds" : [2, 3, 4],
+
+    "processPostUrls" : [
+      "https://dl.dropboxusercontent.com/s/dgrh8p52n92dlw7/01.gif",
+      "https://dl.dropboxusercontent.com/s/s90kzmx64xjx1zj/02.jpg"
+    ],
+    "processPostCaptions" : [
+      "First I bought some blue-tinted materials to start making my stuff",
+      "Then we start sowing the cloth together, creating a beautiful tapestry of clothing"
+    ]
   },
   {
     "parentId": 3,

@@ -3,25 +3,28 @@ package com.app.tiktok.ui.story
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
+import android.content.ClipData
+import android.content.ClipDescription
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.view.GestureDetector
-import android.view.MotionEvent
-import android.view.View
+import android.view.*
+import android.view.View.GONE
 import android.view.View.OnTouchListener
-import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.view.GestureDetectorCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.app.tiktok.R
 import com.app.tiktok.app.MyApp
+import com.app.tiktok.databinding.IncludePriceTagBinding
+import com.app.tiktok.databinding.IncludeProcessPostBinding
 import com.app.tiktok.model.StoriesDataModel
 import com.app.tiktok.ui.main.viewmodel.MainViewModel
 import com.app.tiktok.utils.*
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.Player
@@ -32,18 +35,22 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import kotlinx.android.synthetic.main.fragment_story_bunch.*
+import kotlinx.android.synthetic.main.include_price_tag.*
+import kotlinx.android.synthetic.main.layout_process_posts_scroll.*
 import kotlinx.android.synthetic.main.layout_story_view.*
 
 
 //https://thumbsnap.com/i/tn1tP9To.mp4
 //https://media.giphy.com/media/7JHtlG3rEkyLLZ1JCs/giphy.gif
 //Sample mp4 of my face
-
 private const val DEBUG_TAG = "Gestures"
+
+
 class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
     private var storyUrl: String? = null
     private var storiesDataModel: StoriesDataModel? = null
     private var parentPost: StoriesDataModel? = null
+    private var gestureListener: MyGestureListener? = null
 
     private var simplePlayer: SimpleExoPlayer? = null
     private val simpleCache = MyApp.simpleCache
@@ -62,7 +69,6 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
     private enum class VolumeState {
         ON, OFF
     }
-
 
     class PlaybackStateListener : Player.EventListener {
         override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
@@ -107,34 +113,55 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
         storiesDataModel = arguments?.getParcelable(Constants.KEY_STORY_DATA)
         parentPost = arguments?.getParcelable(Constants.KEY_PARENT_STORY)
 
-        val myGestureListener = GestureDetectorCompat(context, MyGestureListener(parent))
+        gestureListener = MyGestureListener(parent)
+        val myGestureListener = GestureDetectorCompat(context, gestureListener)
         options_container.setOnTouchListener(OnTouchListener { view, motionEvent ->
             myGestureListener.onTouchEvent(motionEvent)
             false
         })
+
+        //This thing not working
+        if(parent?.top_bar_container?.translationY != 0f){
+            gestureListener!!.moveBottomsOff()
+        }
+
+        //Adding drag functionality
+        options_container.setOnDragListener(dragListen)
 
         setData()
     }
 
     inner class MyGestureListener constructor(val parentFragment: StoryBunchFragment?) : GestureDetector.SimpleOnGestureListener() {
 
-        override fun onDoubleTap(event: MotionEvent): Boolean {
-            Log.d(
-                DEBUG_TAG,
-                "onDoubleTap: $event"
-            )
+        fun create0fAnimator(view: View?): ObjectAnimator? {
+            return ObjectAnimator.ofFloat(view, "translationY", 0f)
+        }
 
-            //Top Bar
-            Log.d("check", parentFragment?.top_bar_container?.translationY.toString())
+        fun moveBottomsOff(){
+            val socialIconsAnim = ObjectAnimator.ofFloat(recycler_view_options, "translationY", 400f)
+            val profilePicAnim = ObjectAnimator.ofFloat(caption_profile, "translationY", 300f)
+            val usernameAnim = ObjectAnimator.ofFloat(username, "translationY", 300f)
+            val dateAnim = ObjectAnimator.ofFloat(date, "translationY", 300f)
+            val captionAnim = ObjectAnimator.ofFloat(text_view_video_description, "translationY", 300f)
+
+            AnimatorSet().apply {
+                duration = 600
+                playTogether(socialIconsAnim, profilePicAnim, usernameAnim, dateAnim, captionAnim)
+                start()
+            }
+        }
+
+        override fun onDoubleTap(event: MotionEvent): Boolean {
+
             if(parentFragment?.top_bar_container?.translationY == 0f){
 
-                ObjectAnimator.ofFloat(parentFragment?.top_bar_container, "translationY", -300f).apply {
-                    duration = 600
-                    start()
-                }
+                val topBarAnim = ObjectAnimator.ofFloat(parentFragment?.top_bar_container, "translationY", -300f)
+                val bottomPostsAnim = ObjectAnimator.ofFloat(parentFragment?.layout_bot_sheet, "translationY", 300f)
 
-                ObjectAnimator.ofFloat(parentFragment?.layout_bot_sheet, "translationY", 300f).apply {
+                moveBottomsOff()
+                AnimatorSet().apply {
                     duration = 600
+                    playTogether(topBarAnim, bottomPostsAnim)
                     start()
                 }
 
@@ -152,33 +179,18 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
                     }
                 }
 
-                ObjectAnimator.ofFloat(recycler_view_options, "translationY", 400f).apply {
-                    duration = 600
-                    start()
-                }
-
-                ObjectAnimator.ofFloat(recycler_view_options, "translationY", 400f).apply {
-                    duration = 600
-                    start()
-                }
-
-                val animX = ObjectAnimator.ofFloat(caption_profile, "translationY", 300f)
-                val animY = ObjectAnimator.ofFloat(text_view_video_description, "translationY", 300f)
-                val animZ = ObjectAnimator.ofFloat(date, "translationY", 300f)
-
-                AnimatorSet().apply {
-                    playTogether(animX, animY, animZ)
-                    start()
-                }
-
             }else{
-                ObjectAnimator.ofFloat(parentFragment?.top_bar_container, "translationY", 0f).apply {
+                AnimatorSet().apply {
                     duration = 600
-                    start()
-                }
-
-                ObjectAnimator.ofFloat(parentFragment?.layout_bot_sheet, "translationY", 0f).apply {
-                    duration = 600
+                    playTogether(
+                        create0fAnimator(parentFragment?.top_bar_container),
+                        create0fAnimator(parentFragment?.layout_bot_sheet),
+                        create0fAnimator(recycler_view_options),
+                        create0fAnimator(caption_profile),
+                        create0fAnimator(username),
+                        create0fAnimator(date),
+                        create0fAnimator(text_view_video_description)
+                    )
                     start()
                 }
 
@@ -195,20 +207,6 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
                         parentFragment?.posts_view_pager.setLayoutParams(viewPagerMarginParams)
                     }
                 }
-
-                ObjectAnimator.ofFloat(recycler_view_options, "translationY", 0f).apply {
-                    duration = 600
-                    start()
-                }
-
-                val animX = ObjectAnimator.ofFloat(caption_profile, "translationY", 0f)
-                val animY = ObjectAnimator.ofFloat(text_view_video_description, "translationY", 0f)
-                val animZ = ObjectAnimator.ofFloat(date, "translationY", 0f)
-
-                AnimatorSet().apply {
-                    playTogether(animX, animY, animZ)
-                    start()
-                }
             }
 
             return true
@@ -216,39 +214,133 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
 
     }
 
+    // Creates a new drag event listener
+    //https://www.tutlane.com/tutorial/android/android-drag-and-drop-with-examples
+    private val dragListen = View.OnDragListener { v, event ->
 
-//    internal class MyGestureListener : SimpleOnGestureListener() {
-////        private val storyBunchFragment: StoryBunchFragment = parentFragment
-//
-//        override fun onDoubleTap(event: MotionEvent): Boolean {
-//            Log.d(
-//                DEBUG_TAG,
-//                "onDoubleTap: $event"
-//            )
-//
-//            ObjectAnimator.ofFloat(parent.topView, "translationY", -100f).apply {
-//                duration = 1000
-//                start()
-//            }
-//
-//            return true
-//        }
-//
-//        companion object {
-//            private const val DEBUG_TAG = "Gestures"
-//        }
-//    }
+        when (event.action) {
+            DragEvent.ACTION_DRAG_STARTED -> {
+                if (event.clipDescription.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
+                    val vw = event.localState as View
+                    vw.visibility = GONE
+                    true
+                } else {
+                    false
+                }
+            }
+            DragEvent.ACTION_DRAG_ENTERED -> {
+                true
+            }
+            DragEvent.ACTION_DRAG_LOCATION ->
+                // Ignore the event
+                true
+            DragEvent.ACTION_DRAG_EXITED -> {
+                true
+            }
+            DragEvent.ACTION_DROP -> {
+
+                val vw = event.localState as View
+                vw.x = event.x - vw.width/2
+                vw.y = event.y - vw.height/2
+                vw.visibility = View.VISIBLE //finally set Visibility to VISIBLE
+
+                true
+            }
+
+            DragEvent.ACTION_DRAG_ENDED -> {
+                true
+            }
+            else -> {
+                // An unknown action type was received.
+                Log.e("DragDrop Example", "Unknown action type received by OnDragListener.")
+                false
+            }
+        }
+    }
+
+    inner class OnProcessPostClicked {
+        fun onProcessPostClicked(processCaption: String, processPostUrl: String){
+            context?.let {
+                Glide.with(it)
+                    .load(processPostUrl)
+                    .into(post_image)
+                // .transition(DrawableTransitionOptions.withCrossFade())
+            }
+
+            text_view_video_description.setTextOrHide(value = processCaption)
+        }
+    }
 
     private fun setData() {
 
-        if(storiesDataModel?.storyUrl == "https://media.giphy.com/media/3oriO6qJiXajN0TyDu/giphy.gif"){
-            val layoutInflator = requireActivity().layoutInflater
-            val view = layoutInflator.inflate(
-                R.layout.include_price_tag,
+        if(storiesDataModel?.productName != null){
+            val binding: IncludePriceTagBinding = IncludePriceTagBinding.inflate(
+                getLayoutInflater(),
                 options_container,
                 false
             )
-            options_container.addView(view)
+            options_container.addView(binding.root)
+
+            binding.apply {
+                productName = storiesDataModel?.productName
+                productPrice = storiesDataModel?.productPrice
+            }
+
+            Glide.with(this)
+                .load(storiesDataModel?.productThumb)
+                .into(product_thumb)
+
+            val PRICETAG_TAG = "price tag"
+            val priceTag = binding.root.apply {
+                tag = PRICETAG_TAG
+                setOnLongClickListener { v: View ->
+                    val item = ClipData.Item(v.tag as? CharSequence)
+                    val dragData = ClipData(
+                        v.tag as? CharSequence,
+                        arrayOf(ClipDescription.MIMETYPE_TEXT_PLAIN),
+                        item)
+
+                    val myShadow = View.DragShadowBuilder(this)
+
+                    // Starts the drag
+                    v.startDragAndDrop(
+                        dragData,   // the data to be dragged
+                        myShadow,   // the drag shadow builder
+                        v,
+                        0           // flags (not currently used, set to 0)
+                    )
+                }
+            }
+
+        }
+
+        if(storiesDataModel?.processPostUrls != null){
+
+            val processPostsLayout = layoutInflater.inflate(R.layout.layout_process_posts_scroll, options_container, false)
+
+            options_container.addView(processPostsLayout)
+
+            storiesDataModel?.processPostUrls?.add(0, storiesDataModel?.storyUrl!!)
+            storiesDataModel?.processPostCaptions?.add(0, storiesDataModel?.storyDescription!!)
+            for((i, processPostUrlString) in storiesDataModel?.processPostUrls?.withIndex()!!){
+                val binding: IncludeProcessPostBinding = IncludeProcessPostBinding.inflate(
+                    getLayoutInflater(),
+                    scroll_linear_layout,
+                    false
+                )
+
+                binding.apply {
+                    processCaption = storiesDataModel?.processPostCaptions?.get(i)
+                    processPostUrl = processPostUrlString
+                    onProcessPostClicked = OnProcessPostClicked()
+                }
+
+                Glide.with(this)
+                    .load(processPostUrlString)
+                    .into(binding.processPostImage)
+
+                scroll_linear_layout.addView(binding.root)
+            }
         }
 
         //Group members
@@ -276,7 +368,7 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
         val storyUrlType = storyUrl?.substring(storyUrl!!.length - 3)
 
         //Eventually include gif when you figure out how to make ImageView support it
-        if (storyUrlType.equals("jpg") || storyUrlType.equals("gif")) {
+        if (storyUrlType.equals("jpg") || storyUrlType.equals("gif") || storyUrlType.equals("jpeg")) {
             post_image.visibility = View.VISIBLE
             player_view_story.visibility = View.GONE
 
@@ -300,6 +392,7 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
 
         //image_view_group_pic?.loadCenterCropImageFromUrl(storiesDataModel?.storyThumbUrl)
         text_view_video_description.setTextOrHide(value = storiesDataModel?.storyDescription)
+        username.text = storiesDataModel?.userName
 
         image_view_option_like_title?.text =
             storiesDataModel?.likesCount?.formatNumberAsReadableFormat()
@@ -313,14 +406,6 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
         //group_name?.text =storiesDataModel?.groupName
         //followers_count?.text = storiesDataModel?.followersCount?.formatNumberAsReadableFormat()
 
-        //Eventually implement ListView with all the profile images. For now, manually insert
-        for (memberThumUrl in storiesDataModel?.membersThumbUrls!!) {
-
-        }
-
-        for (groupId in storiesDataModel?.sameGroupPostIds!!) {
-
-        }
 
 //        text_view_account_handle.setTextOrHide(value = storiesDataModel?.userName)
 //        text_view_video_description.setTextOrHide(value = storiesDataModel?.storyDescription)

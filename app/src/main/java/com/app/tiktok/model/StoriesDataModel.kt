@@ -19,5 +19,13 @@ data class StoriesDataModel(
     val groupName: String,
     val followersCount : Long,
     val membersThumbUrls : ArrayList<String>,
-    val sameGroupPostIds : ArrayList<String>
+    val sameGroupPostIds : ArrayList<String>,
+
+    val productPrice : Long?,
+    val productName : String?,
+    val productThumb : String?,
+
+    val processPostUrls : ArrayList<String>?,
+    val processPostCaptions : ArrayList<String>?
+
 ): Parcelable

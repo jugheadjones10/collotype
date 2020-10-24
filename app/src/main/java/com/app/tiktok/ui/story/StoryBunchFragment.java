@@ -306,6 +306,7 @@ public class StoryBunchFragment extends Fragment {
         //Pass in everything first. Later we may need to filter.
         pagerAdapter = new StoryBunchPagerAdapter(this, childrenPosts);
 
+        binding.postsViewPager.setOffscreenPageLimit(2);
         binding.postsViewPager.setAdapter(pagerAdapter);
         binding.postsViewPager.registerOnPageChangeCallback(viewPagerChangeCallback);
     }

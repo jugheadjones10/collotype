@@ -137,8 +137,10 @@
                 android:layout_height="wrap_content"
                 android:text="Followers"
                 android:textColor="@color/colorWhite"
-                android:textSize="10sp"
+                android:textSize="8sp"
+                android:includeFontPadding="false"
                 app:layout_constraintEnd_toEndOf="@+id/followers_count2"
+                app:layout_constraintStart_toStartOf="@+id/followers_count2"
                 app:layout_constraintTop_toBottomOf="@+id/followers_count2" />
 
             <TextView
