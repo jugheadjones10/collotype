@@ -12,7 +12,6 @@ import android.util.Log
 import android.view.*
 import android.view.View.GONE
 import android.view.View.OnTouchListener
-import android.widget.ImageView
 import androidx.core.view.GestureDetectorCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -24,7 +23,7 @@ import com.app.tiktok.model.StoriesDataModel
 import com.app.tiktok.ui.main.viewmodel.MainViewModel
 import com.app.tiktok.utils.*
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.Player
@@ -273,6 +272,9 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
 
     private fun setData() {
 
+        //Own self is added so it is displayed at the bottom
+        Log.d("lag", "Setting data in story view fragment")
+
         if(storiesDataModel?.productName != null){
             val binding: IncludePriceTagBinding = IncludePriceTagBinding.inflate(
                 getLayoutInflater(),
@@ -333,7 +335,12 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
                     onProcessPostClicked = OnProcessPostClicked()
                 }
 
-                binding.processPostImage.loadImageFromUrl(processPostUrlString)
+                //binding.processPostImage.loadImageFromUrl(processPostUrlString)
+                Glide.with(this)
+                    .load(processPostUrlString)
+                    .thumbnail(0.25f)
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                    .into(binding.processPostImage)
 
                 scroll_linear_layout.addView(binding.root)
             }
@@ -370,6 +377,8 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
 
             //Loading image content from url
             post_image?.loadImageFromUrl(storyUrl)
+            Log.d("lag", "Loaded image in story view fragment")
+
 
         } else if (storyUrlType.equals("mp4")) {
 //            post_image.visibility = View.GONE

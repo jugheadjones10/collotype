@@ -9,6 +9,7 @@
         android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraintLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -19,28 +20,27 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" >
-            </androidx.viewpager2.widget.ViewPager2>
+                app:layout_constraintTop_toTopOf="parent" />
 
             <!-- Top bar bg and height measurer all depend on container profile -->
-<!--            <View-->
-<!--                android:id="@+id/height_measurer"-->
-<!--                android:layout_width="0dp"-->
-<!--                android:layout_height="0dp"-->
-<!--                app:layout_constraintBottom_toBottomOf="parent"-->
-<!--                app:layout_constraintStart_toStartOf="parent"-->
-<!--                app:layout_constraintTop_toTopOf="parent" />-->
+            <!--            <View-->
+            <!--                android:id="@+id/height_measurer"-->
+            <!--                android:layout_width="0dp"-->
+            <!--                android:layout_height="0dp"-->
+            <!--                app:layout_constraintBottom_toBottomOf="parent"-->
+            <!--                app:layout_constraintStart_toStartOf="parent"-->
+            <!--                app:layout_constraintTop_toTopOf="parent" />-->
 
             <!-- View pager images turn white if this linear layout isn't here. No idea why.-->
-<!--            <LinearLayout-->
-<!--                android:id="@+id/bottom_placeholder"-->
-<!--                 android:background="@color/colorBlack"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="100dp"-->
-<!--                android:orientation="vertical"-->
-<!--                app:layout_constraintBottom_toBottomOf="parent"-->
-<!--                app:layout_constraintEnd_toEndOf="parent"-->
-<!--                app:layout_constraintStart_toStartOf="parent" />-->
+            <!--            <LinearLayout-->
+            <!--                android:id="@+id/bottom_placeholder"-->
+            <!--                 android:background="@color/colorBlack"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="100dp"-->
+            <!--                android:orientation="vertical"-->
+            <!--                app:layout_constraintBottom_toBottomOf="parent"-->
+            <!--                app:layout_constraintEnd_toEndOf="parent"-->
+            <!--                app:layout_constraintStart_toStartOf="parent" />-->
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -109,27 +109,49 @@
                 app:layout_constraintBottom_toBottomOf="@+id/container_profile"
                 app:layout_constraintStart_toEndOf="@+id/container_profile"/>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/materialButton"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
+            <View
+                android:id="@+id/view"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginBottom="5dp"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:minWidth="0dp"
-                android:minHeight="0dp"
-                android:paddingLeft="5dp"
-                android:paddingTop="2dp"
-                android:paddingRight="5dp"
-                android:paddingBottom="2dp"
-                android:text="following"
-                android:textAllCaps="false"
-                android:textColor="@color/colorWhite"
-                android:textSize="10sp"
-                app:backgroundTint="#AB808080"
+                android:background="@drawable/following_bg"
                 app:layout_constraintBottom_toBottomOf="@+id/group_name2"
-                app:layout_constraintStart_toEndOf="@+id/group_name2" />
+                app:layout_constraintStart_toEndOf="@+id/group_name2"
+                app:layout_constraintTop_toTopOf="@+id/group_name2">
+
+            </View>
+
+            <View
+                android:layout_width="7dp"
+                android:layout_height="7dp"
+                android:background="@drawable/dot_bg"
+                app:layout_constraintBottom_toBottomOf="@+id/view"
+                app:layout_constraintEnd_toEndOf="@+id/view"
+                app:layout_constraintStart_toStartOf="@+id/view"
+                app:layout_constraintTop_toTopOf="@+id/view" />
+
+
+<!--            <com.google.android.material.button.MaterialButton-->
+<!--                android:id="@+id/materialButton"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="0dp"-->
+<!--                android:layout_marginStart="16dp"-->
+<!--                android:layout_marginBottom="5dp"-->
+<!--                android:insetTop="0dp"-->
+<!--                android:insetBottom="0dp"-->
+<!--                android:minWidth="0dp"-->
+<!--                android:minHeight="0dp"-->
+<!--                android:paddingLeft="5dp"-->
+<!--                android:paddingTop="2dp"-->
+<!--                android:paddingRight="5dp"-->
+<!--                android:paddingBottom="2dp"-->
+<!--                android:text="following"-->
+<!--                android:textAllCaps="false"-->
+<!--                android:textColor="@color/colorWhite"-->
+<!--                android:textSize="10sp"-->
+<!--                app:backgroundTint="#AB808080"-->
+<!--                app:layout_constraintBottom_toBottomOf="@+id/group_name2"-->
+<!--                app:layout_constraintStart_toEndOf="@+id/group_name2" />-->
 
             <TextView
                 android:id="@+id/textView"

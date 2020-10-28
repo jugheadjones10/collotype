@@ -95,7 +95,7 @@ public class StoryBunchFragment extends Fragment {
         public void onPageSelected(int position) {
             super.onPageSelected(position);
 
-            //binding.layoutBotSheet.thumbnailsRecyclerView.smoothScrollToPosition(position);
+            binding.layoutBotSheet.thumbnailsRecyclerView.smoothScrollToPosition(position);
 
             //This thing crashes if recycler view hasn't loaded yet/5555
             binding.layoutBotSheet.thumbnailsRecyclerView.postDelayed(new Runnable() {
@@ -115,7 +115,11 @@ public class StoryBunchFragment extends Fragment {
     private final OnBottomItemClickListener recyclerViewClickCallback = new OnBottomItemClickListener() {
         @Override
         public void onBottomItemClicked(int position) {
-            binding.postsViewPager.setCurrentItem(position);
+            Log.d("kidding", "Before view pager set current item");
+
+            binding.postsViewPager.setCurrentItem(position, false);
+            Log.d("kidding", "After view pager set current item");
+
         }
     };
 
@@ -151,15 +155,20 @@ public class StoryBunchFragment extends Fragment {
 
     private void setChildrenPosts(){
         //Own self is added so it is displayed at the bottom
+        Log.d("lag", "IN Story bunch before filter");
         childrenPosts = viewModel.getDataList(parentPost.getStoryId());
+        Log.d("lag", "IN Story bunch after filter");
         childrenPosts.add(0, parentPost);
     }
 
     private void setHeights(){
+
         final ViewTreeObserver observer= binding.layoutBotSheet.botSheet.getViewTreeObserver();
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
+                Log.d("lag", "First global layout run");
+
                 // I don't understand onGlobalLayout. What exactly does it listen for?
                 int squareLength = binding.storyBunchParent.getWidth()/4;
                 bigSquareLength = squareLength;
@@ -178,7 +187,7 @@ public class StoryBunchFragment extends Fragment {
 //                binding.bottomPlaceholder.setLayoutParams(bottomPlaceholderLayoutParams);
 
                 //Below are methods that need squareLength
-                //populateBottomSheetGrid(squareLength);
+                populateBottomSheetGrid(squareLength);
                 initializeRecyclerView(squareLength);
                 initializeBottomSheetBehaviour(squareLength);
 
@@ -303,10 +312,13 @@ public class StoryBunchFragment extends Fragment {
     }
 
     private void initializeViewPager(){
+        Log.d("lag", "IN view pager intitaize");
+
+
         //Pass in everything first. Later we may need to filter.
         pagerAdapter = new StoryBunchPagerAdapter(this, childrenPosts);
 
-        binding.postsViewPager.setOffscreenPageLimit(5);
+        binding.postsViewPager.setOffscreenPageLimit(1);
         binding.postsViewPager.setAdapter(pagerAdapter);
         binding.postsViewPager.registerOnPageChangeCallback(viewPagerChangeCallback);
     }
@@ -363,6 +375,8 @@ public class StoryBunchFragment extends Fragment {
     }
 
     private void injectDataIntoView(){
+        Log.d("lag", "IN inject data into view");
+
         //Set data for member profile images
         LayoutInflater layoutInflator = getActivity().getLayoutInflater();
         parentPost.getMembersThumbUrls().forEach(profileUrl -> {

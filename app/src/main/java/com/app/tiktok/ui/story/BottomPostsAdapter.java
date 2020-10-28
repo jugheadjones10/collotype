@@ -2,6 +2,7 @@ package com.app.tiktok.ui.story;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -131,7 +132,6 @@ class BottomPostsAdapter extends RecyclerView.Adapter<BottomPostsAdapter.BottomP
     public void onBindViewHolder(@NonNull BottomPostViewHolder holder, int position) {
         holder.itemView.setSelected(selectedPos == position);
 
-
         String storyUrl = storiesDataModels.get(position).getStoryUrl();
         String storyType = storyUrl.substring(storyUrl.length() - 3);
         if(storyType.equals("jpg") || storyType.equals("gif")){
@@ -142,7 +142,7 @@ class BottomPostsAdapter extends RecyclerView.Adapter<BottomPostsAdapter.BottomP
             Glide.with(mContext)
                     .load(storyUrl)
                     .thumbnail(0.25f)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                     .into(holder.binding.bottomPostImage);
 
         }else if(storyType.equals("mp4")){
@@ -159,6 +159,7 @@ class BottomPostsAdapter extends RecyclerView.Adapter<BottomPostsAdapter.BottomP
         }
 
         holder.itemView.setOnClickListener(view -> {
+            Log.d("kidding", "Click listener runs");
             notifyItemChanged(selectedPos);
             selectedPos = holder.getLayoutPosition();
             notifyItemChanged(selectedPos);

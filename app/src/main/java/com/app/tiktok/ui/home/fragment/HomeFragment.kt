@@ -47,14 +47,20 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
         storiesData.observe(viewLifecycleOwner, Observer { value ->
             when(value) {
                 is ResultData.Loading -> {
+                    Log.d("lag", "Result data is loading")
                 }
                 is ResultData.Success -> {
+                    Log.d("lag", "Result data SUCCESS")
+
+
                     if (!value.data.isNullOrEmpty()) {
                         val dataList = value.data
 
                         //We add a filter here to get posts that have parentId = 0; meaning they have no parents
                         //and that they are the parent posts
                         val parentPostsList = dataList.filter { it.parentId == 0L }
+                        Log.d("lag", "AFter filter")
+
                         if(parentPostsList is MutableList){
                             storiesPagerAdapter = StoriesPagerAdapter(this, parentPostsList)
                         }
