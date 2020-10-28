@@ -12,8 +12,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_marginBottom="10dp"
-    android:layout_width="50dp"
-    android:layout_height="50dp">
+    android:layout_width="45dp"
+    android:layout_height="45dp">
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/process_post_image"
@@ -26,7 +26,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:shapeAppearance="@style/RoundedRectangularImageViewShape"
-        app:strokeColor="@color/colorBlack"
+        app:strokeColor="@color/colorWhite"
         app:strokeWidth="1dp"
         android:onClick="@{() -> onProcessPostClicked.onProcessPostClicked(processCaption, processPostUrl)}"/>
 

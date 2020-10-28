@@ -95,7 +95,7 @@ public class StoryBunchFragment extends Fragment {
         public void onPageSelected(int position) {
             super.onPageSelected(position);
 
-            binding.layoutBotSheet.thumbnailsRecyclerView.smoothScrollToPosition(position);
+            //binding.layoutBotSheet.thumbnailsRecyclerView.smoothScrollToPosition(position);
 
             //This thing crashes if recycler view hasn't loaded yet/5555
             binding.layoutBotSheet.thumbnailsRecyclerView.postDelayed(new Runnable() {
@@ -178,7 +178,7 @@ public class StoryBunchFragment extends Fragment {
 //                binding.bottomPlaceholder.setLayoutParams(bottomPlaceholderLayoutParams);
 
                 //Below are methods that need squareLength
-                populateBottomSheetGrid(squareLength);
+                //populateBottomSheetGrid(squareLength);
                 initializeRecyclerView(squareLength);
                 initializeBottomSheetBehaviour(squareLength);
 
@@ -306,7 +306,7 @@ public class StoryBunchFragment extends Fragment {
         //Pass in everything first. Later we may need to filter.
         pagerAdapter = new StoryBunchPagerAdapter(this, childrenPosts);
 
-        binding.postsViewPager.setOffscreenPageLimit(2);
+        binding.postsViewPager.setOffscreenPageLimit(5);
         binding.postsViewPager.setAdapter(pagerAdapter);
         binding.postsViewPager.registerOnPageChangeCallback(viewPagerChangeCallback);
     }

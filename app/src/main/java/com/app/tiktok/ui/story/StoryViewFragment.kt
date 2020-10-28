@@ -34,6 +34,7 @@ import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory
 import com.google.android.exoplayer2.util.Util
+import com.google.android.material.imageview.ShapeableImageView
 import kotlinx.android.synthetic.main.fragment_story_bunch.*
 import kotlinx.android.synthetic.main.include_price_tag.*
 import kotlinx.android.synthetic.main.layout_process_posts_scroll.*
@@ -264,7 +265,6 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
                 Glide.with(it)
                     .load(processPostUrl)
                     .into(post_image)
-                // .transition(DrawableTransitionOptions.withCrossFade())
             }
 
             text_view_video_description.setTextOrHide(value = processCaption)
@@ -286,9 +286,7 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
                 productPrice = storiesDataModel?.productPrice
             }
 
-            Glide.with(this)
-                .load(storiesDataModel?.productThumb)
-                .into(product_thumb)
+            product_thumb.loadImageFromUrl(storiesDataModel?.productThumb)
 
             val PRICETAG_TAG = "price tag"
             val priceTag = binding.root.apply {
@@ -335,9 +333,7 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
                     onProcessPostClicked = OnProcessPostClicked()
                 }
 
-                Glide.with(this)
-                    .load(processPostUrlString)
-                    .into(binding.processPostImage)
+                binding.processPostImage.loadImageFromUrl(processPostUrlString)
 
                 scroll_linear_layout.addView(binding.root)
             }
@@ -376,18 +372,18 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
             post_image?.loadImageFromUrl(storyUrl)
 
         } else if (storyUrlType.equals("mp4")) {
-            post_image.visibility = View.GONE
-            player_view_story.visibility = View.VISIBLE
-
-            //Loading video content from url
-
-            val simplePlayer = getPlayer()
-
-            setVolumeControl(VolumeState.OFF)
-            player_view_story.player = simplePlayer
-
-            storyUrl = storiesDataModel?.storyUrl
-            storyUrl?.let { prepareMedia(it) }
+//            post_image.visibility = View.GONE
+//            player_view_story.visibility = View.VISIBLE
+//
+//            //Loading video content from url
+//
+//            val simplePlayer = getPlayer()
+//
+//            setVolumeControl(VolumeState.OFF)
+//            player_view_story.player = simplePlayer
+//
+//            storyUrl = storiesDataModel?.storyUrl
+//            storyUrl?.let { prepareMedia(it) }
         }
 
         //image_view_group_pic?.loadCenterCropImageFromUrl(storiesDataModel?.storyThumbUrl)
@@ -399,9 +395,8 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
         image_view_option_comment_title?.text =
             storiesDataModel?.commentsCount?.formatNumberAsReadableFormat()
 
-        Glide.with(this)
-            .load(parentPost?.membersThumbUrls?.get(0))
-            .into(caption_profile as ImageView)
+        (caption_profile as ShapeableImageView).loadImageFromUrl(parentPost?.membersThumbUrls?.get(0))
+
 
         //group_name?.text =storiesDataModel?.groupName
         //followers_count?.text = storiesDataModel?.followersCount?.formatNumberAsReadableFormat()
@@ -426,17 +421,17 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
     }
 
     override fun onPause() {
-        pauseVideo()
+        //pauseVideo()
         super.onPause()
     }
 
     override fun onResume() {
-        restartVideo()
+        //restartVideo()
         super.onResume()
     }
 
     override fun onDestroy() {
-        releasePlayer()
+        //releasePlayer()
         super.onDestroy()
     }
 

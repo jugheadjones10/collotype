@@ -19,6 +19,7 @@ import com.app.tiktok.app.MyApp;
 import com.app.tiktok.databinding.BottomPostItemBinding;
 import com.app.tiktok.model.StoriesDataModel;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -139,21 +140,22 @@ class BottomPostsAdapter extends RecyclerView.Adapter<BottomPostsAdapter.BottomP
             holder.binding.bottomPostImage.setVisibility(View.VISIBLE);
 
             Glide.with(mContext)
-                .load(storyUrl)
-                .into(holder.binding.bottomPostImage);
+                    .load(storyUrl)
+                    .thumbnail(0.25f)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(holder.binding.bottomPostImage);
 
         }else if(storyType.equals("mp4")){
 
-            holder.binding.bottomPlayerViewStory.setVisibility(View.VISIBLE);
-            holder.binding.bottomPostImage.setVisibility(View.GONE);
-
-            holder.binding.bottomPlayerViewStory.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_ZOOM);
-
-            SimpleExoPlayer simplePlayer = getPlayer();
-//            simplePlayer.setVideoScalingMode(C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
-            holder.binding.bottomPlayerViewStory.setPlayer(simplePlayer);
-
-            prepareMedia(storyUrl);
+//            holder.binding.bottomPlayerViewStory.setVisibility(View.VISIBLE);
+//            holder.binding.bottomPostImage.setVisibility(View.GONE);
+//
+//            holder.binding.bottomPlayerViewStory.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_ZOOM);
+//
+//            SimpleExoPlayer simplePlayer = getPlayer();
+//            holder.binding.bottomPlayerViewStory.setPlayer(simplePlayer);
+//
+//            prepareMedia(storyUrl);
         }
 
         holder.itemView.setOnClickListener(view -> {

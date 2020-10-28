@@ -40,7 +40,7 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
 
         viewPager2 = view_pager_stories
         viewPager2?.setPageTransformer(VerticalCubeTransformer())
-        viewPager2?.offscreenPageLimit = 1
+        viewPager2?.offscreenPageLimit = 8
 
         val storiesData = homeViewModel.getDataList()
 
@@ -60,7 +60,7 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
                         }
                         view_pager_stories.adapter = storiesPagerAdapter
 
-                        startPreCaching(dataList)
+                        //startPreCaching(dataList)
                     }
                 }
             }
