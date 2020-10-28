@@ -3,6 +3,7 @@ package com.app.tiktok.ui.story;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -40,9 +41,11 @@ import com.app.tiktok.utils.ExtensionsKt;
 import com.app.tiktok.utils.ImageExtensionsKt;
 import com.app.tiktok.utils.Utility;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.imageview.ShapeableImageView;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -109,6 +112,7 @@ public class StoryBunchFragment extends Fragment {
                 }
             }, 50);
         }
+
     };
 
     //Set view pager post when bottom recycler view item is clicked
@@ -128,12 +132,24 @@ public class StoryBunchFragment extends Fragment {
     }
 
     @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList("childrenPosts", (ArrayList<? extends Parcelable>) childrenPosts);
+        outState.putParcelable("parentPost", parentPost);
+        outState.putInt("squareLength", bigSquareLength);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_story_bunch, container, false);
 
         //Get Arguments
-        parentPost = getArguments().getParcelable(Constants.KEY_STORY_DATA);
+        if(savedInstanceState != null){
+            parentPost = savedInstanceState.getParcelable("parentPost");
+        }else{
+            parentPost = getArguments().getParcelable(Constants.KEY_STORY_DATA);
+        }
 
         //Initialize View Model
         viewModel = new ViewModelProvider(this).get(StoryBunchViewModel.class);
@@ -142,9 +158,18 @@ public class StoryBunchFragment extends Fragment {
         bottomSheetBehavior = BottomSheetBehavior.from(binding.layoutBotSheet.botSheet);
 
         //Get data from view model
-        setChildrenPosts();
+        if(savedInstanceState != null){
+            childrenPosts = savedInstanceState.getParcelable("childrenPosts");
+        }else{
+            setChildrenPosts();
+        }
 
-        setHeights();
+        if(savedInstanceState != null){
+            bigSquareLength = savedInstanceState.getInt("squareLength");
+            setSquareDependentLengths(bigSquareLength);
+        }else{
+            setHeights();
+        }
 
         initializeViewPager();
         initializeNestedScrollViewBehaviour();
@@ -173,28 +198,32 @@ public class StoryBunchFragment extends Fragment {
                 int squareLength = binding.storyBunchParent.getWidth()/4;
                 bigSquareLength = squareLength;
 
-                //Set peek height with square length
-                bottomSheetBehavior.setPeekHeight(squareLength);
-
-                //Set view pager bottom margin with square length
-                MarginLayoutParams viewPagerMarginParams = (MarginLayoutParams)binding.postsViewPager.getLayoutParams();
-                viewPagerMarginParams.bottomMargin = squareLength;
-                binding.postsViewPager.setLayoutParams(viewPagerMarginParams);
-
-                //Old method of setting bottom of view pager to top of bottom placeholder
-//                ViewGroup.LayoutParams bottomPlaceholderLayoutParams = binding.bottomPlaceholder.getLayoutParams();
-//                bottomPlaceholderLayoutParams.height = squareLength;
-//                binding.bottomPlaceholder.setLayoutParams(bottomPlaceholderLayoutParams);
-
-                //Below are methods that need squareLength
-                populateBottomSheetGrid(squareLength);
-                initializeRecyclerView(squareLength);
-                initializeBottomSheetBehaviour(squareLength);
+                setSquareDependentLengths(bigSquareLength);
 
                 ViewTreeObserver innerObserver = binding.layoutBotSheet.botSheet.getViewTreeObserver();
                 innerObserver.removeOnGlobalLayoutListener(this);
             }
         });
+    }
+
+    private void setSquareDependentLengths(int squareLength){
+        //Set peek height with square length
+        bottomSheetBehavior.setPeekHeight(squareLength);
+
+        //Set view pager bottom margin with square length
+        MarginLayoutParams viewPagerMarginParams = (MarginLayoutParams)binding.postsViewPager.getLayoutParams();
+        viewPagerMarginParams.bottomMargin = squareLength;
+        binding.postsViewPager.setLayoutParams(viewPagerMarginParams);
+
+        //Old method of setting bottom of view pager to top of bottom placeholder
+//                ViewGroup.LayoutParams bottomPlaceholderLayoutParams = binding.bottomPlaceholder.getLayoutParams();
+//                bottomPlaceholderLayoutParams.height = squareLength;
+//                binding.bottomPlaceholder.setLayoutParams(bottomPlaceholderLayoutParams);
+
+        //Below are methods that need squareLength
+        populateBottomSheetGrid(squareLength);
+        initializeRecyclerView(squareLength);
+        initializeBottomSheetBehaviour(squareLength);
     }
 
     private void populateBottomSheetGrid(int squareLength){
@@ -318,7 +347,7 @@ public class StoryBunchFragment extends Fragment {
         //Pass in everything first. Later we may need to filter.
         pagerAdapter = new StoryBunchPagerAdapter(this, childrenPosts);
 
-        binding.postsViewPager.setOffscreenPageLimit(1);
+        binding.postsViewPager.setOffscreenPageLimit(2);
         binding.postsViewPager.setAdapter(pagerAdapter);
         binding.postsViewPager.registerOnPageChangeCallback(viewPagerChangeCallback);
     }
@@ -383,13 +412,16 @@ public class StoryBunchFragment extends Fragment {
             ShapeableImageView view = (ShapeableImageView)layoutInflator.inflate(R.layout.include_member_profile, binding.groupMembers, false);
             Glide.with(this)
                     .load(profileUrl)
+                    .thumbnail(0.25f)
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                     .into(view);
             binding.groupMembers.addView(view);
         });
 
         Glide.with(this)
                 .load(parentPost.getStoryThumbUrl())
-                .centerCrop()
+                .thumbnail(0.25f)
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .into(binding.imageViewGroupPic);
 
         binding.groupName2.setText(parentPost.getGroupName());

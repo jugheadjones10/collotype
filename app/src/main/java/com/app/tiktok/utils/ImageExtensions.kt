@@ -1,12 +1,12 @@
 package com.app.tiktok.utils
 
-import android.widget.ImageView
-import com.app.tiktok.R
+import android.graphics.Bitmap
+import android.view.View
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.FutureTarget
 import com.google.android.material.imageview.ShapeableImageView
-import kotlinx.android.synthetic.main.fragment_story_bunch.*
+
 
 fun ShapeableImageView.loadImageFromUrl(imageUrl: String?){
 //    Glide.with(this)
@@ -18,18 +18,18 @@ fun ShapeableImageView.loadImageFromUrl(imageUrl: String?){
         .thumbnail(0.25f)
         .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
         .into(this)
-}
 
-fun ShapeableImageView.loadCenterCropImageFromUrl(imageUrl: String?) {
-    Glide.with(this)
-        .load(imageUrl)
-        .centerCrop()
-        .into(this)
-}
+//    val futureTarget: FutureTarget<Bitmap> = Glide.with(context)
+//        .asBitmap()
+//        .load(imageUrl)
+//        .submit(200, 600)
+//
+//
+//    //This thing crashes if recycler view hasn't loaded yet/5555
+//    postDelayed(Runnable { //DOES THIS CHECK ACTUALLY HAVE ANY EFFECT
+//        val bitmap = futureTarget.get()
+//        setImageBitmap(bitmap)
+//        Glide.with(context).clear(futureTarget)
+//    }, 50)
 
-fun ShapeableImageView.loadCenterCropFromLocal(imageId: Int?) {
-    Glide.with(this)
-        .load(imageId)
-        .centerCrop()
-        .into(this)
 }

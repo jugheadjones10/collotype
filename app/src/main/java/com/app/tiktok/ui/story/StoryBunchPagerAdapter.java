@@ -23,6 +23,8 @@ public class StoryBunchPagerAdapter extends FragmentStateAdapter {
         return StoryViewFragment.Companion.newInstance(mPostData.get(position), mPostData.get(0));
     }
 
+
+
     @Override
     public int getItemCount() {
         return mPostData.size();

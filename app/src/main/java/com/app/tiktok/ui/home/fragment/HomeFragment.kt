@@ -52,7 +52,6 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
                 is ResultData.Success -> {
                     Log.d("lag", "Result data SUCCESS")
 
-
                     if (!value.data.isNullOrEmpty()) {
                         val dataList = value.data
 

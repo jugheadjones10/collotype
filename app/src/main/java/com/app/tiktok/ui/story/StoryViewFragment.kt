@@ -12,6 +12,7 @@ import android.util.Log
 import android.view.*
 import android.view.View.GONE
 import android.view.View.OnTouchListener
+import android.widget.LinearLayout
 import androidx.core.view.GestureDetectorCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -110,8 +111,14 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
             toggleVolume()
         }
 
-        storiesDataModel = arguments?.getParcelable(Constants.KEY_STORY_DATA)
-        parentPost = arguments?.getParcelable(Constants.KEY_PARENT_STORY)
+        if(savedInstanceState == null){
+            storiesDataModel = arguments?.getParcelable(Constants.KEY_STORY_DATA)
+            parentPost = arguments?.getParcelable(Constants.KEY_PARENT_STORY)
+        }else{
+            storiesDataModel = savedInstanceState.getParcelable("storiesDataModel")
+            parentPost = savedInstanceState.getParcelable("parentPost")
+        }
+
 
         gestureListener = MyGestureListener(parent)
         val myGestureListener = GestureDetectorCompat(context, gestureListener)
@@ -129,6 +136,12 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
         options_container.setOnDragListener(dragListen)
 
         setData()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putParcelable("storiesDataModel", storiesDataModel)
+        outState.putParcelable("parentPost", parentPost)
     }
 
     inner class MyGestureListener constructor(val parentFragment: StoryBunchFragment?) : GestureDetector.SimpleOnGestureListener() {
@@ -259,12 +272,20 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
     }
 
     inner class OnProcessPostClicked {
-        fun onProcessPostClicked(processCaption: String, processPostUrl: String){
+        fun onProcessPostClicked(processCaption: String, processPostUrl: String, view: View){
             context?.let {
                 Glide.with(it)
                     .load(processPostUrl)
                     .into(post_image)
             }
+
+            Log.d("holyshit", " " + view.isSelected);
+
+            (view.getParent() as LinearLayout).dispatchSetSelected(false)
+            view.isSelected = true
+
+            Log.d("holyshit", "after " + view.isSelected);
+
 
             text_view_video_description.setTextOrHide(value = processCaption)
         }
@@ -316,9 +337,9 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
 
         if(storiesDataModel?.processPostUrls != null){
 
-            val processPostsLayout = layoutInflater.inflate(R.layout.layout_process_posts_scroll, options_container, false)
+            val processPostsLayout = layoutInflater.inflate(R.layout.layout_process_posts_scroll, story_view_parent_constraint, false)
 
-            options_container.addView(processPostsLayout)
+            story_view_parent_constraint.addView(processPostsLayout)
 
             storiesDataModel?.processPostUrls?.add(0, storiesDataModel?.storyUrl!!)
             storiesDataModel?.processPostCaptions?.add(0, storiesDataModel?.storyDescription!!)
@@ -341,6 +362,8 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
                     .thumbnail(0.25f)
                     .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                     .into(binding.processPostImage)
+
+                binding.parentCard.isSelected = false
 
                 scroll_linear_layout.addView(binding.root)
             }
@@ -405,6 +428,7 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
             storiesDataModel?.commentsCount?.formatNumberAsReadableFormat()
 
         (caption_profile as ShapeableImageView).loadImageFromUrl(parentPost?.membersThumbUrls?.get(0))
+
 
 
         //group_name?.text =storiesDataModel?.groupName
