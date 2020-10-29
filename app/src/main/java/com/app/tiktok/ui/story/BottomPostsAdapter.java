@@ -97,6 +97,14 @@ class BottomPostsAdapter extends RecyclerView.Adapter<BottomPostsAdapter.BottomP
     private StoryBunchFragment.OnBottomItemClickListener itemClickListener;
     private Context mContext;
 
+    public void setSelectedPos(int selectedPos) {
+        this.selectedPos = selectedPos;
+    }
+
+    public int getSelectedPos() {
+        return selectedPos;
+    }
+
     private int selectedPos = RecyclerView.NO_POSITION;
 
     private SimpleExoPlayer simplePlayer;
@@ -134,7 +142,7 @@ class BottomPostsAdapter extends RecyclerView.Adapter<BottomPostsAdapter.BottomP
 
         String storyUrl = storiesDataModels.get(position).getStoryUrl();
         String storyType = storyUrl.substring(storyUrl.length() - 3);
-        if(storyType.equals("jpg") || storyType.equals("gif")){
+        if(storyType.equals("jpg") || storyType.equals("gif") || storyType.equals("png") || storyType.equals("jpeg")){
 
             holder.binding.bottomPlayerViewStory.setVisibility(View.GONE);
             holder.binding.bottomPostImage.setVisibility(View.VISIBLE);
@@ -159,7 +167,7 @@ class BottomPostsAdapter extends RecyclerView.Adapter<BottomPostsAdapter.BottomP
         }
 
         holder.itemView.setOnClickListener(view -> {
-            Log.d("kidding", "Click listener runs");
+//            Log.d("kidding", "Click listener runs");
             notifyItemChanged(selectedPos);
             selectedPos = holder.getLayoutPosition();
             notifyItemChanged(selectedPos);

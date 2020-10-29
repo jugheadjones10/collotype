@@ -67,6 +67,7 @@ public class StoryBunchFragment extends Fragment {
     private LayoutManager layoutManager;
 
     private BottomSheetBehavior bottomSheetBehavior;
+    private BottomPostsAdapter bottomPostsAdapter;
     private StoriesDataModel parentPost;
     private List<StoriesDataModel> childrenPosts;
 
@@ -101,13 +102,21 @@ public class StoryBunchFragment extends Fragment {
             binding.layoutBotSheet.thumbnailsRecyclerView.smoothScrollToPosition(position);
 
 //            This thing crashes if recycler view hasn't loaded yet/5555
+
             binding.layoutBotSheet.thumbnailsRecyclerView.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     //DOES THIS CHECK ACTUALLY HAVE ANY EFFECT
+//                    if(binding.layoutBotSheet.thumbnailsRecyclerView.findViewHolderForAdapterPosition(position) != null ) {
+//                        View view = binding.layoutBotSheet.thumbnailsRecyclerView.findViewHolderForAdapterPosition(position).itemView;
+//                        view.callOnClick();
+//                    }
+
                     if(binding.layoutBotSheet.thumbnailsRecyclerView.findViewHolderForAdapterPosition(position) != null ) {
                         View view = binding.layoutBotSheet.thumbnailsRecyclerView.findViewHolderForAdapterPosition(position).itemView;
-                        view.callOnClick();
+                        bottomPostsAdapter.notifyItemChanged(bottomPostsAdapter.getSelectedPos());
+                        bottomPostsAdapter.setSelectedPos(position);
+                        bottomPostsAdapter.notifyItemChanged(position);
                     }
                 }
             }, 50);
@@ -276,7 +285,8 @@ public class StoryBunchFragment extends Fragment {
         };
 
         binding.layoutBotSheet.thumbnailsRecyclerView.setLayoutManager(layoutManager);
-        binding.layoutBotSheet.thumbnailsRecyclerView.setAdapter(new BottomPostsAdapter(childrenPosts, getContext(), recyclerViewClickCallback));
+        bottomPostsAdapter = new BottomPostsAdapter(childrenPosts, getContext(), recyclerViewClickCallback);
+        binding.layoutBotSheet.thumbnailsRecyclerView.setAdapter(bottomPostsAdapter);
 
         //This removes recyclerView blinking on selected item change
         binding.layoutBotSheet.thumbnailsRecyclerView.getItemAnimator().setChangeDuration(0);

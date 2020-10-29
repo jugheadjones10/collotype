@@ -5,8 +5,4 @@
         android:radius="8dp" />
 
     <solid android:color="@color/colorWhite" />
-    <item android:shadowColor="#000000"/>
-    <item android:shadowRadius="5"/>
-    <item android:shadowDy="3"/>
-
 </shape>

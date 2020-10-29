@@ -364,8 +364,6 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
                     .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                     .into(binding.processPostImage)
 
-                binding.parentCard.isSelected = false
-
                 scroll_linear_layout.addView(binding.root)
             }
         }
@@ -395,7 +393,7 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
         val storyUrlType = storyUrl?.substring(storyUrl!!.length - 3)
 
         //Eventually include gif when you figure out how to make ImageView support it
-        if (storyUrlType.equals("jpg") || storyUrlType.equals("gif") || storyUrlType.equals("jpeg")) {
+        if (storyUrlType.equals("jpg") || storyUrlType.equals("gif") || storyUrlType.equals("jpeg") || storyUrlType.equals("png")) {
             post_image.visibility = View.VISIBLE
             player_view_story.visibility = View.GONE
 
