@@ -399,19 +399,8 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
             post_image.visibility = View.VISIBLE
             player_view_story.visibility = View.GONE
 
-            val circularProgressDrawable = CircularProgressDrawable(context!!)
-            circularProgressDrawable.strokeWidth = 5f
-            circularProgressDrawable.centerRadius = 30f
-            circularProgressDrawable.start()
-
-            Glide.with(this)
-                .load(storyUrl)
-//                .placeholder(R.drawable.ironman_sexy)
-                .thumbnail(0.25f)
-                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                .into(post_image)
             //Loading image content from url
-            //post_image?.loadImageFromUrl(storyUrl)
+            post_image?.loadImageFromUrl(storyUrl)
 
             Log.d("lag", "Loaded image in story view fragment")
 

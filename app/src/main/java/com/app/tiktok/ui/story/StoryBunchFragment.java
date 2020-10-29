@@ -97,10 +97,10 @@ public class StoryBunchFragment extends Fragment {
         @Override
         public void onPageSelected(int position) {
             super.onPageSelected(position);
-
+            Log.d("infinite", "OnPageChangeCallback");
             binding.layoutBotSheet.thumbnailsRecyclerView.smoothScrollToPosition(position);
 
-            //This thing crashes if recycler view hasn't loaded yet/5555
+//            This thing crashes if recycler view hasn't loaded yet/5555
             binding.layoutBotSheet.thumbnailsRecyclerView.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -119,10 +119,12 @@ public class StoryBunchFragment extends Fragment {
     private final OnBottomItemClickListener recyclerViewClickCallback = new OnBottomItemClickListener() {
         @Override
         public void onBottomItemClicked(int position) {
-            Log.d("kidding", "Before view pager set current item");
+//            Log.d("kidding", "Before view pager set current item");
+
+            Log.d("infinite", "On recycler view bottom item clicked");
 
             binding.postsViewPager.setCurrentItem(position, false);
-            Log.d("kidding", "After view pager set current item");
+//            Log.d("kidding", "After view pager set current item");
 
         }
     };
@@ -181,7 +183,7 @@ public class StoryBunchFragment extends Fragment {
     private void setChildrenPosts(){
         //Own self is added so it is displayed at the bottom
         Log.d("lag", "IN Story bunch before filter");
-        childrenPosts = viewModel.getDataList(parentPost.getStoryId());
+        childrenPosts = viewModel.getDataList(parentPost.getStoryId()).subList(0, 10);
         Log.d("lag", "IN Story bunch after filter");
         childrenPosts.add(0, parentPost);
     }
@@ -253,6 +255,8 @@ public class StoryBunchFragment extends Fragment {
 
             Glide.with(this)
                     .load(storiesDataModel.getStoryUrl())
+                    .thumbnail(0.25f)
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                     .into(view);
 
             binding.layoutBotSheet.postsGridLayout.addView(view);
@@ -343,11 +347,10 @@ public class StoryBunchFragment extends Fragment {
     private void initializeViewPager(){
         Log.d("lag", "IN view pager intitaize");
 
-
         //Pass in everything first. Later we may need to filter.
         pagerAdapter = new StoryBunchPagerAdapter(this, childrenPosts);
 
-        binding.postsViewPager.setOffscreenPageLimit(2);
+        binding.postsViewPager.setOffscreenPageLimit(11);
         binding.postsViewPager.setAdapter(pagerAdapter);
         binding.postsViewPager.registerOnPageChangeCallback(viewPagerChangeCallback);
     }
