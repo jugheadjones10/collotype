@@ -73,27 +73,7 @@
     "productName" : "Gnome Knit",
     "productThumb" : "https://dl.dropboxusercontent.com/s/o1b663ln9ivvjw7/05%20Jessenia%20Solorio.jpg"
   },
-  {
-    "parentId": 0,
-    "storyId" : 7,
-    "storyUrl" : "https://dl.dropboxusercontent.com/s/d5uh0279339jq5x/27.jpg",
-    "storyThumbUrl" : "https://dl.dropboxusercontent.com/s/2vc9a8oilrwep3k/13.jpg",
-    "storyDescription" : "Who doesn't love foxes? I, for one, cannot understand.",
-    "userId" : 2,
-    "userProfilePicUrl" : "https://dl.dropboxusercontent.comm/s/ocb4ly2njrodix8/01.jpg",
-    "userName" : "sally-fixer",
-    "likesCount" : 55,
-    "commentsCount" : 44,
 
-    "groupName" : "Fox as Pet",
-    "followersCount" : 123,
-    "membersThumbUrls" : [
-      "https://dl.dropboxusercontent.com/s/ocb4ly2njrodix8/01.jpg",
-      "https://dl.dropboxusercontent.com/s/r2llzf11yj18i8e/02.jpg",
-      "https://dl.dropboxusercontent.com/s/y09j15n3yp9eio5/03.jpg"
-    ],
-    "sameGroupPostIds" : [2, 3, 4]
-  },
   {
     "parentId": 1,
     "storyId" : 2,
