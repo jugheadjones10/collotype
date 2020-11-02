@@ -71,18 +71,6 @@ public class StoryBunchFragment extends Fragment {
     private StoriesDataModel parentPost;
     private List<StoriesDataModel> childrenPosts;
 
-//    public ConstraintLayout getTopView(){
-//        return binding.topBarContainer;
-//    }
-//
-//    public ViewPager2 getViewPager(){
-//        return binding.postsViewPager;
-//    }
-//
-//    public LinearLayout getBotSheet(){
-//        return binding.layoutBotSheet.botSheet;
-//    }
-
     public static StoryBunchFragment newInstance(StoriesDataModel storiesDataModel) {
         StoryBunchFragment storyBunchFragment = new StoryBunchFragment();
 
@@ -128,13 +116,7 @@ public class StoryBunchFragment extends Fragment {
     private final OnBottomItemClickListener recyclerViewClickCallback = new OnBottomItemClickListener() {
         @Override
         public void onBottomItemClicked(int position) {
-//            Log.d("kidding", "Before view pager set current item");
-
-            Log.d("infinite", "On recycler view bottom item clicked");
-
             binding.postsViewPager.setCurrentItem(position, false);
-//            Log.d("kidding", "After view pager set current item");
-
         }
     };
 
@@ -145,9 +127,6 @@ public class StoryBunchFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList("childrenPosts", (ArrayList<? extends Parcelable>) childrenPosts);
-        outState.putParcelable("parentPost", parentPost);
-        outState.putInt("squareLength", bigSquareLength);
     }
 
     @Override
@@ -155,12 +134,10 @@ public class StoryBunchFragment extends Fragment {
                              Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_story_bunch, container, false);
 
+        Log.d("lifecyclecheck", "StoryBunchFragment onCreateView");
+
         //Get Arguments
-        if(savedInstanceState != null){
-            parentPost = savedInstanceState.getParcelable("parentPost");
-        }else{
-            parentPost = getArguments().getParcelable(Constants.KEY_STORY_DATA);
-        }
+        parentPost = getArguments().getParcelable(Constants.KEY_STORY_DATA);
 
         //Initialize View Model
         viewModel = new ViewModelProvider(this).get(StoryBunchViewModel.class);
@@ -169,18 +146,9 @@ public class StoryBunchFragment extends Fragment {
         bottomSheetBehavior = BottomSheetBehavior.from(binding.layoutBotSheet.botSheet);
 
         //Get data from view model
-        if(savedInstanceState != null){
-            childrenPosts = savedInstanceState.getParcelable("childrenPosts");
-        }else{
-            setChildrenPosts();
-        }
+        setChildrenPosts();
 
-        if(savedInstanceState != null){
-            bigSquareLength = savedInstanceState.getInt("squareLength");
-            setSquareDependentLengths(bigSquareLength);
-        }else{
-            setHeights();
-        }
+        setHeights();
 
         initializeViewPager();
         initializeNestedScrollViewBehaviour();
@@ -191,9 +159,7 @@ public class StoryBunchFragment extends Fragment {
 
     private void setChildrenPosts(){
         //Own self is added so it is displayed at the bottom
-        Log.d("lag", "IN Story bunch before filter");
-        childrenPosts = viewModel.getDataList(parentPost.getStoryId()).subList(0, 10);
-        Log.d("lag", "IN Story bunch after filter");
+        childrenPosts = viewModel.getDataList(parentPost.getStoryId());
         childrenPosts.add(0, parentPost);
     }
 
@@ -226,13 +192,8 @@ public class StoryBunchFragment extends Fragment {
         viewPagerMarginParams.bottomMargin = squareLength;
         binding.postsViewPager.setLayoutParams(viewPagerMarginParams);
 
-        //Old method of setting bottom of view pager to top of bottom placeholder
-//                ViewGroup.LayoutParams bottomPlaceholderLayoutParams = binding.bottomPlaceholder.getLayoutParams();
-//                bottomPlaceholderLayoutParams.height = squareLength;
-//                binding.bottomPlaceholder.setLayoutParams(bottomPlaceholderLayoutParams);
-
         //Below are methods that need squareLength
-        populateBottomSheetGrid(squareLength);
+        //populateBottomSheetGrid(squareLength);
         initializeRecyclerView(squareLength);
         initializeBottomSheetBehaviour(squareLength);
     }
@@ -265,6 +226,7 @@ public class StoryBunchFragment extends Fragment {
             Glide.with(this)
                     .load(storiesDataModel.getStoryUrl())
                     .thumbnail(0.25f)
+                    .override(150, 150)
                     .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                     .into(view);
 
@@ -336,10 +298,6 @@ public class StoryBunchFragment extends Fragment {
 
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-                //Below code chunk makes bottom recycler view gradually disappear as we slide up
-//                ViewGroup.LayoutParams recyclerViewLayoutParans = binding.layoutBotSheet.thumbnailsRecyclerView.getLayoutParams();
-//                recyclerViewLayoutParans.height = (int) (squareLength* (1 - slideOffset));
-//                binding.layoutBotSheet.thumbnailsRecyclerView.setLayoutParams(recyclerViewLayoutParans);
 
                 ViewGroup.LayoutParams tabLayoutParams = binding.layoutBotSheet.tab.getLayoutParams();
                 tabLayoutParams.height = (int) (squareLength*slideOffset);
@@ -360,7 +318,7 @@ public class StoryBunchFragment extends Fragment {
         //Pass in everything first. Later we may need to filter.
         pagerAdapter = new StoryBunchPagerAdapter(this, childrenPosts);
 
-        binding.postsViewPager.setOffscreenPageLimit(11);
+        //binding.postsViewPager.setOffscreenPageLimit(1);
         binding.postsViewPager.setAdapter(pagerAdapter);
         binding.postsViewPager.registerOnPageChangeCallback(viewPagerChangeCallback);
     }
@@ -426,6 +384,7 @@ public class StoryBunchFragment extends Fragment {
             Glide.with(this)
                     .load(profileUrl)
                     .thumbnail(0.25f)
+                    .override(25,25)
                     .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                     .into(view);
             binding.groupMembers.addView(view);
@@ -434,6 +393,7 @@ public class StoryBunchFragment extends Fragment {
         Glide.with(this)
                 .load(parentPost.getStoryThumbUrl())
                 .thumbnail(0.25f)
+                .override(55,55)
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .into(binding.imageViewGroupPic);
 

@@ -142,6 +142,7 @@ class BottomPostsAdapter extends RecyclerView.Adapter<BottomPostsAdapter.BottomP
 
         String storyUrl = storiesDataModels.get(position).getStoryUrl();
         String storyType = storyUrl.substring(storyUrl.length() - 3);
+
         if(storyType.equals("jpg") || storyType.equals("gif") || storyType.equals("png") || storyType.equals("jpeg")){
 
             holder.binding.bottomPlayerViewStory.setVisibility(View.GONE);
@@ -150,6 +151,7 @@ class BottomPostsAdapter extends RecyclerView.Adapter<BottomPostsAdapter.BottomP
             Glide.with(mContext)
                     .load(storyUrl)
                     .thumbnail(0.25f)
+                    .override(150, 150)
                     .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                     .into(holder.binding.bottomPostImage);
 

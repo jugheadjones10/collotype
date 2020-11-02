@@ -7,6 +7,8 @@ import com.app.tiktok.ui.story.StoryBunchFragment
 import com.app.tiktok.ui.story.StoryViewFragment
 
 class StoriesPagerAdapter(fragment: Fragment, val dataList: MutableList<StoriesDataModel> = mutableListOf()) : FragmentStateAdapter(fragment) {
+
+
     override fun getItemCount(): Int {
         return dataList.size
     }

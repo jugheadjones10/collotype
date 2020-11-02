@@ -98,10 +98,13 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
             }
     }
 
+
     private val viewModel by activityViewModels<MainViewModel>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        Log.d("lifecyclecheck", "StoryViewFragment onCreateView")
 
         parent = parentFragment as StoryBunchFragment
 
@@ -133,14 +136,12 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
             gestureListener!!.moveBottomsOff()
         }
 
-        //Adding drag functionality
-        options_container.setOnDragListener(dragListen)
-
         setData()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
+        Log.d("lifecyclecheck", "ONSAVEDINSTANCESTATE IN STORYVIEWFRAGMENT")
         outState.putParcelable("storiesDataModel", storiesDataModel)
         outState.putParcelable("parentPost", parentPost)
     }
@@ -298,6 +299,9 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
         Log.d("lag", "Setting data in story view fragment")
 
         if(storiesDataModel?.productName != null){
+            //Adding drag functionality
+            options_container.setOnDragListener(dragListen)
+
             val binding: IncludePriceTagBinding = IncludePriceTagBinding.inflate(
                 getLayoutInflater(),
                 options_container,
@@ -368,31 +372,12 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
             }
         }
 
-        //Group members
-//        group_member_one?.setImageResource(R.drawable.profile_scarlett)
-//        group_member_two?.setImageResource(R.drawable.profile_victoria)
-//        group_member_three?.setImageResource(R.drawable.profile_chris)
-
-//        "storyId" : 1,
-//        "storyUrl" : "https://res.cloudinary.com/mydatacloud/video/upload/v1592819413/stories/video_azmmil.mp4",
-//        "storyThumbUrl" : "https://res.cloudinary.com/mydatacloud/video/upload/v1592819413/stories/video_azmmil.jpg",
-//        "storyDescription" : "Tried drawing Iron Man... it was fun, but also tiring",
-//        "userId" : 1,
-//        "userProfilePicUrl" : "https://res.cloudinary.com/mydatacloud/image/upload/v1592823557/profiles/user_3_dzxh4b.jpg",
-//        "userName" : "Sherlyn",
-//        "likesCount" : 500,
-//        "commentsCount" : 1000,
-//
-//        "groupName" : "Iron Man X",
-//        "followersCount" : 1235,
-//        "membersThumbUrls" : [],
-//        "sameGroupPostIds" : [2, 3, 4]
-
         //Check file type of url. If file type is jpg, then use loadImageFromUrl into ImageView. If mp4, use exo player.
         storyUrl = storiesDataModel?.storyUrl
         val storyUrlType = storyUrl?.substring(storyUrl!!.length - 3)
 
         //Eventually include gif when you figure out how to make ImageView support it
+
         if (storyUrlType.equals("jpg") || storyUrlType.equals("gif") || storyUrlType.equals("jpeg") || storyUrlType.equals("png")) {
             post_image.visibility = View.VISIBLE
             player_view_story.visibility = View.GONE
@@ -401,7 +386,6 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
             post_image?.loadImageFromUrl(storyUrl)
 
             Log.d("lag", "Loaded image in story view fragment")
-
 
         } else if (storyUrlType.equals("mp4")) {
 //            post_image.visibility = View.GONE

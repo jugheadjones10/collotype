@@ -40,7 +40,7 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
 
         viewPager2 = view_pager_stories
         viewPager2?.setPageTransformer(VerticalCubeTransformer())
-        viewPager2?.offscreenPageLimit = 8
+        viewPager2?.offscreenPageLimit = 3
 
         val storiesData = homeViewModel.getDataList()
 
