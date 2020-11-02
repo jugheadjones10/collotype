@@ -193,7 +193,7 @@ public class StoryBunchFragment extends Fragment {
         binding.postsViewPager.setLayoutParams(viewPagerMarginParams);
 
         //Below are methods that need squareLength
-        //populateBottomSheetGrid(squareLength);
+        populateBottomSheetGrid(squareLength);
         initializeRecyclerView(squareLength);
         initializeBottomSheetBehaviour(squareLength);
     }
