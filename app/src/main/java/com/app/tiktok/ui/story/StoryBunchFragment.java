@@ -26,6 +26,8 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.LayoutManager;
@@ -36,6 +38,8 @@ import com.app.tiktok.R;
 import com.app.tiktok.databinding.FragmentStoryBunchBinding;
 import com.app.tiktok.model.StoriesDataModel;
 import com.app.tiktok.ui.home.fragment.HomeFragment;
+import com.app.tiktok.ui.home.fragment.HomeFragmentDirections;
+import com.app.tiktok.ui.user.UserDataModel;
 import com.app.tiktok.utils.Constants;
 import com.app.tiktok.utils.ExtensionsKt;
 import com.app.tiktok.utils.ImageExtensionsKt;
@@ -90,7 +94,6 @@ public class StoryBunchFragment extends Fragment {
             binding.layoutBotSheet.thumbnailsRecyclerView.smoothScrollToPosition(position);
 
 //            This thing crashes if recycler view hasn't loaded yet/5555
-
             binding.layoutBotSheet.thumbnailsRecyclerView.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -196,6 +199,7 @@ public class StoryBunchFragment extends Fragment {
         populateBottomSheetGrid(squareLength);
         initializeRecyclerView(squareLength);
         initializeBottomSheetBehaviour(squareLength);
+        initializeBottomSheetViewPager(squareLength);
     }
 
     private void populateBottomSheetGrid(int squareLength){
@@ -312,6 +316,10 @@ public class StoryBunchFragment extends Fragment {
         });
     }
 
+    private void initializeBottomSheetViewPager(int squareLength){
+
+    }
+
     private void initializeViewPager(){
         Log.d("lag", "IN view pager intitaize");
 
@@ -374,21 +382,52 @@ public class StoryBunchFragment extends Fragment {
 
     }
 
+    int i;
     private void injectDataIntoView(){
         Log.d("lag", "IN inject data into view");
 
         //Set data for member profile images
         LayoutInflater layoutInflator = getActivity().getLayoutInflater();
-        parentPost.getMembersThumbUrls().forEach(profileUrl -> {
-            ShapeableImageView view = (ShapeableImageView)layoutInflator.inflate(R.layout.include_member_profile, binding.groupMembers, false);
-            Glide.with(this)
-                    .load(profileUrl)
-                    .thumbnail(0.25f)
-                    .override(25,25)
-                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                    .into(view);
-            binding.groupMembers.addView(view);
-        });
+
+        if(parentPost.getMemberIds() != null){
+            for (int j = 0; j < parentPost.getMemberIds().size(); j++) {
+                UserDataModel userDataModel = viewModel.getUser(parentPost.getMemberIds().get(j));
+
+                String profileUrl = userDataModel.getUserProfilePicUrl();
+                ShapeableImageView view = (ShapeableImageView)layoutInflator.inflate(R.layout.include_member_profile, binding.groupMembers, false);
+                Glide.with(this)
+                        .load(profileUrl)
+                        .thumbnail(0.25f)
+                        .override(25,25)
+                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                        .into(view);
+                binding.groupMembers.addView(view);
+
+                view.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
+                        HomeFragmentDirections.ActionNavigationHomeToUserFragment2 action =
+                                HomeFragmentDirections.actionNavigationHomeToUserFragment2(userDataModel);
+                        navController.navigate(action);
+
+                    }
+                });
+            }
+        }else{
+            for (i = 0; i < parentPost.getMembersThumbUrls().size(); i++) {
+                String profileUrl = parentPost.getMembersThumbUrls().get(i);
+                ShapeableImageView view = (ShapeableImageView)layoutInflator.inflate(R.layout.include_member_profile, binding.groupMembers, false);
+                Glide.with(this)
+                        .load(profileUrl)
+                        .thumbnail(0.25f)
+                        .override(25,25)
+                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                        .into(view);
+                binding.groupMembers.addView(view);
+            }
+        }
+
 
         Glide.with(this)
                 .load(parentPost.getStoryThumbUrl())

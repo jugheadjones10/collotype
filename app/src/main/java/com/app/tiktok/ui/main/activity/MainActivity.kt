@@ -43,7 +43,7 @@ class MainActivity: BaseActivity(), NavController.OnDestinationChangedListener {
         arguments: Bundle?
     ) {
         when (destination.id) {
-            R.id.navigation_home -> {
+            R.id.navigation_home, R.id.userFragment -> {
                 changeStatusBarColor(R.color.colorBlack)
                 val colorDark = ContextCompat.getColorStateList(
                     this,

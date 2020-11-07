@@ -13,6 +13,7 @@
 
     "groupName" : "Iron Man Art",
     "followersCount" : 1235,
+    "memberIds"  : [0, 1],
     "membersThumbUrls" : [
       "https://dl.dropboxusercontent.com/s/dv8howhirrh93lh/01.jpg",
       "https://dl.dropboxusercontent.com/s/qdf0ilyulte4qa1/02.png"

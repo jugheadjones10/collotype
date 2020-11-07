@@ -13,6 +13,7 @@ import com.app.tiktok.mock.Mock;
 import com.app.tiktok.model.ResultData;
 import com.app.tiktok.model.StoriesDataModel;
 import com.app.tiktok.repository.DataRepository;
+import com.app.tiktok.ui.user.UserDataModel;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -36,5 +37,13 @@ public class StoryBunchViewModel extends ViewModel {
             .stream()
             .filter(storiesDataModel -> storiesDataModel.getParentId() == storyId)
             .collect(Collectors.toList());
+    }
+
+    public UserDataModel getUser(long userId){
+        return dataRepository.getUsersData()
+                .stream()
+                .filter(userDataModel -> userDataModel.getId() == userId)
+                .collect(Collectors.toList())
+                .get(0);
     }
 }

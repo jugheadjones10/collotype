@@ -1,0 +1,20 @@
+[
+  {
+    "id": 0,
+    "username": "Sharon lim",
+    "followersCount" : 1235,
+    "viewsCount": 125166,
+    "postsCount": 125125,
+    "userProfilePicUrl": "https://dl.dropboxusercontent.com/s/dv8howhirrh93lh/01.jpg",
+    "galleries": [1,2,3,5,6,7]
+  },
+  {
+    "id": 1,
+    "username": "Tom Him",
+    "followersCount" : 1235,
+    "viewsCount": 125166,
+    "postsCount": 125125,
+    "userProfilePicUrl": "https://dl.dropboxusercontent.com/s/qdf0ilyulte4qa1/02.png",
+    "galleries": [1,2,5]
+  }
+]

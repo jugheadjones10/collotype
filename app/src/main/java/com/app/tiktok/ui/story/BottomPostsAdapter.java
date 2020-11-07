@@ -37,61 +37,7 @@ import java.util.List;
 
 import static com.app.tiktok.utils.ExtensionsKt.logError;
 
-
-//  {
-//          "parentId": 4,
-//          "storyId" : 2,
-//          "storyUrl" : "https://dl.dropboxusercontent.com/s/www6v7432raa6jv/1-2.mp4",
-//          "storyThumbUrl" : "https://i.ibb.co/Xy6KvBM/01.jpg",
-//          "storyDescription" : "Tried drawing Iron Man... it was fun, but also tiring",
-//          "userId" : 1,
-//          "userProfilePicUrl" : "https://res.cloudinary.com/mydatacloud/image/upload/v1592823557/profiles/user_3_dzxh4b.jpg",
-//          "userName" : "Sherlyn",
-//          "likesCount" : 500,
-//          "commentsCount" : 1000,
-//
-//          "groupName" : "Anime Club",
-//          "followersCount" : 1235,
-//          "membersThumbUrls" : [],
-//          "sameGroupPostIds" : [2, 3, 4]
-//          },
-//{
-//        "parentId": 4,
-//        "storyId" : 3,
-//        "storyUrl" : "https://dl.dropboxusercontent.com/s/sj29gg0fnz7t7jg/1-3.mp4",
-//        "storyThumbUrl" : "https://i.ibb.co/Xy6KvBM/01.jpg",
-//        "storyDescription" : "Tried drawing Iron Man... it was fun, but also tiring",
-//        "userId" : 1,
-//        "userProfilePicUrl" : "https://res.cloudinary.com/mydatacloud/image/upload/v1592823557/profiles/user_3_dzxh4b.jpg",
-//        "userName" : "Sherlyn",
-//        "likesCount" : 500,
-//        "commentsCount" : 1000,
-//
-//        "groupName" : "Anime Club",
-//        "followersCount" : 1235,
-//        "membersThumbUrls" : [],
-//        "sameGroupPostIds" : [2, 3, 4]
-//        },
-//        {
-//        "parentId": 4,
-//        "storyId" : 4,
-//        "storyUrl" : "https://dl.dropboxusercontent.com/s/20dxz114jrp4ubt/1-4.mp4",
-//        "storyThumbUrl" : "https://i.ibb.co/Xy6KvBM/01.jpg",
-//        "storyDescription" : "Tried drawing Iron Man... it was fun, but also tiring",
-//        "userId" : 1,
-//        "userProfilePicUrl" : "https://res.cloudinary.com/mydatacloud/image/upload/v1592823557/profiles/user_3_dzxh4b.jpg",
-//        "userName" : "Sherlyn",
-//        "likesCount" : 500,
-//        "commentsCount" : 1000,
-//
-//        "groupName" : "Anime Club",
-//        "followersCount" : 1235,
-//        "membersThumbUrls" : [],
-//        "sameGroupPostIds" : [2, 3, 4]
-//        },
-
-
-class BottomPostsAdapter extends RecyclerView.Adapter<BottomPostsAdapter.BottomPostViewHolder> {
+public class BottomPostsAdapter extends RecyclerView.Adapter<BottomPostsAdapter.BottomPostViewHolder> {
 
     private List<StoriesDataModel> storiesDataModels;
     private StoryBunchFragment.OnBottomItemClickListener itemClickListener;
@@ -168,14 +114,16 @@ class BottomPostsAdapter extends RecyclerView.Adapter<BottomPostsAdapter.BottomP
 //            prepareMedia(storyUrl);
         }
 
-        holder.itemView.setOnClickListener(view -> {
-//            Log.d("kidding", "Click listener runs");
-            notifyItemChanged(selectedPos);
-            selectedPos = holder.getLayoutPosition();
-            notifyItemChanged(selectedPos);
+        if(itemClickListener != null){
+            holder.itemView.setOnClickListener(view -> {
+                notifyItemChanged(selectedPos);
+                selectedPos = holder.getLayoutPosition();
+                notifyItemChanged(selectedPos);
 
-            itemClickListener.onBottomItemClicked(position);
-        });
+                itemClickListener.onBottomItemClicked(position);
+            });
+        }
+
     }
 
     @Override

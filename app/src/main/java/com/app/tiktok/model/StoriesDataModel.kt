@@ -19,6 +19,7 @@ data class StoriesDataModel(
     val groupName: String,
     val followersCount : Long,
     val membersThumbUrls : ArrayList<String>,
+    val memberIds : ArrayList<Integer>?,
     val sameGroupPostIds : ArrayList<String>,
 
     val productPrice : Long?,
