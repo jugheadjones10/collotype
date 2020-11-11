@@ -1,5 +1,7 @@
 package com.app.tiktok.utils
 
+import android.content.Context
+import android.util.DisplayMetrics
 import java.util.*
 
 object Utility {
@@ -27,5 +29,21 @@ object Utility {
         val hasDecimal =
             truncated < 100 && truncated / 10.0 != (truncated / 10).toDouble()
         return if (hasDecimal) (truncated / 10.0).toString() + suffix else (truncated / 10).toString() + suffix
+    }
+
+    fun pxToDp(px: Int, context: Context): Int {
+        val displayMetrics: DisplayMetrics = context.getResources().getDisplayMetrics()
+        return Math.round(px / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT))
+    }
+
+    fun dpToPx(dp: Int, context: Context): Int {
+        val density: Float = context
+            .getResources()
+            .getDisplayMetrics().density
+        return Math.round(dp.toFloat() * density)
+    }
+
+    fun extractS3URLfileType(url: String): String{
+        return url.split("?")[0].takeLast(3).toLowerCase()
     }
 }

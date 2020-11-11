@@ -2,6 +2,7 @@ package com.app.tiktok.ui.story;
 
 import android.content.Context;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 import androidx.hilt.lifecycle.ViewModelInject;
@@ -24,12 +25,20 @@ import kotlinx.coroutines.Dispatchers;
 
 public class StoryBunchViewModel extends ViewModel {
 
-//    private MutableLiveData<Integer> position = new MutableLiveData<>(0);
     private DataRepository dataRepository;
+    private MutableLiveData<Boolean> setDraggable = new MutableLiveData<>(true);
 
     @ViewModelInject
     public StoryBunchViewModel(DataRepository dataRepository){
         this.dataRepository = dataRepository;
+    }
+
+    public void setDraggable(boolean draggable){
+        setDraggable.setValue(draggable);
+    }
+
+    public LiveData<Boolean> getDraggable(){
+        return setDraggable;
     }
 
     public List<StoriesDataModel> getDataList(long storyId){
@@ -39,11 +48,32 @@ public class StoryBunchViewModel extends ViewModel {
             .collect(Collectors.toList());
     }
 
+    public StoriesDataModel getPost(long storyId){
+        try{
+            return dataRepository.getStoriesData()
+                    .stream()
+                    .filter(storiesDataModel -> storiesDataModel.getStoryId() == storyId)
+                    .collect(Collectors.toList())
+                    .get(0);
+        }catch(IndexOutOfBoundsException e){
+            Log.d("exception", "" + storyId);
+            throw e;
+        }
+    }
+
     public UserDataModel getUser(long userId){
         return dataRepository.getUsersData()
                 .stream()
                 .filter(userDataModel -> userDataModel.getId() == userId)
                 .collect(Collectors.toList())
                 .get(0);
+    }
+
+    public List<StoriesDataModel> getPostsWithProcessPosts(long parentPostId){
+        //So that means parent posts shouldn't have process posts
+        return dataRepository.getStoriesData()
+                .stream()
+                .filter(storiesDataModel -> storiesDataModel.getParentId() == parentPostId && storiesDataModel.getProcessPostIds().size() > 0)
+                .collect(Collectors.toList());
     }
 }

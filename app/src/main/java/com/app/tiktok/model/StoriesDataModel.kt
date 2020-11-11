@@ -5,28 +5,34 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class StoriesDataModel(
+
+    val parentId: Long,
     val storyId: Long,
-    val storyUrl: String,
+
     val storyThumbUrl: String? = null,
+    val groupName: String? = null,
+    val memberIds : ArrayList<Long>?,
+    val followersCount : Long? = null,
+
+    val storyUrl: String,
+    val processPostIds: ArrayList<Long>?,
     val storyDescription: String? = null,
-    val userId: String,
-    val userProfilePicUrl: String? = null,
-    val userName: String,
     val likesCount: Long,
     val commentsCount: Long,
 
-    val parentId: Long,
-    val groupName: String,
-    val followersCount : Long,
-    val membersThumbUrls : ArrayList<String>,
-    val memberIds : ArrayList<Integer>?,
-    val sameGroupPostIds : ArrayList<String>,
+
+//    val userId: String,
+//    val userProfilePicUrl: String? = null,
+//    val userName: String,
+//
+//    val membersThumbUrls : ArrayList<String>,
+//    val sameGroupPostIds : ArrayList<String>?,
 
     val productPrice : Long?,
     val productName : String?,
-    val productThumb : String?,
+    val productThumb : String?
 
-    val processPostUrls : ArrayList<String>?,
-    val processPostCaptions : ArrayList<String>?
+//    val processPostUrls : ArrayList<String>?,
+//    val processPostCaptions : ArrayList<String>?
 
 ): Parcelable

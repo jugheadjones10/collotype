@@ -19,6 +19,7 @@ import com.app.tiktok.R;
 import com.app.tiktok.app.MyApp;
 import com.app.tiktok.databinding.BottomPostItemBinding;
 import com.app.tiktok.model.StoriesDataModel;
+import com.app.tiktok.utils.Utility;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.exoplayer2.C;
@@ -56,11 +57,19 @@ public class BottomPostsAdapter extends RecyclerView.Adapter<BottomPostsAdapter.
     private SimpleExoPlayer simplePlayer;
     private CacheDataSourceFactory cacheDataSourceFactory;
     private SimpleCache simpleCache = MyApp.Companion.getSimpleCache();
+    private boolean modifyFirst;
 
     public BottomPostsAdapter(List<StoriesDataModel> storiesDataModels, Context mContext, StoryBunchFragment.OnBottomItemClickListener itemClickListener) {
         this.storiesDataModels = storiesDataModels;
         this.mContext = mContext;
         this.itemClickListener = itemClickListener;
+    }
+
+    public BottomPostsAdapter(List<StoriesDataModel> storiesDataModels, Context mContext, boolean modifyFirst) {
+        this.storiesDataModels = storiesDataModels;
+        this.mContext = mContext;
+        this.itemClickListener = null;
+        this.modifyFirst = modifyFirst;
     }
 
     public class BottomPostViewHolder extends RecyclerView.ViewHolder {
@@ -81,13 +90,20 @@ public class BottomPostsAdapter extends RecyclerView.Adapter<BottomPostsAdapter.
         return new BottomPostViewHolder(binding);
     }
 
-
     @Override
     public void onBindViewHolder(@NonNull BottomPostViewHolder holder, int position) {
         holder.itemView.setSelected(selectedPos == position);
 
+        if(position == 0 && modifyFirst){
+            Log.d("Goalsscroller", "modify first ran");
+            ViewGroup.LayoutParams itemContainerLayoutParams = holder.binding.bottomPostItemContainer.getLayoutParams();
+            itemContainerLayoutParams.height = Utility.INSTANCE.dpToPx(50, mContext);
+            itemContainerLayoutParams.width = Utility.INSTANCE.dpToPx(50, mContext);
+            holder.binding.bottomPostItemContainer.setLayoutParams(itemContainerLayoutParams);
+        }
+
         String storyUrl = storiesDataModels.get(position).getStoryUrl();
-        String storyType = storyUrl.substring(storyUrl.length() - 3);
+        String storyType = Utility.INSTANCE.extractS3URLfileType(storyUrl);
 
         if(storyType.equals("jpg") || storyType.equals("gif") || storyType.equals("png") || storyType.equals("jpeg")){
 

@@ -24,6 +24,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.GestureDetectorCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentResultListener;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -48,6 +50,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.imageview.ShapeableImageView;
+import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -143,7 +146,7 @@ public class StoryBunchFragment extends Fragment {
         parentPost = getArguments().getParcelable(Constants.KEY_STORY_DATA);
 
         //Initialize View Model
-        viewModel = new ViewModelProvider(this).get(StoryBunchViewModel.class);
+        viewModel = new ViewModelProvider(getActivity()).get(StoryBunchViewModel.class);
 
         //Set bottom sheet behaviour
         bottomSheetBehavior = BottomSheetBehavior.from(binding.layoutBotSheet.botSheet);
@@ -153,6 +156,7 @@ public class StoryBunchFragment extends Fragment {
 
         setHeights();
 
+        initializeBottomSheetFragment();
         initializeViewPager();
         initializeNestedScrollViewBehaviour();
         injectDataIntoView();
@@ -196,46 +200,16 @@ public class StoryBunchFragment extends Fragment {
         binding.postsViewPager.setLayoutParams(viewPagerMarginParams);
 
         //Below are methods that need squareLength
-        populateBottomSheetGrid(squareLength);
         initializeRecyclerView(squareLength);
         initializeBottomSheetBehaviour(squareLength);
-        initializeBottomSheetViewPager(squareLength);
     }
 
-    private void populateBottomSheetGrid(int squareLength){
-        LayoutInflater layoutInflator = getActivity().getLayoutInflater();
+    private void initializeBottomSheetFragment(){
+        Fragment bottomSheetFragment = BottomSheetFragment.newInstance(parentPost);
 
-        for (int i = 0; i < childrenPosts.size(); i++) {
-            StoriesDataModel storiesDataModel = childrenPosts.get(i);
-
-            ImageView view = (ImageView)layoutInflator.inflate(R.layout.include_bottom_sheet_grid_image, binding.layoutBotSheet.postsGridLayout, false);
-
-            ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
-
-            if(i % 7 == 0){
-                GridLayout.LayoutParams gridLayoutParams = new GridLayout.LayoutParams();
-                gridLayoutParams.rowSpec = GridLayout.spec(GridLayout.UNDEFINED, 2);
-                gridLayoutParams.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 2);
-                gridLayoutParams.height = squareLength*2;
-                gridLayoutParams.width = squareLength*2;
-
-                view.setLayoutParams(gridLayoutParams);
-            }else{
-                layoutParams.height = squareLength;
-                layoutParams.width = squareLength;
-
-                view.setLayoutParams(layoutParams);
-            }
-
-            Glide.with(this)
-                    .load(storiesDataModel.getStoryUrl())
-                    .thumbnail(0.25f)
-                    .override(150, 150)
-                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                    .into(view);
-
-            binding.layoutBotSheet.postsGridLayout.addView(view);
-        }
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+        transaction.add(R.id.bot_sheet_fragment, bottomSheetFragment);
+        transaction.commit();
     }
 
     private void initializeRecyclerView(int squareLength){
@@ -302,22 +276,22 @@ public class StoryBunchFragment extends Fragment {
 
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                int thirtyPx = Utility.INSTANCE.dpToPx(BottomSheetFragment.TAB_ITEM_WIDTH, getContext());
+                int tabVerticalPadding = (squareLength - thirtyPx)/2;
 
-                ViewGroup.LayoutParams tabLayoutParams = binding.layoutBotSheet.tab.getLayoutParams();
-                tabLayoutParams.height = (int) (squareLength*slideOffset);
-                binding.layoutBotSheet.tab.setLayoutParams(tabLayoutParams);
+                TabLayout tabLayout = getChildFragmentManager().findFragmentById(R.id.bot_sheet_fragment).getView().findViewById(R.id.tab_layout);
+                ViewGroup.LayoutParams tabLayoutParams = tabLayout.getLayoutParams();
+                tabLayoutParams.height = (int) (thirtyPx*slideOffset);
+                tabLayout.setLayoutParams(tabLayoutParams);
 
                 //How come I don't need to set layout params again after specifying margins? Unlike in the setHeights method
-                MarginLayoutParams tabMarginParams = (MarginLayoutParams)binding.layoutBotSheet.tab.getLayoutParams();
-                tabMarginParams.topMargin = (int) (binding.topBarContainer.getHeight()*slideOffset);
+                MarginLayoutParams tabMarginParams = (MarginLayoutParams)tabLayout.getLayoutParams();
+                tabMarginParams.topMargin = (int) ((tabVerticalPadding + binding.topBarContainer.getHeight())*slideOffset);
+                tabMarginParams.bottomMargin = (int) (tabVerticalPadding*slideOffset);
 
                 transitionBottomSheetBackgroundColor(slideOffset);
             }
         });
-    }
-
-    private void initializeBottomSheetViewPager(int squareLength){
-
     }
 
     private void initializeViewPager(){
@@ -332,54 +306,14 @@ public class StoryBunchFragment extends Fragment {
     }
 
     private void initializeNestedScrollViewBehaviour(){
-        binding.layoutBotSheet.nestedScrollView.setOnTouchListener(new View.OnTouchListener() {
+        viewModel.getDraggable().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(binding.layoutBotSheet.botSheet);
-
-                switch(motionEvent.getAction()) {
-                    case (MotionEvent.ACTION_DOWN):
-                        y1 = motionEvent.getY();
-                        break;
-                    case (MotionEvent.ACTION_MOVE): {
-                        y2 = motionEvent.getY();
-
-                        dy = y2 - y1;
-
-                        y1 = y2;
-
-                        // Use dx and dy to determine the direction of the move
-                        if (dy > 0)
-                            direction = "down";
-                        else
-                            direction = "up";
-
-                        Log.d("scroller", direction);
-                        Log.d("scroller", "" + view.getScrollY());
-
-                        if (direction.equals("up") || (direction.equals("down") && view.getScrollY() != 0)) {
-                            Log.d("scroller", "A");
-
-                            bottomSheetBehavior.setDraggable(false);
-                            //binding.layoutBotSheet.nestedScrollView.getParent().requestDisallowInterceptTouchEvent(true);
-                        }
-
-                        if(direction.equals("down") && view.getScrollY() == 0){
-                            Log.d("scroller", "B");
-                            bottomSheetBehavior.setDraggable(true);
-                        }
-
-                        break;
-                    }
-                    case (MotionEvent.ACTION_UP):
-                        bottomSheetBehavior.setDraggable(true);
-                        break;
+            public void onChanged(Boolean draggable) {
+                if(draggable != null){
+                    bottomSheetBehavior.setDraggable(draggable);
                 }
-                return false;
-
             }
         });
-
     }
 
     int i;
@@ -410,24 +344,25 @@ public class StoryBunchFragment extends Fragment {
                         HomeFragmentDirections.ActionNavigationHomeToUserFragment2 action =
                                 HomeFragmentDirections.actionNavigationHomeToUserFragment2(userDataModel);
                         navController.navigate(action);
-
                     }
                 });
             }
         }else{
-            for (i = 0; i < parentPost.getMembersThumbUrls().size(); i++) {
-                String profileUrl = parentPost.getMembersThumbUrls().get(i);
-                ShapeableImageView view = (ShapeableImageView)layoutInflator.inflate(R.layout.include_member_profile, binding.groupMembers, false);
-                Glide.with(this)
-                        .load(profileUrl)
-                        .thumbnail(0.25f)
-                        .override(25,25)
-                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                        .into(view);
-                binding.groupMembers.addView(view);
-            }
+//            for (i = 0; i < parentPost.getMemberIds().size(); i++) {
+//
+//                UserDataModel user = viewModel.getUser(parentPost.getMemberIds().get(i));
+//
+//                String profileUrl = user.getUserProfilePicUrl();
+//                ShapeableImageView view = (ShapeableImageView)layoutInflator.inflate(R.layout.include_member_profile, binding.groupMembers, false);
+//                Glide.with(this)
+//                        .load(profileUrl)
+//                        .thumbnail(0.25f)
+//                        .override(25,25)
+//                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+//                        .into(view);
+//                binding.groupMembers.addView(view);
+//            }
         }
-
 
         Glide.with(this)
                 .load(parentPost.getStoryThumbUrl())
@@ -476,21 +411,6 @@ public class StoryBunchFragment extends Fragment {
                 ((startR + (int) (fraction * (endR - startR))) << 16) |
                 ((startG + (int) (fraction * (endG - startG))) << 8) |
                 ((startB + (int) (fraction * (endB - startB))));
-    }
-
-
-    private int pxToDp(int px) {
-        DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
-        int dp = Math.round(px / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-        return dp;
-    }
-
-    private int dpToPx(int dp) {
-        float density = getContext()
-                .getResources()
-                .getDisplayMetrics()
-                .density;
-        return Math.round((float) dp * density);
     }
 
 }

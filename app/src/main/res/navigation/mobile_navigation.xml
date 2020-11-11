@@ -27,4 +27,8 @@
             android:name="UserDataModel"
             app:argType="com.app.tiktok.ui.user.UserDataModel" />
     </fragment>
+    <fragment
+        android:id="@+id/storyBunchFragment"
+        android:name="com.app.tiktok.ui.story.StoryBunchFragment"
+        android:label="StoryBunchFragment" />
 </navigation>

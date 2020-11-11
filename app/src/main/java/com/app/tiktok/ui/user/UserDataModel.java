@@ -27,11 +27,11 @@ public class UserDataModel implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(id);
+        dest.writeLong(id);
         dest.writeString(username);
-        dest.writeInt(followersCount);
-        dest.writeInt(viewsCount);
-        dest.writeInt(postsCount);
+        dest.writeLong(followersCount);
+        dest.writeLong(viewsCount);
+        dest.writeLong(postsCount);
         dest.writeString(userProfilePicUrl);
         dest.writeList(galleries);
     }
@@ -46,15 +46,15 @@ public class UserDataModel implements Parcelable {
         galleries = in.readArrayList(List.class.getClassLoader());
     }
 
-    private int id;
+    private long id;
     private String username;
-    private int followersCount;
-    private int viewsCount;
-    private int postsCount;
+    private long followersCount;
+    private long viewsCount;
+    private long postsCount;
     private String userProfilePicUrl;
-    private ArrayList<Integer> galleries;
+    private ArrayList<Long> galleries;
 
-    public UserDataModel(int id, String username, int followersCount, int viewsCount, int postsCount, String userProfilePicUrl, ArrayList<Integer> galleries) {
+    public UserDataModel(long id, String username, long followersCount, long viewsCount, long postsCount, String userProfilePicUrl, ArrayList<Long> galleries) {
         this.id = id;
         this.username = username;
         this.followersCount = followersCount;
@@ -64,11 +64,11 @@ public class UserDataModel implements Parcelable {
         this.galleries = galleries;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -80,27 +80,27 @@ public class UserDataModel implements Parcelable {
         this.username = username;
     }
 
-    public int getFollowersCount() {
+    public long getFollowersCount() {
         return followersCount;
     }
 
-    public void setFollowersCount(int followersCount) {
+    public void setFollowersCount(long followersCount) {
         this.followersCount = followersCount;
     }
 
-    public int getViewsCount() {
+    public long getViewsCount() {
         return viewsCount;
     }
 
-    public void setViewsCount(int viewsCount) {
+    public void setViewsCount(long viewsCount) {
         this.viewsCount = viewsCount;
     }
 
-    public int getPostsCount() {
+    public long getPostsCount() {
         return postsCount;
     }
 
-    public void setPostsCount(int postsCount) {
+    public void setPostsCount(long postsCount) {
         this.postsCount = postsCount;
     }
 
@@ -112,11 +112,11 @@ public class UserDataModel implements Parcelable {
         this.userProfilePicUrl = userProfilePicUrl;
     }
 
-    public ArrayList<Integer> getGalleries() {
+    public ArrayList<Long> getGalleries() {
         return galleries;
     }
 
-    public void setGalleries(ArrayList<Integer> galleries) {
+    public void setGalleries(ArrayList<Long> galleries) {
         this.galleries = galleries;
     }
 }

@@ -23,6 +23,7 @@ import com.app.tiktok.databinding.IncludePriceTagBinding
 import com.app.tiktok.databinding.IncludeProcessPostBinding
 import com.app.tiktok.model.StoriesDataModel
 import com.app.tiktok.ui.main.viewmodel.MainViewModel
+import com.app.tiktok.ui.user.UserDataModel
 import com.app.tiktok.utils.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -100,13 +101,16 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
 
 
     private val viewModel by activityViewModels<MainViewModel>()
+    private val storyBunchViewModel by activityViewModels<StoryBunchViewModel>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         Log.d("lifecyclecheck", "StoryViewFragment onCreateView")
 
-        parent = parentFragment as StoryBunchFragment
+        if(parentFragment is StoryBunchFragment){
+            parent = parentFragment as StoryBunchFragment
+        }
 
         playbackStateListener = PlaybackStateListener()
 
@@ -122,7 +126,6 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
             storiesDataModel = savedInstanceState.getParcelable("storiesDataModel")
             parentPost = savedInstanceState.getParcelable("parentPost")
         }
-
 
         gestureListener = MyGestureListener(parent)
         val myGestureListener = GestureDetectorCompat(context, gestureListener)
@@ -340,15 +343,22 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
 
         }
 
-        if(storiesDataModel?.processPostUrls != null){
+        if(storiesDataModel?.processPostIds != null && storiesDataModel?.processPostIds!!.size > 0){
 
             val processPostsLayout = layoutInflater.inflate(R.layout.layout_process_posts_scroll, story_view_parent_constraint, false)
 
             story_view_parent_constraint.addView(processPostsLayout)
 
-            storiesDataModel?.processPostUrls?.add(0, storiesDataModel?.storyUrl!!)
-            storiesDataModel?.processPostCaptions?.add(0, storiesDataModel?.storyDescription!!)
-            for((i, processPostUrlString) in storiesDataModel?.processPostUrls?.withIndex()!!){
+//            val processPostUrls: ArrayList<String> = ArrayList(storiesDataModel?.processPostUrls!!);
+//            processPostUrls.add(0, storiesDataModel?.storyUrl!!)
+//
+//            val processPostCaptions: ArrayList<String> = ArrayList(storiesDataModel?.processPostCaptions!!);
+//            processPostCaptions.add(0, storiesDataModel?.storyDescription!!)
+
+            for(processPostId in storiesDataModel?.processPostIds!!){
+
+                val processPost : StoriesDataModel = storyBunchViewModel.getPost(processPostId)
+
                 val binding: IncludeProcessPostBinding = IncludeProcessPostBinding.inflate(
                     getLayoutInflater(),
                     scroll_linear_layout,
@@ -356,14 +366,14 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
                 )
 
                 binding.apply {
-                    processCaption = storiesDataModel?.processPostCaptions?.get(i)
-                    processPostUrl = processPostUrlString
+                    processCaption = processPost.storyDescription
+                    processPostUrl = processPost.storyUrl
                     onProcessPostClicked = OnProcessPostClicked()
                 }
 
                 //binding.processPostImage.loadImageFromUrl(processPostUrlString)
                 Glide.with(this)
-                    .load(processPostUrlString)
+                    .load(processPost.storyUrl)
                     .thumbnail(0.25f)
                     .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                     .into(binding.processPostImage)
@@ -372,11 +382,8 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
             }
         }
 
-        //Check file type of url. If file type is jpg, then use loadImageFromUrl into ImageView. If mp4, use exo player.
         storyUrl = storiesDataModel?.storyUrl
-        val storyUrlType = storyUrl?.substring(storyUrl!!.length - 3)
-
-        //Eventually include gif when you figure out how to make ImageView support it
+        val storyUrlType = Utility.extractS3URLfileType(storyUrl!!)
 
         if (storyUrlType.equals("jpg") || storyUrlType.equals("gif") || storyUrlType.equals("jpeg") || storyUrlType.equals("png")) {
             post_image.visibility = View.VISIBLE
@@ -388,6 +395,7 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
             Log.d("lag", "Loaded image in story view fragment")
 
         } else if (storyUrlType.equals("mp4")) {
+
 //            post_image.visibility = View.GONE
 //            player_view_story.visibility = View.VISIBLE
 //
@@ -404,15 +412,16 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
 
         //image_view_group_pic?.loadCenterCropImageFromUrl(storiesDataModel?.storyThumbUrl)
         text_view_video_description.setTextOrHide(value = storiesDataModel?.storyDescription)
-        username.text = storiesDataModel?.userName
+
+        val user: UserDataModel = storyBunchViewModel.getUser(parentPost?.memberIds?.get(0)!!)
+        username.text = user.username
 
         image_view_option_like_title?.text =
             storiesDataModel?.likesCount?.formatNumberAsReadableFormat()
         image_view_option_comment_title?.text =
             storiesDataModel?.commentsCount?.formatNumberAsReadableFormat()
 
-        (caption_profile as ShapeableImageView).loadImageFromUrl(parentPost?.membersThumbUrls?.get(0))
-
+        (caption_profile as ShapeableImageView).loadImageFromUrl(user.userProfilePicUrl)
 
 
         //group_name?.text =storiesDataModel?.groupName

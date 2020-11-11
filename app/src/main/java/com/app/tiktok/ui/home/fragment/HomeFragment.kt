@@ -19,6 +19,7 @@ import com.app.tiktok.model.StoriesDataModel
 import com.app.tiktok.ui.home.adapter.StoriesPagerAdapter
 import com.app.tiktok.ui.home.adapter.VerticalCubeTransformer
 import com.app.tiktok.ui.main.viewmodel.MainViewModel
+import com.app.tiktok.ui.story.StoryBunchViewModel
 import com.app.tiktok.utils.Constants
 import com.app.tiktok.work.PreCachingService
 import dagger.hilt.android.AndroidEntryPoint
@@ -27,11 +28,13 @@ import kotlinx.android.synthetic.main.fragment_home.*
 @AndroidEntryPoint
 class HomeFragment : BaseFragment(R.layout.fragment_home) {
     private val homeViewModel by activityViewModels<MainViewModel>()
+    private val storyBunchViewModel by activityViewModels<StoryBunchViewModel>()
 
-    private lateinit var storiesPagerAdapter: StoriesPagerAdapter
+    //private lateinit var storiesPagerAdapter: StoriesPagerAdapter
 
     companion object{
         var viewPager2: ViewPager2? = null
+        var storiesPagerAdapter: StoriesPagerAdapter? = null;
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -64,6 +67,13 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
                             storiesPagerAdapter = StoriesPagerAdapter(this, parentPostsList)
                         }
                         view_pager_stories.adapter = storiesPagerAdapter
+
+                        view_pager_stories.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                            override fun onPageSelected(position: Int) {
+                                storyBunchViewModel.setDraggable(true)
+                                super.onPageSelected(position)
+                            }
+                        })
 
                         //startPreCaching(dataList)
                     }

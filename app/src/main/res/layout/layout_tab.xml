@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <LinearLayout
+        android:id="@+id/icon_container"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:background="@drawable/tab_item_bg">
+
+        <View
+            android:id="@+id/icon_bg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/short_vid_30"/>
+    </LinearLayout>
+</layout>

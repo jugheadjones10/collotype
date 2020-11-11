@@ -1,5 +1,6 @@
 package com.app.tiktok.ui.user;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.UserHandle;
 import android.util.Log;
@@ -9,17 +10,23 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView.RecycledViewPool;
 
 import com.app.tiktok.R;
 import com.app.tiktok.databinding.LayoutAllUserPostsBinding;
 import com.app.tiktok.databinding.LayoutUserGalleryBinding;
 import com.app.tiktok.databinding.LayoutUserHeaderBinding;
+import com.app.tiktok.ui.home.fragment.HomeFragmentDirections;
 import com.app.tiktok.ui.story.BottomPostsAdapter;
+import com.app.tiktok.ui.story.StoryBunchViewModel;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.android.material.imageview.ShapeableImageView;
 
 import java.util.List;
 
@@ -32,11 +39,16 @@ class UserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     private List<DataItem> dataItems;
     private Context mContext;
     private int squareLength;
+    private StoryBunchViewModel viewModel;
 
-    public UserAdapter(Context mContext, int squareLength, List<DataItem> dataItems){
+    RecycledViewPool viewPool;
+
+    public UserAdapter(Context mContext, int squareLength, List<DataItem> dataItems, StoryBunchViewModel viewModel){
         this.mContext = mContext;
         this.squareLength = squareLength;
         this.dataItems = dataItems;
+        this.viewModel = viewModel;
+        viewPool = new RecyclerView.RecycledViewPool();
     }
 
     @NonNull
@@ -48,9 +60,11 @@ class UserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             return new UserHeaderViewHolder(binding);
         }else if(viewType == ITEM_VIEW_TYPE_ALL_USER_POSTS){
             LayoutAllUserPostsBinding binding =  DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.layout_all_user_posts, parent,false);
+            binding.allUserPostsRecyclerView.setRecycledViewPool(viewPool);
             return new AllUserPostsViewHolder(binding);
         }else if(viewType == ITEM_VIEW_TYPE_USER_GALLERY){
             LayoutUserGalleryBinding binding =  DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.layout_user_gallery, parent,false);
+            binding.galleryRecyclerView.setRecycledViewPool(viewPool);
             return new UserGalleryViewHolder(binding);
         }else{
             throw new ClassCastException("Unknown viewType ${viewType}");
@@ -105,6 +119,33 @@ class UserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             UserGallery userGallery = (UserGallery)dataItems.get(position);
 
             Log.d("type", holder.getItemViewType() + userGallery.parentStory.getGroupName());
+
+            viewHolder.binding.groupMembers.removeAllViews();
+            for (int j = 0; j < userGallery.parentStory.getMemberIds().size(); j++) {
+                UserDataModel userDataModel = viewModel.getUser(userGallery.parentStory.getMemberIds().get(j));
+
+                LayoutInflater layoutInflator = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+                String profileUrl = userDataModel.getUserProfilePicUrl();
+                ShapeableImageView view = (ShapeableImageView)layoutInflator.inflate(R.layout.include_member_profile, viewHolder.binding.groupMembers, false);
+                Glide.with(mContext)
+                        .load(profileUrl)
+                        .thumbnail(0.25f)
+                        .override(25,25)
+                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                        .into(view);
+                viewHolder.binding.groupMembers.addView(view);
+
+//                view.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
+//                        HomeFragmentDirections.ActionNavigationHomeToUserFragment2 action =
+//                                HomeFragmentDirections.actionNavigationHomeToUserFragment2(userDataModel);
+//                        navController.navigate(action);
+//                    }
+//                });
+            }
 
             Glide.with(mContext)
                     .load(userGallery.parentStory.getStoryThumbUrl())

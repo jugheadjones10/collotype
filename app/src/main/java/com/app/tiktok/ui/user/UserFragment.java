@@ -20,6 +20,7 @@ import com.app.tiktok.R;
 import com.app.tiktok.databinding.FragmentUserBinding;
 import com.app.tiktok.model.StoriesDataModel;
 import com.app.tiktok.ui.story.StoryBunchFragment;
+import com.app.tiktok.ui.story.StoryBunchViewModel;
 import com.app.tiktok.utils.Constants;
 
 import java.io.Serializable;
@@ -32,6 +33,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class UserFragment extends Fragment {
 
     private UserViewModel userViewModel;
+    private StoryBunchViewModel storyBunchViewModel;
     private UserAdapter userAdapter;
     private FragmentUserBinding binding;
     private UserDataModel userData;
@@ -53,9 +55,12 @@ public class UserFragment extends Fragment {
 
         //View Model
         userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+        storyBunchViewModel = new ViewModelProvider(getActivity()).get(StoryBunchViewModel.class);
 
         //Get Argument
-        userData = UserFragmentArgs.fromBundle(getArguments()).getUserDataModel();
+        if(getArguments() != null){
+            userData = UserFragmentArgs.fromBundle(getArguments()).getUserDataModel();
+        }
 
         return binding.getRoot();
     }
@@ -79,7 +84,6 @@ public class UserFragment extends Fragment {
                 innerObserver.removeOnGlobalLayoutListener(this);
             }
         });
-
     }
 
     private void initializeRecyclerView(int squareLength){
@@ -90,7 +94,7 @@ public class UserFragment extends Fragment {
         dataItems.add(0, new UserHeader(userData));
 
         List<List<StoriesDataModel>> userGalleriesList = new ArrayList<>();
-        for(int galleryId : userData.getGalleries()){
+        for(long galleryId : userData.getGalleries()){
 
             //Adding user galleries to data items
             StoriesDataModel parentPost = userViewModel.getParentPost(galleryId);
@@ -110,9 +114,7 @@ public class UserFragment extends Fragment {
 
         Log.d("type", dataItems.toString());
 
-        userAdapter = new UserAdapter(getContext(), squareLength, dataItems);
+        userAdapter = new UserAdapter(getContext(), squareLength, dataItems, storyBunchViewModel);
         binding.userRecyclerView.setAdapter(userAdapter);
-
-        //userAdapter.setDataItems(dataItems);
     }
 }
