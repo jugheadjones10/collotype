@@ -136,6 +136,24 @@ public class StoryBunchFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("black", "OnResume");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d("black", "OnPause");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d("black", "OnStop");
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_story_bunch, container, false);

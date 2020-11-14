@@ -29,7 +29,6 @@ import kotlinx.android.synthetic.main.fragment_home.*
 class HomeFragment : BaseFragment(R.layout.fragment_home) {
     private val homeViewModel by activityViewModels<MainViewModel>()
     private val storyBunchViewModel by activityViewModels<StoryBunchViewModel>()
-
     //private lateinit var storiesPagerAdapter: StoriesPagerAdapter
 
     companion object{
@@ -74,7 +73,6 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
                                 super.onPageSelected(position)
                             }
                         })
-
                         //startPreCaching(dataList)
                     }
                 }

@@ -1,6 +1,7 @@
 package com.app.tiktok.base
 
 import android.graphics.Color
+import android.graphics.PixelFormat
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
@@ -17,6 +18,7 @@ open class BaseActivity : AppCompatActivity() {
     }
 
     fun setupContentWindow() {
+        window.setFormat(PixelFormat.TRANSLUCENT)
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         window.statusBarColor = Color.TRANSPARENT

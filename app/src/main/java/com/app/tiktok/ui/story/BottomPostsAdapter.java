@@ -1,6 +1,7 @@
 package com.app.tiktok.ui.story;
 
 import android.content.Context;
+import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -93,6 +94,7 @@ public class BottomPostsAdapter extends RecyclerView.Adapter<BottomPostsAdapter.
     @Override
     public void onBindViewHolder(@NonNull BottomPostViewHolder holder, int position) {
         holder.itemView.setSelected(selectedPos == position);
+
 
         if(position == 0 && modifyFirst){
             Log.d("Goalsscroller", "modify first ran");
