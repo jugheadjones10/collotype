@@ -109,7 +109,7 @@ public class BottomPostsAdapter extends RecyclerView.Adapter<BottomPostsAdapter.
 
         if(storyType.equals("jpg") || storyType.equals("gif") || storyType.equals("png") || storyType.equals("jpeg")){
 
-            holder.binding.bottomPlayerViewStory.setVisibility(View.GONE);
+            //holder.binding.bottomPlayerViewStory.setVisibility(View.GONE);
             holder.binding.bottomPostImage.setVisibility(View.VISIBLE);
 
             Glide.with(mContext)

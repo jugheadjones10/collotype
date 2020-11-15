@@ -297,6 +297,8 @@ public class StoryBunchFragment extends Fragment {
                 int thirtyPx = Utility.INSTANCE.dpToPx(BottomSheetFragment.TAB_ITEM_WIDTH, getContext());
                 int tabVerticalPadding = (squareLength - thirtyPx)/2;
 
+                binding.layoutBotSheet.botSheet.setVisibility(View.VISIBLE);
+
                 TabLayout tabLayout = getChildFragmentManager().findFragmentById(R.id.bot_sheet_fragment).getView().findViewById(R.id.tab_layout);
                 ViewGroup.LayoutParams tabLayoutParams = tabLayout.getLayoutParams();
                 tabLayoutParams.height = (int) (thirtyPx*slideOffset);

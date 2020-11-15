@@ -61,6 +61,13 @@
 
 <!--        </LinearLayout>-->
 
+        <ImageView
+            android:id="@+id/hry"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/ironman_fight"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/imageView" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/thumbnails_recycler_view"

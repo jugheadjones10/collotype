@@ -11,6 +11,6 @@ public class VerticalCubeTransformer implements ViewPager2.PageTransformer {
     public void transformPage(@NonNull View page, float position) {
         page.setPivotX(page.getWidth() * 0.5f);
         page.setPivotY(position < 0f ? page.getHeight() : 0f);
-        //page.setRotationX(-35f * position);
+        page.setRotationX(-45f * position);
     }
 }
