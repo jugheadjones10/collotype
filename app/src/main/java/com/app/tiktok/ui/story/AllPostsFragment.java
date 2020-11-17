@@ -49,11 +49,6 @@ public class AllPostsFragment extends Fragment {
     private List<StoriesDataModel> childrenPosts;
     private StoryBunchViewModel viewModel;
 
-    float y1 = 0;
-    float y2 = 0;
-    float dy = 0;
-    String direction;
-
     public AllPostsFragment() {
     }
 
@@ -149,6 +144,11 @@ public class AllPostsFragment extends Fragment {
         }
     }
 
+    float y1 = 0;
+    float y2 = 0;
+    float dy = 0;
+    String direction;
+
     private void initializeNestedScrollViewBehaviour(){
         binding.nestedScrollView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -156,6 +156,7 @@ public class AllPostsFragment extends Fragment {
 
                 switch(motionEvent.getAction()) {
                     case (MotionEvent.ACTION_DOWN):
+                        viewModel.setDraggable(false);
                         y1 = motionEvent.getY();
                         break;
                     case (MotionEvent.ACTION_MOVE): {
@@ -174,22 +175,23 @@ public class AllPostsFragment extends Fragment {
                         Log.d("scroller", direction);
                         Log.d("scroller", "" + view.getScrollY());
 
-                        if (direction.equals("up") || (direction.equals("down") && view.getScrollY() != 0)) {
-                            Log.d("scroller", "A");
+//                        if (direction.equals("up") || (direction.equals("down") && view.getScrollY() != 0)) {
+//                            Log.d("scroller", "A");
 
                             viewModel.setDraggable(false);
-                        }
+//                        }
 
-                        if(direction.equals("down") && view.getScrollY() == 0){
-                            Log.d("scroller", "B");
-
-                            viewModel.setDraggable(true);
-                        }
+//                        if(direction.equals("down") && view.getScrollY() == 0){
+//                            Log.d("scroller", "B");
+//
+//                            viewModel.setDraggable(true);
+//                        }
 
                         break;
                     }
+                    case (MotionEvent.ACTION_CANCEL):
                     case (MotionEvent.ACTION_UP):
-                        //viewModel.setDraggable(true);
+                        viewModel.setDraggable(true);
 
                         break;
                 }

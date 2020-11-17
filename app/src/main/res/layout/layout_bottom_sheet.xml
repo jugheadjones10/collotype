@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <LinearLayout
+    <com.app.tiktok.ui.story.LinearLayoutBottomSheet
         android:id="@+id/bot_sheet"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -61,14 +61,6 @@
 
 <!--        </LinearLayout>-->
 
-        <ImageView
-            android:id="@+id/hry"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@drawable/ironman_fight"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/imageView" />
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/thumbnails_recycler_view"
             android:layout_width="match_parent"
@@ -78,35 +70,11 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
-
         <FrameLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/bot_sheet_fragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-<!--        <androidx.core.widget.NestedScrollView-->
-<!--            android:background="@color/colorBlack"-->
-<!--            android:id="@+id/nested_scroll_view"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent">-->
-
-<!--            <LinearLayout-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="match_parent"-->
-<!--                android:orientation="vertical">-->
-
-<!--                <GridLayout-->
-<!--                    android:id="@+id/posts_grid_layout"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:columnCount="4"-->
-<!--                    android:rowCount="30">-->
-<!--                </GridLayout>-->
-
-<!--            </LinearLayout>-->
-
-<!--        </androidx.core.widget.NestedScrollView>-->
-
-    </LinearLayout>
+    </com.app.tiktok.ui.story.LinearLayoutBottomSheet>
 </layout>

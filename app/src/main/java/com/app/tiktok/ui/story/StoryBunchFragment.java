@@ -2,6 +2,7 @@ package com.app.tiktok.ui.story;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.DisplayMetrics;
@@ -55,6 +56,7 @@ import com.google.android.material.tabs.TabLayout;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -66,14 +68,14 @@ public class StoryBunchFragment extends Fragment {
     float dy = 0;
     String direction;
 
-    public int bigSquareLength;
-
-    private FragmentStoryBunchBinding binding;
+    public FragmentStoryBunchBinding binding;
     private StoryBunchViewModel viewModel;
     private StoryBunchPagerAdapter pagerAdapter;
     private LayoutManager layoutManager;
 
-    private BottomSheetBehavior bottomSheetBehavior;
+    public int bigSquareLength;
+
+    public BottomSheetBehavior bottomSheetBehavior;
     private BottomPostsAdapter bottomPostsAdapter;
     private StoriesDataModel parentPost;
     private List<StoriesDataModel> childrenPosts;
@@ -87,6 +89,12 @@ public class StoryBunchFragment extends Fragment {
 
         return storyBunchFragment;
     }
+
+    private static StoryBunchFragment instance;
+    public static StoryBunchFragment getInstance(){
+        return instance;
+    }
+
 
     // Set bottom recycler view item as selected when view pager is swiped
     private final ViewPager2.OnPageChangeCallback viewPagerChangeCallback = new ViewPager2.OnPageChangeCallback() {
@@ -131,34 +139,12 @@ public class StoryBunchFragment extends Fragment {
     }
 
     @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d("black", "OnResume");
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.d("black", "OnPause");
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Log.d("black", "OnStop");
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_story_bunch, container, false);
 
         Log.d("lifecyclecheck", "StoryBunchFragment onCreateView");
+        instance = this;
 
         //Get Arguments
         parentPost = getArguments().getParcelable(Constants.KEY_STORY_DATA);
@@ -185,7 +171,22 @@ public class StoryBunchFragment extends Fragment {
     private void setChildrenPosts(){
         //Own self is added so it is displayed at the bottom
         childrenPosts = viewModel.getDataList(parentPost.getStoryId());
-        childrenPosts.add(0, parentPost);
+
+        List<StoriesDataModel> postsWithProcess = new ArrayList<>();
+        List<StoriesDataModel> childrenPostsCopy = new ArrayList<>(childrenPosts);
+
+        for(StoriesDataModel storiesDataModel : childrenPosts){
+            if(storiesDataModel.getProcessPostIds().size() > 0){
+                childrenPostsCopy.remove(storiesDataModel);
+                postsWithProcess.add(storiesDataModel);
+            }
+        }
+
+        List<StoriesDataModel> finalList = new ArrayList<StoriesDataModel>(postsWithProcess);
+        finalList.addAll(childrenPostsCopy);
+
+        finalList.add(0, parentPost);
+        childrenPosts = finalList;
     }
 
     private void setHeights(){
@@ -200,7 +201,7 @@ public class StoryBunchFragment extends Fragment {
                 int squareLength = binding.storyBunchParent.getWidth()/4;
                 bigSquareLength = squareLength;
 
-                setSquareDependentLengths(bigSquareLength);
+                setSquareDependentLengths(squareLength);
 
                 ViewTreeObserver innerObserver = binding.layoutBotSheet.botSheet.getViewTreeObserver();
                 innerObserver.removeOnGlobalLayoutListener(this);
@@ -226,7 +227,7 @@ public class StoryBunchFragment extends Fragment {
         Fragment bottomSheetFragment = BottomSheetFragment.newInstance(parentPost);
 
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        transaction.add(R.id.bot_sheet_fragment, bottomSheetFragment);
+        transaction.add(R.id.bot_sheet_fragment, bottomSheetFragment, "BottomSheetFragment");
         transaction.commit();
     }
 
@@ -254,6 +255,11 @@ public class StoryBunchFragment extends Fragment {
             public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
                 if (e.getAction() == MotionEvent.ACTION_DOWN) {
                     HomeFragment.Companion.getViewPager2().setUserInputEnabled(false);
+
+//                    if(getChildFragmentManager().findFragmentByTag("BottomSheetFragment") == null) {
+//                        initializeBottomSheetFragment();
+//                    }
+
                 }else if(e.getAction() == MotionEvent.ACTION_UP){
                     //This clause prevents home fragment view pager 2 from getting disabled if user clicks on recycler view items
                     if(bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED){
@@ -279,35 +285,48 @@ public class StoryBunchFragment extends Fragment {
         bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
+
                 if(newState == BottomSheetBehavior.STATE_COLLAPSED){
                     HomeFragment.Companion.getViewPager2().setUserInputEnabled(true);
 
-                    ViewGroup.LayoutParams recyclerViewLayoutParans = binding.layoutBotSheet.thumbnailsRecyclerView.getLayoutParams();
-                    recyclerViewLayoutParans.height = squareLength;
-                    binding.layoutBotSheet.thumbnailsRecyclerView.setLayoutParams(recyclerViewLayoutParans);
+                    ViewGroup.LayoutParams recyclerViewLayoutParams = binding.layoutBotSheet.thumbnailsRecyclerView.getLayoutParams();
+                    recyclerViewLayoutParams.height = squareLength;
+                    binding.layoutBotSheet.thumbnailsRecyclerView.setLayoutParams(recyclerViewLayoutParams);
                 }else{
-                    ViewGroup.LayoutParams recyclerViewLayoutParans = binding.layoutBotSheet.thumbnailsRecyclerView.getLayoutParams();
-                    recyclerViewLayoutParans.height = 0;
-                    binding.layoutBotSheet.thumbnailsRecyclerView.setLayoutParams(recyclerViewLayoutParans);
+                    ViewGroup.LayoutParams recyclerViewLayoutParams = binding.layoutBotSheet.thumbnailsRecyclerView.getLayoutParams();
+                    recyclerViewLayoutParams.height = 0;
+                    binding.layoutBotSheet.thumbnailsRecyclerView.setLayoutParams(recyclerViewLayoutParams);
                 }
             }
 
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+
                 int thirtyPx = Utility.INSTANCE.dpToPx(BottomSheetFragment.TAB_ITEM_WIDTH, getContext());
-                int tabVerticalPadding = (squareLength - thirtyPx)/2;
+                int tabVerticalPadding = (squareLength - thirtyPx) / 2;
 
                 binding.layoutBotSheet.botSheet.setVisibility(View.VISIBLE);
 
                 TabLayout tabLayout = getChildFragmentManager().findFragmentById(R.id.bot_sheet_fragment).getView().findViewById(R.id.tab_layout);
                 ViewGroup.LayoutParams tabLayoutParams = tabLayout.getLayoutParams();
-                tabLayoutParams.height = (int) (thirtyPx*slideOffset);
+                tabLayoutParams.height = (int) (thirtyPx * slideOffset);
                 tabLayout.setLayoutParams(tabLayoutParams);
 
                 //How come I don't need to set layout params again after specifying margins? Unlike in the setHeights method
-                MarginLayoutParams tabMarginParams = (MarginLayoutParams)tabLayout.getLayoutParams();
-                tabMarginParams.topMargin = (int) ((tabVerticalPadding + binding.topBarContainer.getHeight())*slideOffset);
-                tabMarginParams.bottomMargin = (int) (tabVerticalPadding*slideOffset);
+                MarginLayoutParams tabMarginParams = (MarginLayoutParams) tabLayout.getLayoutParams();
+                tabMarginParams.topMargin = (int) ((tabVerticalPadding + binding.topBarContainer.getHeight()) * slideOffset);
+                tabMarginParams.bottomMargin = (int) (tabVerticalPadding * slideOffset);
+                tabMarginParams.leftMargin = (int) (Utility.INSTANCE.dpToPx(50, getContext()) * slideOffset);
+                tabMarginParams.rightMargin = (int) (Utility.INSTANCE.dpToPx(50, getContext()) * slideOffset);
+
+                for (int i = 0; i < tabLayout.getTabCount(); i++) {
+                    ViewGroup.LayoutParams tabViewLayoutParams = tabLayout.getTabAt(i).getCustomView().getLayoutParams();
+                    tabViewLayoutParams.width = (int) (Utility.INSTANCE.dpToPx(BottomSheetFragment.TAB_ITEM_WIDTH, getContext()) * slideOffset);
+                    tabViewLayoutParams.height = (int) (Utility.INSTANCE.dpToPx(BottomSheetFragment.TAB_ITEM_WIDTH, getContext()) * slideOffset);
+                    tabLayout.getTabAt(i).getCustomView().setLayoutParams(tabViewLayoutParams);
+                }
+
+                tabLayout.setSelectedTabIndicatorHeight((int) (Utility.INSTANCE.dpToPx(BottomSheetFragment.TAB_ITEM_WIDTH, getContext()) * slideOffset));
 
                 transitionBottomSheetBackgroundColor(slideOffset);
             }
@@ -329,6 +348,7 @@ public class StoryBunchFragment extends Fragment {
         viewModel.getDraggable().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean draggable) {
+                Log.d("observe", draggable + "");
                 if(draggable != null){
                     bottomSheetBehavior.setDraggable(draggable);
                 }

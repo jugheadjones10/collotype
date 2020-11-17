@@ -40,14 +40,16 @@ class UserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     private Context mContext;
     private int squareLength;
     private StoryBunchViewModel viewModel;
+    private NavController navController;
 
     RecycledViewPool viewPool;
 
-    public UserAdapter(Context mContext, int squareLength, List<DataItem> dataItems, StoryBunchViewModel viewModel){
+    public UserAdapter(Context mContext, int squareLength, List<DataItem> dataItems, StoryBunchViewModel viewModel, NavController navController){
         this.mContext = mContext;
         this.squareLength = squareLength;
         this.dataItems = dataItems;
         this.viewModel = viewModel;
+        this.navController = navController;
         viewPool = new RecyclerView.RecycledViewPool();
     }
 
@@ -136,15 +138,14 @@ class UserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                         .into(view);
                 viewHolder.binding.groupMembers.addView(view);
 
-//                view.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
-//                        HomeFragmentDirections.ActionNavigationHomeToUserFragment2 action =
-//                                HomeFragmentDirections.actionNavigationHomeToUserFragment2(userDataModel);
-//                        navController.navigate(action);
-//                    }
-//                });
+                view.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        HomeFragmentDirections.ActionNavigationHomeToUserFragment2 action =
+                                HomeFragmentDirections.actionNavigationHomeToUserFragment2(userDataModel);
+                        navController.navigate(action);
+                    }
+                });
             }
 
             Glide.with(mContext)

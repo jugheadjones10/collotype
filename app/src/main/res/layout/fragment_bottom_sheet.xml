@@ -8,9 +8,9 @@
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_layout"
         android:layout_width="match_parent"
-        android:background="@color/colorBlack"
-        app:tabIndicatorHeight="35dp"
+        android:background="@color/colorTransparent"
         app:tabIndicatorColor="@android:color/holo_red_dark"
+        app:tabIndicatorHeight="0dp"
         app:tabIndicatorFullWidth="false"
         app:tabGravity="center"
         android:layout_height="0dp" />

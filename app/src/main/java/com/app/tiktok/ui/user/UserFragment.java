@@ -8,6 +8,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import android.service.autofill.UserData;
 import android.util.Log;
@@ -37,16 +39,7 @@ public class UserFragment extends Fragment {
     private UserAdapter userAdapter;
     private FragmentUserBinding binding;
     private UserDataModel userData;
-
-//    public static UserFragment newInstance(UserDataModel userDataModel) {
-//        UserFragment userFragment = new UserFragment();
-//
-//        Bundle args = new Bundle();
-//        args.putParcelable(Constants.KEY_USER_DATA, userDataModel);
-//        userFragment.setArguments(args);
-//
-//        return userFragment;
-//    }
+    private NavController navController;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -56,6 +49,8 @@ public class UserFragment extends Fragment {
         //View Model
         userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
         storyBunchViewModel = new ViewModelProvider(getActivity()).get(StoryBunchViewModel.class);
+
+        navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
 
         //Get Argument
         if(getArguments() != null){
@@ -97,8 +92,8 @@ public class UserFragment extends Fragment {
         for(long galleryId : userData.getGalleries()){
 
             //Adding user galleries to data items
-            StoriesDataModel parentPost = userViewModel.getParentPost(galleryId);
-            List<StoriesDataModel> children = userViewModel.getDataList(galleryId);
+            StoriesDataModel parentPost = userViewModel.getParentPostWithGhosts(galleryId);
+            List<StoriesDataModel> children = userViewModel.getChildrenPosts(galleryId);
             dataItems.add(new UserGallery(parentPost, children));
 
             userGalleriesList.add(children);
@@ -108,13 +103,12 @@ public class UserFragment extends Fragment {
         List<StoriesDataModel> allUserPostsMix = new ArrayList<>();
         for(List<StoriesDataModel> gallery : userGalleriesList){
             allUserPostsMix.addAll(gallery.subList(0, 4));
-            //allUserPostsMix.add(gallery.get(0));
         }
         dataItems.add(1, new AllUserPosts(allUserPostsMix));
 
         Log.d("type", dataItems.toString());
 
-        userAdapter = new UserAdapter(getContext(), squareLength, dataItems, storyBunchViewModel);
+        userAdapter = new UserAdapter(getContext(), squareLength, dataItems, storyBunchViewModel, navController);
         binding.userRecyclerView.setAdapter(userAdapter);
     }
 }

@@ -37,6 +37,7 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import com.google.android.material.imageview.ShapeableImageView
+import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_story_bunch.*
 import kotlinx.android.synthetic.main.include_price_tag.*
 import kotlinx.android.synthetic.main.layout_process_posts_scroll.*
@@ -113,6 +114,8 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
         }
 
         playbackStateListener = PlaybackStateListener()
+
+        post_image.cameraDistance = 4000f
 
         options_container.setOnClickListener {
             Log.d("volume", "options container on click listener")

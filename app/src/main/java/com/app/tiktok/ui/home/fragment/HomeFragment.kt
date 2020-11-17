@@ -3,9 +3,7 @@ package com.app.tiktok.ui.home.fragment
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
-import android.view.MotionEvent
 import android.view.View
-import android.view.View.OnTouchListener
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.viewpager2.widget.ViewPager2
@@ -42,7 +40,7 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
 
         viewPager2 = view_pager_stories
         viewPager2?.setPageTransformer(VerticalCubeTransformer())
-        viewPager2?.offscreenPageLimit = 3
+        viewPager2?.offscreenPageLimit = 4
 
         val storiesData = homeViewModel.getDataList()
 

@@ -18,7 +18,7 @@ public class UserViewModel extends ViewModel {
         this.dataRepository = dataRepository;
     }
 
-    public List<StoriesDataModel> getDataList(long storyId){
+    public List<StoriesDataModel> getChildrenPosts(long storyId){
         return dataRepository.getStoriesData()
                 .stream()
                 .filter(storiesDataModel -> storiesDataModel.getParentId() == storyId)
@@ -29,6 +29,14 @@ public class UserViewModel extends ViewModel {
         return dataRepository.getStoriesData()
                 .stream()
                 .filter(storiesDataModel -> storiesDataModel.getStoryId() == storyId && storiesDataModel.getParentId() == 0)
+                .collect(Collectors.toList())
+                .get(0);
+    }
+
+    public StoriesDataModel getParentPostWithGhosts(long storyId){
+        return dataRepository.getStoriesData()
+                .stream()
+                .filter(storiesDataModel -> storiesDataModel.getStoryId() == storyId && (storiesDataModel.getParentId() == 0 || storiesDataModel.getParentId() == -1))
                 .collect(Collectors.toList())
                 .get(0);
     }

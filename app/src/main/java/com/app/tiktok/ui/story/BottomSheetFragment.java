@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,7 +38,8 @@ public class BottomSheetFragment extends Fragment {
     private static final String KEY_PARENT_POST = "KEY_PARENT_POST";
 
     private StoriesDataModel parentPost;
-    private FragmentBottomSheetBinding binding;
+    public FragmentBottomSheetBinding binding;
+    private static BottomSheetFragment instance;
 
     public BottomSheetFragment() {
     }
@@ -50,9 +52,15 @@ public class BottomSheetFragment extends Fragment {
         return fragment;
     }
 
+    public static BottomSheetFragment getInstance(){
+        return instance;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("morning", "BOttom SHeet wok up");
+        instance = this;
         if (getArguments() != null) {
             parentPost = getArguments().getParcelable(KEY_PARENT_POST);
         }
@@ -73,11 +81,46 @@ public class BottomSheetFragment extends Fragment {
         initializeViewPager();
         TabLayout tabLayout = binding.tabLayout;
 
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                LinearLayout tabLayout = (LinearLayout) tab.getCustomView();
+                tabLayout.findViewById(R.id.icon_container).setBackground(getResources().getDrawable(R.drawable.tab_indicator));
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                LinearLayout tabLayout = (LinearLayout) tab.getCustomView();
+                tabLayout.findViewById(R.id.icon_container).setBackground(getResources().getDrawable(R.drawable.tab_indicator_white));
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
         tabLayout.setSelectedTabIndicator(R.drawable.tab_indicator);
         new TabLayoutMediator(tabLayout, binding.bottomSheetPager,
             (tab, position) -> {
                 LayoutTabBinding tabBinding = DataBindingUtil.inflate(getLayoutInflater(), R.layout.layout_tab, binding.tabLayout, false);
-                tabBinding.iconContainer.setZ(20);
                 switch (position){
                     case 0:
                         tabBinding.iconBg.setBackgroundResource(R.drawable.clock_30__3_);
@@ -97,10 +140,6 @@ public class BottomSheetFragment extends Fragment {
                     default:
                 }
                 tab.setCustomView(tabBinding.getRoot());
-
-                ViewGroup.LayoutParams tabViewLayoutParams = tab.getCustomView().getLayoutParams();
-                tabViewLayoutParams.width = Utility.INSTANCE.dpToPx(TAB_ITEM_WIDTH, getContext());
-                tab.getCustomView().setLayoutParams(tabViewLayoutParams);
             }
         ).attach();
     }
@@ -109,7 +148,7 @@ public class BottomSheetFragment extends Fragment {
         //Pass in everything first. Later we may need to filter.
         BottomSheetPagerAdapter pagerAdapter = new BottomSheetPagerAdapter(this, parentPost);
 
-        binding.bottomSheetPager.setOffscreenPageLimit(4);
+        binding.bottomSheetPager.setOffscreenPageLimit(1);
         binding.bottomSheetPager.setAdapter(pagerAdapter);
     }
 }

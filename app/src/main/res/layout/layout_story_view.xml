@@ -57,7 +57,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/date"
             app:layout_constraintEnd_toStartOf="@+id/recycler_view_options"
             app:layout_constraintHeight_default="wrap"
-            app:layout_constraintStart_toEndOf="@+id/date"
+            app:layout_constraintStart_toEndOf="@id/barrier"
             app:layout_constraintTop_toTopOf="@+id/username"
             tools:text="@tools:sample/lorem/random" />
 
@@ -205,6 +205,15 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="end"
+            app:constraint_referenced_ids="username, date"
+            tools:layout_editor_absoluteX="48dp"
+            tools:layout_editor_absoluteY="15dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

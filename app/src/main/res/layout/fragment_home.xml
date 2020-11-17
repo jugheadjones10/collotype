@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".ui.home.fragment.HomeFragment">
 
-
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/view_pager_stories"
         android:layout_width="0dp"

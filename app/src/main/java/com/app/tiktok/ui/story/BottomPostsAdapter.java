@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.app.tiktok.R;
 import com.app.tiktok.app.MyApp;
 import com.app.tiktok.databinding.BottomPostItemBinding;
+import com.app.tiktok.databinding.EnlargedBottomPostItemBinding;
 import com.app.tiktok.model.StoriesDataModel;
 import com.app.tiktok.utils.Utility;
 import com.bumptech.glide.Glide;
@@ -39,7 +40,7 @@ import java.util.List;
 
 import static com.app.tiktok.utils.ExtensionsKt.logError;
 
-public class BottomPostsAdapter extends RecyclerView.Adapter<BottomPostsAdapter.BottomPostViewHolder> {
+public class BottomPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<StoriesDataModel> storiesDataModels;
     private StoryBunchFragment.OnBottomItemClickListener itemClickListener;
@@ -59,18 +60,25 @@ public class BottomPostsAdapter extends RecyclerView.Adapter<BottomPostsAdapter.
     private CacheDataSourceFactory cacheDataSourceFactory;
     private SimpleCache simpleCache = MyApp.Companion.getSimpleCache();
     private boolean modifyFirst;
+    private int squareLength = -1;
+
+    private int NORMAL_ITEM = 0;
+    private int ENLARGED_ITEM = 1;
 
     public BottomPostsAdapter(List<StoriesDataModel> storiesDataModels, Context mContext, StoryBunchFragment.OnBottomItemClickListener itemClickListener) {
         this.storiesDataModels = storiesDataModels;
         this.mContext = mContext;
         this.itemClickListener = itemClickListener;
+        modifyFirst = false;
     }
 
-    public BottomPostsAdapter(List<StoriesDataModel> storiesDataModels, Context mContext, boolean modifyFirst) {
+    public BottomPostsAdapter(List<StoriesDataModel> storiesDataModels, Context mContext, boolean modifyFirst, int squareLength) {
         this.storiesDataModels = storiesDataModels;
         this.mContext = mContext;
         this.itemClickListener = null;
         this.modifyFirst = modifyFirst;
+
+        this.squareLength = squareLength;
     }
 
     public class BottomPostViewHolder extends RecyclerView.ViewHolder {
@@ -83,43 +91,61 @@ public class BottomPostsAdapter extends RecyclerView.Adapter<BottomPostsAdapter.
         }
     }
 
-    @NonNull
-    @Override
-    public BottomPostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        BottomPostItemBinding binding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.bottom_post_item, parent, false);
+    public class EnlargedBottomPostViewHolder extends RecyclerView.ViewHolder {
 
-        return new BottomPostViewHolder(binding);
+        EnlargedBottomPostItemBinding binding;
+
+        public EnlargedBottomPostViewHolder(EnlargedBottomPostItemBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+        }
     }
 
     @Override
-    public void onBindViewHolder(@NonNull BottomPostViewHolder holder, int position) {
-        holder.itemView.setSelected(selectedPos == position);
-
-
+    public int getItemViewType(int position) {
         if(position == 0 && modifyFirst){
-            Log.d("Goalsscroller", "modify first ran");
-            ViewGroup.LayoutParams itemContainerLayoutParams = holder.binding.bottomPostItemContainer.getLayoutParams();
-            itemContainerLayoutParams.height = Utility.INSTANCE.dpToPx(50, mContext);
-            itemContainerLayoutParams.width = Utility.INSTANCE.dpToPx(50, mContext);
-            holder.binding.bottomPostItemContainer.setLayoutParams(itemContainerLayoutParams);
+            return ENLARGED_ITEM;
+        }else{
+            return NORMAL_ITEM;
         }
+    }
 
+    @NonNull
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        if(viewType == ENLARGED_ITEM){
+            EnlargedBottomPostItemBinding binding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.enlarged_bottom_post_item, parent, false);
+
+            return new EnlargedBottomPostViewHolder(binding);
+        }else{
+            BottomPostItemBinding binding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.bottom_post_item, parent, false);
+
+            return new BottomPostViewHolder(binding);
+        }
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        holder.itemView.setSelected(selectedPos == position);
         String storyUrl = storiesDataModels.get(position).getStoryUrl();
         String storyType = Utility.INSTANCE.extractS3URLfileType(storyUrl);
 
-        if(storyType.equals("jpg") || storyType.equals("gif") || storyType.equals("png") || storyType.equals("jpeg")){
+        if(holder.getItemViewType() == ENLARGED_ITEM) {
+            EnlargedBottomPostViewHolder viewHolder = (EnlargedBottomPostViewHolder) holder;
 
-            //holder.binding.bottomPlayerViewStory.setVisibility(View.GONE);
-            holder.binding.bottomPostImage.setVisibility(View.VISIBLE);
+            if(storyType.equals("jpg") || storyType.equals("gif") || storyType.equals("png") || storyType.equals("jpeg")){
 
-            Glide.with(mContext)
-                    .load(storyUrl)
-                    .thumbnail(0.25f)
-                    .override(150, 150)
-                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                    .into(holder.binding.bottomPostImage);
+                //holder.binding.bottomPlayerViewStory.setVisibility(View.GONE);
+                viewHolder.binding.bottomPostImage.setVisibility(View.VISIBLE);
 
-        }else if(storyType.equals("mp4")){
+                Glide.with(mContext)
+                        .load(storyUrl)
+                        .thumbnail(0.25f)
+                        .override(150, 150)
+                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                        .into(viewHolder.binding.bottomPostImage);
+
+            }else if(storyType.equals("mp4")){
 
 //            holder.binding.bottomPlayerViewStory.setVisibility(View.VISIBLE);
 //            holder.binding.bottomPostImage.setVisibility(View.GONE);
@@ -130,6 +156,48 @@ public class BottomPostsAdapter extends RecyclerView.Adapter<BottomPostsAdapter.
 //            holder.binding.bottomPlayerViewStory.setPlayer(simplePlayer);
 //
 //            prepareMedia(storyUrl);
+            }
+
+        }else{
+            BottomPostViewHolder viewHolder = (BottomPostViewHolder) holder;
+
+            Log.d("Goalsscroller", "modify first ran");
+            if(squareLength > 0){
+                ViewGroup.LayoutParams itemContainerLayoutParams = viewHolder.binding.bottomPostItemContainer.getLayoutParams();
+                itemContainerLayoutParams.height = squareLength;
+                itemContainerLayoutParams.width = squareLength;
+                viewHolder.binding.bottomPostItemContainer.setLayoutParams(itemContainerLayoutParams);
+
+                ViewGroup.MarginLayoutParams viewPagerMarginParams = (ViewGroup.MarginLayoutParams)viewHolder.binding.bottomPostItemContainer.getLayoutParams();
+                viewPagerMarginParams.topMargin = Utility.INSTANCE.dpToPx(130, mContext) - squareLength;
+                viewHolder.binding.bottomPostItemContainer.setLayoutParams(viewPagerMarginParams);
+            }
+
+            if(storyType.equals("jpg") || storyType.equals("gif") || storyType.equals("png") || storyType.equals("jpeg")){
+
+                //holder.binding.bottomPlayerViewStory.setVisibility(View.GONE);
+                viewHolder.binding.bottomPostImage.setVisibility(View.VISIBLE);
+
+                Glide.with(mContext)
+                        .load(storyUrl)
+                        .thumbnail(0.25f)
+                        .override(150, 150)
+                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                        .into(viewHolder.binding.bottomPostImage);
+
+            }else if(storyType.equals("mp4")){
+
+//            holder.binding.bottomPlayerViewStory.setVisibility(View.VISIBLE);
+//            holder.binding.bottomPostImage.setVisibility(View.GONE);
+//
+//            holder.binding.bottomPlayerViewStory.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_ZOOM);
+//
+//            SimpleExoPlayer simplePlayer = getPlayer();
+//            holder.binding.bottomPlayerViewStory.setPlayer(simplePlayer);
+//
+//            prepareMedia(storyUrl);
+            }
+
         }
 
         if(itemClickListener != null){
