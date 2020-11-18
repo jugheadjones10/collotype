@@ -151,7 +151,7 @@ class UserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             Glide.with(mContext)
                     .load(userGallery.parentStory.getStoryThumbUrl())
                     .thumbnail(0.25f)
-                    .override(150, 150)
+                    .override(100, 100)
                     .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                     .into(viewHolder.binding.imageViewGroupPic);
 

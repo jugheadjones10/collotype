@@ -136,7 +136,7 @@ public class AllPostsFragment extends Fragment {
             Glide.with(this)
                     .load(storiesDataModel.getStoryUrl())
                     .thumbnail(0.25f)
-                    .override(150, 150)
+                    .override(100, 100)
                     .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                     .into(view);
 

@@ -17,7 +17,7 @@ fun ShapeableImageView.loadImageFromUrl(imageUrl: String?){
     Glide.with(this)
         .load(imageUrl)
         .thumbnail(0.25f)
-        .override(400, 720)
+        .override(250, 450)
         .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
         .into(this)
 

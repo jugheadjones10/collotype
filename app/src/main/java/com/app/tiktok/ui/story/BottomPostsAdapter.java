@@ -141,7 +141,7 @@ public class BottomPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 Glide.with(mContext)
                         .load(storyUrl)
                         .thumbnail(0.25f)
-                        .override(150, 150)
+                        .override(100, 100)
                         .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                         .into(viewHolder.binding.bottomPostImage);
 
@@ -181,7 +181,7 @@ public class BottomPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 Glide.with(mContext)
                         .load(storyUrl)
                         .thumbnail(0.25f)
-                        .override(150, 150)
+                        .override(100, 100)
                         .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                         .into(viewHolder.binding.bottomPostImage);
 

@@ -292,6 +292,7 @@ public class AllGoalsFragment extends Fragment {
                     }
                     case (MotionEvent.ACTION_CANCEL):
                     case (MotionEvent.ACTION_UP):
+                        Log.d("cancelled", "I got cancelled");
                         viewModel.setDraggable(true);
 
                         break;

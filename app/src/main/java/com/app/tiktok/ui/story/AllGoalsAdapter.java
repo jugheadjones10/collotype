@@ -142,6 +142,7 @@ class AllGoalsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                     }
                     case (MotionEvent.ACTION_CANCEL):
                     case (MotionEvent.ACTION_UP):
+                        viewModel.setDraggable(true);
                         goalsViewHolder.binding.goalsRecyclerView.requestDisallowInterceptTouchEvent(false);
                         break;
                 }
