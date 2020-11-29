@@ -9,9 +9,6 @@
         <variable name="onProcessPostClicked" type="com.app.tiktok.ui.story.StoryViewFragment.OnProcessPostClicked"/>
     </data>
 
-<!--<androidx.constraintlayout.widget.ConstraintLayout-->
-<!--   >-->
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/parent_card"
         android:layout_marginBottom="10dp"
@@ -34,7 +31,5 @@
             app:shapeAppearance="@style/RoundedRectangularImageViewShape" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-<!--</androidx.constraintlayout.widget.ConstraintLayout>-->
 
 </layout>

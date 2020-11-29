@@ -143,7 +143,8 @@ class AllGoalsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                     case (MotionEvent.ACTION_CANCEL):
                     case (MotionEvent.ACTION_UP):
                         viewModel.setDraggable(true);
-                        goalsViewHolder.binding.goalsRecyclerView.requestDisallowInterceptTouchEvent(false);
+                        Log.d("mama", "onUp");
+                        //goalsViewHolder.binding.goalsRecyclerView.requestDisallowInterceptTouchEvent(false);
                         break;
                 }
                 return false;
@@ -201,12 +202,14 @@ class AllGoalsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
         @Override
         public boolean onDown(MotionEvent e) {
+            Log.d("mama", "onDown");
             targetRecyclerView.requestDisallowInterceptTouchEvent(true);
             return super.onDown(e);
         }
 
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            Log.d("mama", "onFling");
             if(Math.abs(velocityY) > Math.abs(velocityX)){
                 targetRecyclerView.requestDisallowInterceptTouchEvent(false);
             }
@@ -215,6 +218,7 @@ class AllGoalsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            Log.d("mama", "onScroll");
             if(Math.abs(distanceY) > Math.abs(distanceX)){
                 targetRecyclerView.requestDisallowInterceptTouchEvent(false);
             }

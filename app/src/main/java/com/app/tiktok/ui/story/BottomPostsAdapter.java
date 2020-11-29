@@ -43,7 +43,7 @@ import static com.app.tiktok.utils.ExtensionsKt.logError;
 public class BottomPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<StoriesDataModel> storiesDataModels;
-    private StoryBunchFragment.OnBottomItemClickListener itemClickListener;
+    private StoryBunchFragment.OnBottomItemClickListener itemClickListener = null;
     private Context mContext;
 
     public void setSelectedPos(int selectedPos) {
@@ -59,7 +59,7 @@ public class BottomPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private SimpleExoPlayer simplePlayer;
     private CacheDataSourceFactory cacheDataSourceFactory;
     private SimpleCache simpleCache = MyApp.Companion.getSimpleCache();
-    private boolean modifyFirst;
+    private boolean modifyFirst = false;
     private int squareLength = -1;
 
     private int NORMAL_ITEM = 0;
@@ -69,17 +69,15 @@ public class BottomPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         this.storiesDataModels = storiesDataModels;
         this.mContext = mContext;
         this.itemClickListener = itemClickListener;
-        modifyFirst = false;
     }
 
     public BottomPostsAdapter(List<StoriesDataModel> storiesDataModels, Context mContext, boolean modifyFirst, int squareLength) {
         this.storiesDataModels = storiesDataModels;
         this.mContext = mContext;
-        this.itemClickListener = null;
         this.modifyFirst = modifyFirst;
-
         this.squareLength = squareLength;
     }
+
 
     public class BottomPostViewHolder extends RecyclerView.ViewHolder {
 
@@ -162,7 +160,7 @@ public class BottomPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             BottomPostViewHolder viewHolder = (BottomPostViewHolder) holder;
 
             Log.d("Goalsscroller", "modify first ran");
-            if(squareLength > 0){
+            if(squareLength > 0 && modifyFirst){
                 ViewGroup.LayoutParams itemContainerLayoutParams = viewHolder.binding.bottomPostItemContainer.getLayoutParams();
                 itemContainerLayoutParams.height = squareLength;
                 itemContainerLayoutParams.width = squareLength;

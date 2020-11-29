@@ -155,6 +155,9 @@ public class StoryBunchFragment extends Fragment {
         //Set bottom sheet behaviour
         bottomSheetBehavior = BottomSheetBehavior.from(binding.layoutBotSheet.botSheet);
 
+        binding.postsViewPager.setCameraDistance(1000000000000000000000000000f);
+        binding.storyBunchParent.setCameraDistance(1000000000000000000000000000f);
+
         //Get data from view model
         setChildrenPosts();
 
@@ -217,6 +220,10 @@ public class StoryBunchFragment extends Fragment {
         MarginLayoutParams viewPagerMarginParams = (MarginLayoutParams)binding.postsViewPager.getLayoutParams();
         viewPagerMarginParams.bottomMargin = squareLength;
         binding.postsViewPager.setLayoutParams(viewPagerMarginParams);
+
+        ViewGroup.LayoutParams recyclerViewLayoutParams = binding.layoutBotSheet.thumbnailsRecyclerView.getLayoutParams();
+        recyclerViewLayoutParams.height = squareLength;
+        binding.layoutBotSheet.thumbnailsRecyclerView.setLayoutParams(recyclerViewLayoutParams);
 
         //Below are methods that need squareLength
         initializeRecyclerView(squareLength);

@@ -84,23 +84,6 @@ public class BottomSheetFragment extends Fragment {
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
-
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
                 LinearLayout tabLayout = (LinearLayout) tab.getCustomView();
                 tabLayout.findViewById(R.id.icon_container).setBackground(getResources().getDrawable(R.drawable.tab_indicator));
             }
@@ -126,7 +109,7 @@ public class BottomSheetFragment extends Fragment {
                         tabBinding.iconBg.setBackgroundResource(R.drawable.clock_30__3_);
                         break;
                     case 1:
-                        tabBinding.iconBg.setBackgroundResource(R.drawable.short_vid_30);
+                        tabBinding.iconBg.setBackgroundResource(R.drawable.ic_goals);
                         break;
                     case 2:
                         tabBinding.iconBg.setBackgroundResource(R.drawable.long_vid_30);
@@ -135,7 +118,7 @@ public class BottomSheetFragment extends Fragment {
                         tabBinding.iconBg.setBackgroundResource(R.drawable.pictures_30);
                         break;
                     case 4:
-                        tabBinding.iconBg.setBackgroundResource(R.drawable.favorites_30);
+                        tabBinding.iconBg.setBackgroundResource(R.drawable.short_vid_30);
                         break;
                     default:
                 }

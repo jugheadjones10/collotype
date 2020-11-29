@@ -20,7 +20,7 @@ import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.app.tiktok.R
 import com.app.tiktok.app.MyApp
 import com.app.tiktok.databinding.IncludePriceTagBinding
-import com.app.tiktok.databinding.IncludeProcessPostBinding
+import com.app.tiktok.databinding.ItemProcessPostBinding
 import com.app.tiktok.model.StoriesDataModel
 import com.app.tiktok.ui.main.viewmodel.MainViewModel
 import com.app.tiktok.ui.user.UserDataModel
@@ -48,7 +48,6 @@ import kotlinx.android.synthetic.main.layout_story_view.*
 //https://media.giphy.com/media/7JHtlG3rEkyLLZ1JCs/giphy.gif
 //Sample mp4 of my face
 private const val DEBUG_TAG = "Gestures"
-
 
 class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
     private var storyUrl: String? = null
@@ -115,7 +114,8 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
 
         playbackStateListener = PlaybackStateListener()
 
-        post_image.cameraDistance = 4000f
+        post_image.cameraDistance = 1000000000000000000000000000f
+        story_view_parent_constraint.cameraDistance = 1000000000000000000000000000f
 
         options_container.setOnClickListener {
             Log.d("volume", "options container on click listener")
@@ -284,6 +284,9 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
             context?.let {
                 Glide.with(it)
                     .load(processPostUrl)
+                    .thumbnail(0.25f)
+                    .override(50, 50)
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                     .into(post_image)
             }
 
@@ -293,7 +296,6 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
             view.isSelected = true
 
             Log.d("holyshit", "after " + view.isSelected);
-
 
             text_view_video_description.setTextOrHide(value = processCaption)
         }
@@ -349,7 +351,6 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
         if(storiesDataModel?.processPostIds != null && storiesDataModel?.processPostIds!!.size > 0){
 
             val processPostsLayout = layoutInflater.inflate(R.layout.layout_process_posts_scroll, story_view_parent_constraint, false)
-
             story_view_parent_constraint.addView(processPostsLayout)
 
 //            val processPostUrls: ArrayList<String> = ArrayList(storiesDataModel?.processPostUrls!!);
@@ -362,7 +363,7 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
 
                 val processPost : StoriesDataModel = storyBunchViewModel.getPost(processPostId)
 
-                val binding: IncludeProcessPostBinding = IncludeProcessPostBinding.inflate(
+                val binding: ItemProcessPostBinding = ItemProcessPostBinding.inflate(
                     getLayoutInflater(),
                     scroll_linear_layout,
                     false
@@ -378,11 +379,15 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
                 Glide.with(this)
                     .load(processPost.storyUrl)
                     .thumbnail(0.25f)
+                    .override(50, 50)
                     .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                     .into(binding.processPostImage)
 
                 scroll_linear_layout.addView(binding.root)
             }
+
+            scroll_linear_layout.getChildAt(0).isSelected = true
+
         }
 
         storyUrl = storiesDataModel?.storyUrl
@@ -399,18 +404,18 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
 
         } else if (storyUrlType.equals("mp4")) {
 
-//            post_image.visibility = View.GONE
-//            player_view_story.visibility = View.VISIBLE
-//
-//            //Loading video content from url
-//
-//            val simplePlayer = getPlayer()
-//
-//            setVolumeControl(VolumeState.OFF)
-//            player_view_story.player = simplePlayer
-//
-//            storyUrl = storiesDataModel?.storyUrl
-//            storyUrl?.let { prepareMedia(it) }
+            post_image.visibility = View.GONE
+            player_view_story.visibility = View.VISIBLE
+
+            //Loading video content from url
+
+            val simplePlayer = getPlayer()
+
+            setVolumeControl(VolumeState.OFF)
+            player_view_story.player = simplePlayer
+
+            storyUrl = storiesDataModel?.storyUrl
+            storyUrl?.let { prepareMedia(it) }
         }
 
         //image_view_group_pic?.loadCenterCropImageFromUrl(storiesDataModel?.storyThumbUrl)
@@ -450,17 +455,17 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
     }
 
     override fun onPause() {
-        //pauseVideo()
+        pauseVideo()
         super.onPause()
     }
 
     override fun onResume() {
-        //restartVideo()
+        restartVideo()
         super.onResume()
     }
 
     override fun onDestroy() {
-        //releasePlayer()
+        releasePlayer()
         super.onDestroy()
     }
 
@@ -495,7 +500,7 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
 //        simplePlayer!!.prepare()
 //
 //        player_view_story.player = simplePlayer
-
+//
 //        cacheDataSourceFactory = CacheDataSource.Factory(simpleCache,
 //            DefaultHttpDataSourceFactory(
 //                Util.getUserAgent(context,

@@ -3,20 +3,231 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.user.UserFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/user_recycler_view"
+    <data>
+        <variable
+            name="UserData"
+            type="com.app.tiktok.ui.user.UserDataModel" />
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="match_parent">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <com.google.android.material.appbar.AppBarLayout
+            android:fitsSystemWindows="true"
+            android:background="@color/colorTransparent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+           <com.google.android.material.appbar.MaterialToolbar
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               app:contentScrim="@color/colorWhite"
+               app:contentInsetStart="0dp"
+               app:layout_scrollFlags="scroll|snap">
+
+
+               <androidx.constraintlayout.widget.ConstraintLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:background="@color/colorWhite">
+
+                   <ImageView
+                       android:id="@+id/profile_background"
+                       android:layout_width="0dp"
+                       android:layout_height="0dp"
+                       android:adjustViewBounds="true"
+                       android:scaleType="centerCrop"
+                       app:layout_constraintBottom_toTopOf="@+id/dummy_view"
+                       app:layout_constraintEnd_toEndOf="parent"
+                       app:layout_constraintStart_toStartOf="parent"
+                       app:layout_constraintTop_toTopOf="parent" />
+
+                   <com.google.android.material.imageview.ShapeableImageView
+                       android:id="@+id/user_profile"
+                       android:layout_width="100dp"
+                       android:layout_height="100dp"
+                       android:layout_marginTop="25dp"
+                       android:adjustViewBounds="true"
+                       android:scaleType="centerCrop"
+                       app:layout_constraintEnd_toEndOf="parent"
+                       app:layout_constraintStart_toStartOf="parent"
+                       app:layout_constraintTop_toTopOf="parent"
+                       app:shapeAppearance="@style/RoundedImageViewShape"
+                       app:strokeColor="@color/colorBlack"
+                       app:strokeWidth="1dp" />
+
+                   <TextView
+                       android:id="@+id/username"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_marginTop="8dp"
+                       android:text="@{UserData.username}"
+                       android:textColor="@color/colorWhite"
+                       android:textSize="18sp"
+                       app:layout_constraintEnd_toEndOf="@+id/user_profile"
+                       app:layout_constraintStart_toStartOf="@+id/user_profile"
+                       app:layout_constraintTop_toBottomOf="@+id/user_profile" />
+
+                   <androidx.constraintlayout.widget.Guideline
+                       android:id="@+id/guideline2"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:orientation="vertical"
+                       app:layout_constraintGuide_percent="0.5" />
+
+                   <ImageView
+                       android:id="@+id/imageView2"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_marginEnd="5dp"
+                       app:layout_constraintEnd_toStartOf="@+id/facebook_ic"
+                       app:layout_constraintHorizontal_bias="0.5"
+                       app:layout_constraintHorizontal_chainStyle="packed"
+                       app:layout_constraintStart_toStartOf="parent"
+                       app:layout_constraintTop_toTopOf="@+id/facebook_ic"
+                       app:srcCompat="@drawable/ic_instagram" />
+
+                   <ImageView
+                       android:id="@+id/facebook_ic"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_marginStart="5dp"
+                       android:layout_marginTop="16dp"
+                       android:layout_marginEnd="5dp"
+                       app:layout_constraintEnd_toStartOf="@+id/imageView4"
+                       app:layout_constraintHorizontal_bias="0.5"
+                       app:layout_constraintStart_toEndOf="@+id/imageView2"
+                       app:layout_constraintTop_toBottomOf="@+id/username"
+                       app:srcCompat="@drawable/ic_facebook" />
+
+                   <View
+                       android:id="@+id/dummy_view"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_marginTop="16dp"
+                       app:layout_constraintEnd_toEndOf="parent"
+                       app:layout_constraintStart_toStartOf="parent"
+                       app:layout_constraintTop_toBottomOf="@id/facebook_ic" />
+
+                   <ImageView
+                       android:id="@+id/imageView4"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_marginLeft="5dp"
+                       app:layout_constraintEnd_toEndOf="parent"
+                       app:layout_constraintHorizontal_bias="0.5"
+                       app:layout_constraintStart_toEndOf="@+id/facebook_ic"
+                       app:layout_constraintTop_toTopOf="@+id/facebook_ic"
+                       app:srcCompat="@drawable/chat" />
+
+
+                   <TextView
+                       android:id="@+id/followers_count"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="@{Long.toString(UserData.followersCount)}"
+                       android:textColor="@android:color/holo_purple"
+                       android:textSize="20sp"
+                       android:textStyle="bold"
+                       app:layout_constraintEnd_toStartOf="@+id/guideline2"
+                       app:layout_constraintHorizontal_chainStyle="spread"
+                       app:layout_constraintStart_toStartOf="parent"
+                       app:layout_constraintTop_toTopOf="@+id/views_count" />
+
+                   <TextView
+                       android:id="@+id/follower_label"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Followers"
+                       android:textColor="@color/colorGray"
+                       android:textSize="10sp"
+                       app:layout_constraintEnd_toEndOf="@id/followers_count"
+                       app:layout_constraintStart_toStartOf="@id/followers_count"
+                       app:layout_constraintTop_toBottomOf="@+id/followers_count" />
+
+                   <TextView
+                       android:id="@+id/views_count"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_marginTop="16dp"
+                       android:text="@{Long.toString(UserData.viewsCount)}"
+                       android:textColor="@android:color/holo_purple"
+                       android:textSize="20sp"
+                       android:textStyle="bold"
+                       app:layout_constraintEnd_toStartOf="@+id/guideline2"
+                       app:layout_constraintStart_toStartOf="@+id/guideline2"
+                       app:layout_constraintTop_toBottomOf="@id/dummy_view" />
+
+                   <TextView
+                       android:id="@+id/views_label"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_marginBottom="16dp"
+                       android:text="Views"
+                       android:textColor="@color/colorGray"
+                       android:textSize="10sp"
+                       app:layout_constraintBottom_toBottomOf="parent"
+                       app:layout_constraintEnd_toEndOf="@id/views_count"
+                       app:layout_constraintStart_toStartOf="@id/views_count"
+                       app:layout_constraintTop_toBottomOf="@+id/views_count" />
+
+                   <TextView
+                       android:id="@+id/posts_count"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="@{Long.toString(UserData.postsCount)}"
+                       android:textColor="@android:color/holo_purple"
+                       android:textSize="20sp"
+                       android:textStyle="bold"
+                       app:layout_constraintEnd_toEndOf="parent"
+                       app:layout_constraintStart_toStartOf="@+id/guideline2"
+                       app:layout_constraintTop_toTopOf="@+id/views_count" />
+
+                   <TextView
+                       android:id="@+id/posts_label"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Posts"
+                       android:textColor="@color/colorGray"
+                       android:textSize="10sp"
+                       app:layout_constraintEnd_toEndOf="@id/posts_count"
+                       app:layout_constraintStart_toStartOf="@id/posts_count"
+                       app:layout_constraintTop_toBottomOf="@+id/posts_count" />
+
+               </androidx.constraintlayout.widget.ConstraintLayout>
+           </com.google.android.material.appbar.MaterialToolbar>
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tab_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorWhite"
+                app:tabTextAppearance="@style/TabTextAppearance"
+                app:tabIndicatorColor="@android:color/holo_purple"
+                app:tabIndicatorHeight="2dp"
+                app:tabIndicatorFullWidth="false"
+                app:tabGravity="center" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.viewpager2.widget.ViewPager2
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:id="@+id/bottom_sheet_pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+<!--    <androidx.recyclerview.widget.RecyclerView-->
+<!--        android:id="@+id/user_recycler_view"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent" />-->
+
 </layout>

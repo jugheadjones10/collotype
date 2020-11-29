@@ -10,6 +10,10 @@
         <item name="android:windowTranslucentStatus">true</item>
     </style>
 
+    <style name="TabTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="textAllCaps">false</item>
+    </style>
+
     <style name="RoundedImageViewShape">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
@@ -17,7 +21,7 @@
 
     <style name="RoundedRectangularImageViewShape">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">15%</item>
+        <item name="cornerSize">10%</item>
     </style>
 
 </resources>

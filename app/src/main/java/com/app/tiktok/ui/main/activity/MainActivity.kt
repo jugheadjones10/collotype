@@ -34,6 +34,8 @@ class MainActivity: BaseActivity(), NavController.OnDestinationChangedListener {
         val navController = findNavController(R.id.nav_host_fragment)
         nav_view.setupWithNavController(navController)
 
+        container.cameraDistance = 1000000000000000000000000000f
+
         navController.addOnDestinationChangedListener(this)
     }
 

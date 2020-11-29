@@ -39,6 +39,8 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
         super.onViewCreated(view, savedInstanceState)
 
         viewPager2 = view_pager_stories
+        viewPager2?.cameraDistance = 1000000000000000000000000000f
+        home_fragment_parent.cameraDistance = 1000000000000000000000000000f
         viewPager2?.setPageTransformer(VerticalCubeTransformer())
         viewPager2?.offscreenPageLimit = 4
 
