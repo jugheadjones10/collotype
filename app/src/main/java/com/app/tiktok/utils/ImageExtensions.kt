@@ -10,9 +10,6 @@ import com.google.android.material.imageview.ShapeableImageView
 
 
 fun ShapeableImageView.loadImageFromUrl(imageUrl: String?){
-//    Glide.with(this)
-//        .load(imageUrl)
-//        .into(this)
 
     Glide.with(this)
         .load(imageUrl)

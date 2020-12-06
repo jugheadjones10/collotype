@@ -7,12 +7,12 @@ import androidx.annotation.Nullable;
 import androidx.core.view.GestureDetectorCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -23,31 +23,32 @@ import android.view.ViewTreeObserver;
 
 import com.app.tiktok.R;
 import com.app.tiktok.databinding.FragmentAllGoalsBinding;
-import com.app.tiktok.databinding.FragmentAllPostsBinding;
-import com.app.tiktok.model.StoriesDataModel;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.app.tiktok.model.Post;
+import com.app.tiktok.model.User;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class AllGoalsFragment extends Fragment {
 
     private static final String KEY_PARENT_POST = "KEY_PARENT_POST";
+    private static final String KEY_GALLERY_ID = "KEY_GALLERY_ID";
 
-    private StoriesDataModel parentPost;
+    private String position;
+    private long galleryId;
     private FragmentAllGoalsBinding binding;
     private AllGoalsAdapter allGoalsAdapter;
-    private StoryBunchViewModel viewModel;
+    private PostsViewModel postsViewModel;
     private NavController navController;
 
     public AllGoalsFragment() {
         // Required empty public constructor
     }
 
-    public static AllGoalsFragment newInstance(StoriesDataModel parentPost) {
+    public static AllGoalsFragment newInstance(String position, long galleryId) {
         AllGoalsFragment fragment = new AllGoalsFragment();
         Bundle args = new Bundle();
-        args.putParcelable(KEY_PARENT_POST, parentPost);
+        args.putString(KEY_PARENT_POST, position);
+        args.putLong(KEY_GALLERY_ID, galleryId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -57,11 +58,12 @@ public class AllGoalsFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            parentPost = getArguments().getParcelable(KEY_PARENT_POST);
+            position = getArguments().getString(KEY_PARENT_POST);
+            galleryId = getArguments().getLong(KEY_GALLERY_ID);
         }
 
         navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
-        viewModel = new ViewModelProvider(getActivity()).get(StoryBunchViewModel.class);
+        postsViewModel = new ViewModelProvider(requireActivity()).get(position, PostsViewModel.class);
     }
 
     @Override
@@ -69,17 +71,29 @@ public class AllGoalsFragment extends Fragment {
                              Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_all_goals, container, false);
 
+        getProcessPosts();
+
         return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         Log.d("observe", "All Goals Fragment created");
-        listenForWidth();
         initializeNestedScrollViewBehaviour();
     }
 
-    private void listenForWidth(){
+    private void getProcessPosts() {
+        postsViewModel.getProcessPosts(galleryId).observe(getViewLifecycleOwner(), new Observer<List<List<Post>>>() {
+            @Override
+            public void onChanged(List<List<Post>> processPosts) {
+                if (processPosts != null) {
+                    listenForWidth(processPosts);
+                }
+            }
+        });
+    }
+
+    private void listenForWidth(List<List<Post>> processPosts){
         final ViewTreeObserver observer = binding.allGoalsRecyclerView.getViewTreeObserver();
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -87,7 +101,7 @@ public class AllGoalsFragment extends Fragment {
                 // I don't understand onGlobalLayout. What exactly does it listen for?
                 int squareLength = binding.allGoalsRecyclerView.getWidth()/4;
 
-                initializeRecyclerView(squareLength);
+                initializeRecyclerView(squareLength, processPosts);
 
                 ViewTreeObserver innerObserver = binding.allGoalsRecyclerView.getViewTreeObserver();
                 innerObserver.removeOnGlobalLayoutListener(this);
@@ -96,151 +110,16 @@ public class AllGoalsFragment extends Fragment {
 
     }
 
-    private void initializeRecyclerView(int squareLength){
-        List<StoriesDataModel> postsWithProcessPosts =  viewModel.getPostsWithProcessPosts(parentPost.getStoryId());
-
-        allGoalsAdapter = new AllGoalsAdapter(getContext(), squareLength, postsWithProcessPosts, parentPost, viewModel, navController);
-        binding.allGoalsRecyclerView.setAdapter(allGoalsAdapter);
-    }
-
-//    int startPoint = -1;
-//    private void initializeNestedScrollViewBehaviour(){
-//
-//        binding.allGoalsRecyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
-//            @Override
-//            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
-//                Log.d("bushman", "" + e.getAction());
-//
-//                switch(e.getAction()) {
-//
-//                    case (MotionEvent.ACTION_DOWN):
-//                        Log.d("fuck", "DOWN");
-//                        //viewModel.setDraggable(false);
-//                       // binding.allGoalsRecyclerView.requestDisallowInterceptTouchEvent(false);
-//                        break;
-//                    case (MotionEvent.ACTION_MOVE): {
-//                        Log.d("fuck", "MOVE");
-//                        break;
-//                    }
-//                    case (MotionEvent.ACTION_CANCEL):
-//                    case (MotionEvent.ACTION_UP):
-//                        break;
-//                }
-//                return false;
-//            }
-//
-//            @Override
-//            public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
-//
-//            }
-//
-//            @Override
-//            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-//
-//            }
-//        });
-//
-//
-//        GestureListener gestureListener = new GestureListener(binding.allGoalsRecyclerView);
-//        GestureDetectorCompat myGestureListener = new GestureDetectorCompat(getContext(), gestureListener);
-////        binding.allGoalsRecyclerView.setOnTouchListener(new View.OnTouchListener() {
-////            @Override
-////            public boolean onTouch(View v, MotionEvent event) {
-////                myGestureListener.onTouchEvent(event);
-////                return false;
-////            }
-////        });
-//
-//    }
-
-    class GestureListener extends GestureDetector.SimpleOnGestureListener{
-        RecyclerView targetRecyclerView;
-
-        GestureListener(RecyclerView targetRecyclerView){
-            this.targetRecyclerView = targetRecyclerView;
-        }
-
-        @Override
-        public boolean onDown(MotionEvent e) {
-            Log.d("shawn","Gesture onDown");
-//            targetRecyclerView.requestDisallowInterceptTouchEvent(true);
-            return super.onDown(e);
-        }
-
-//        @Override
-//        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-//            Log.d("bushman","onFLing");
-//            if (Math.abs(velocityX) > Math.abs(velocityY)) {
-//                Log.d("bushman","onFLin ---- velX > velY");
-//                // Detected a horizontal scroll, prevent the viewpager from switching tabs
-//                targetRecyclerView.requestDisallowInterceptTouchEvent(true);
-//            }else if(Math.abs(velocityY) > Math.abs(velocityX)){
-//                Log.d("bushman","onFLin ---- velY > velX");
-//                targetRecyclerView.requestDisallowInterceptTouchEvent(false);
-//            }
-//            return super.onFling(e1, e2, velocityX, velocityY);
-//        }
-
-        @Override
-        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-
-            if(distanceY > 0){
-                Log.d("shawn", "Finger going up up up");
-                if(viewModel.getDraggable().getValue()){
-                    Log.d("shawn", "Finger going up up up : set to NOT draggable");
-                    viewModel.setDraggable(false);
+    private void initializeRecyclerView(int squareLength, List<List<Post>> processPosts){
+        postsViewModel.getMembers().observe(getViewLifecycleOwner(), new Observer<List<User>>() {
+            @Override
+            public void onChanged(List<User> members) {
+                if(members != null){
+                    allGoalsAdapter = new AllGoalsAdapter(getContext(), squareLength, processPosts, members, navController);
+                    binding.allGoalsRecyclerView.setAdapter(allGoalsAdapter);
                 }
             }
-
-            //Distance Y negative means finger going down
-            if(distanceY < 0){
-                Log.d("shawn", "Finger going down down down");
-                if(viewModel.getDraggable().getValue() && targetRecyclerView.getScrollY() != 0){
-                    Log.d("shawn", "Finger going down down down: set to NOT draggable");
-                    viewModel.setDraggable(false);
-                }
-
-                Log.d("observe", "Target recycler view Get Scroll Y" + distanceY);
-//                Log.d("shawn", "Target recycler view can scroll vertically" + targetRecyclerView.canScrollVertically(-1));
-
-                if(!viewModel.getDraggable().getValue() && !targetRecyclerView.canScrollVertically(-1)){
-                    Log.d("shawn", "Finger going down down down: set TO DRAGGABLE");
-                    viewModel.setDraggable(true);
-                }
-            }
-
-
-            if(distanceY < 0 && targetRecyclerView.getScrollY() == 0){
-               // Log.d("shawn", "me need disabled");
-//                viewModel.setDraggable(true);
-            }else{
-//                viewModel.setDraggable(false);
-            }
-
-            //Distance Y positive means finger gonig up
-
-//            if(distanceY > 0){
-//                targetRecyclerView.requestDisallowInterceptTouchEvent(false);
-//            }
-
-//            Log.d("bushman","onScroll");
-//            if (Math.abs(distanceX) > Math.abs(distanceY)) {
-//                Log.d("bushman","onScroll ---- distanceX > distanceY");
-//                // Detected a horizontal scroll, prevent the viewpager from switching tabs
-//                targetRecyclerView.requestDisallowInterceptTouchEvent(true);
-//            }else if(Math.abs(distanceY) > Math.abs(distanceX)){
-//                Log.d("bushman","onScroll ---- distanceY > distanceX");
-//                targetRecyclerView.requestDisallowInterceptTouchEvent(false);
-//            }
-//            else if (Math.abs(distanceY) > Y_BUFFER) {
-//                // Detected a vertical scroll of large enough magnitude so allow the the event
-//                // to propagate to ancestor views to allow vertical scrolling.  Without the buffer
-//                // a tab swipe would be triggered while holding finger still while glow effect was
-//                // visible.
-//                mRecyclerView.requestDisallowInterceptTouchEvent(false);
-//            }
-            return super.onScroll(e1, e2, distanceX, distanceY);
-        }
+        });
     }
 
     float y1 = 0;
@@ -255,7 +134,7 @@ public class AllGoalsFragment extends Fragment {
 
                 switch(e.getAction()) {
                     case (MotionEvent.ACTION_DOWN):
-                        viewModel.setDraggable(false);
+                        postsViewModel.setDraggable(false);
                         y1 = e.getY();
                         break;
                     case (MotionEvent.ACTION_MOVE): {
@@ -285,7 +164,7 @@ public class AllGoalsFragment extends Fragment {
 //                            viewModel.setDraggable(true);
 //                        }else{
 //
-                            viewModel.setDraggable(false);
+                            //viewModel.setDraggable(false);
 //                        }
 
                         break;
@@ -293,7 +172,7 @@ public class AllGoalsFragment extends Fragment {
                     case (MotionEvent.ACTION_CANCEL):
                     case (MotionEvent.ACTION_UP):
                         Log.d("cancelled", "I got cancelled");
-                        viewModel.setDraggable(true);
+                        postsViewModel.setDraggable(true);
 
                         break;
                 }
@@ -310,56 +189,6 @@ public class AllGoalsFragment extends Fragment {
 
             }
         });
-
-
-//        binding.allGoalsRecyclerView.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View view, MotionEvent motionEvent) {
-//
-//                switch(motionEvent.getAction()) {
-//                    case (MotionEvent.ACTION_DOWN):
-//                        viewModel.setDraggable(false);
-//                        y1 = motionEvent.getY();
-//                        break;
-//                    case (MotionEvent.ACTION_MOVE): {
-//                        y2 = motionEvent.getY();
-//
-//                        dy = y2 - y1;
-//
-//                        y1 = y2;
-//
-//                        // Use dx and dy to determine the direction of the move
-//                        if (dy > 0)
-//                            direction = "down";
-//                        else
-//                            direction = "up";
-//
-////                        Log.d("scroller", direction);
-////                        Log.d("scroller", "" + view.getScrollY());
-//
-//                        if (direction.equals("up") || (direction.equals("down") && view.getScrollY() != 0)) {
-//                            Log.d("cheez", "setDraggable false");
-//
-//                            viewModel.setDraggable(false);
-//                        }
-//
-//                        if(direction.equals("down") && view.getScrollY() == 0){
-//                            Log.d("cheez", "setDraggable true");
-//
-//                            viewModel.setDraggable(true);
-//                        }
-//
-//                        break;
-//                    }
-//                    case (MotionEvent.ACTION_UP):
-//                        //viewModel.setDraggable(true);
-//
-//                        break;
-//                }
-//                return false;
-//
-//            }
-//        });
 
     }
 }

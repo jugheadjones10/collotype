@@ -1,5 +1,7 @@
 package com.app.tiktok.ui.user;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -15,25 +17,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.app.tiktok.R;
 import com.app.tiktok.databinding.FragmentUserBinding;
-import com.app.tiktok.model.StoriesDataModel;
-import com.app.tiktok.ui.story.StoryBunchViewModel;
+import com.app.tiktok.model.Post;
+import com.app.tiktok.model.User;
+import com.app.tiktok.ui.story.UtilViewModel;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
-import java.util.List;
+import java.util.Random;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class UserFragment extends Fragment {
 
-    private UserViewModel userViewModel;
-    private StoryBunchViewModel storyBunchViewModel;
-    private UserAdapter userAdapter;
+    private UtilViewModel utilViewModel;
     private FragmentUserBinding binding;
-    private UserDataModel userData;
+    private User userData;
     private NavController navController;
 
     @Override
@@ -41,16 +42,15 @@ public class UserFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_user, container, false);
 
-        //View Model
-        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
-        storyBunchViewModel = new ViewModelProvider(getActivity()).get(StoryBunchViewModel.class);
-
         navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
 
         //Get Argument
         if(getArguments() != null){
-            userData = UserFragmentArgs.fromBundle(getArguments()).getUserDataModel();
+            userData = UserFragmentArgs.fromBundle(getArguments()).getUser();
         }
+
+//        //View Model
+        utilViewModel = new ViewModelProvider(requireActivity()).get(UtilViewModel.class);
 
         return binding.getRoot();
     }
@@ -59,18 +59,21 @@ public class UserFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        setUpToolbar();
+
         binding.setUserData(userData);
         Glide.with(this)
-                .load(userData.getUserProfilePicUrl())
+                .load(userData.getUrl())
                 .thumbnail(0.25f)
                 .override(100, 100)
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .into(binding.userProfile);
 
-        StoriesDataModel coverStory = userViewModel.getChildrenPosts(userData.getGalleries().get(0)).get(0);
+        Random rand = new Random();
+        Post coverStory = utilViewModel.getRandomUserPost(userData.getGalleries().get(rand.nextInt(userData.getGalleries().size())));
 
         Glide.with(this)
-                .load(coverStory.getStoryUrl())
+                .load(coverStory.getUrl())
                 .thumbnail(0.25f)
                 .override(100, 100)
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
@@ -97,6 +100,22 @@ public class UserFragment extends Fragment {
                 }
             }
         ).attach();
+    }
+
+    private void setUpToolbar(){
+        binding.upButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                requireActivity().onBackPressed();
+            }
+        });
+
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                navController.navigateUp();
+            }
+        });
     }
 
     private void initializeViewPager(){

@@ -16,14 +16,14 @@ import android.widget.LinearLayout
 import androidx.core.view.GestureDetectorCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.swiperefreshlayout.widget.CircularProgressDrawable
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.app.tiktok.R
 import com.app.tiktok.app.MyApp
 import com.app.tiktok.databinding.IncludePriceTagBinding
 import com.app.tiktok.databinding.ItemProcessPostBinding
-import com.app.tiktok.model.StoriesDataModel
-import com.app.tiktok.ui.main.viewmodel.MainViewModel
-import com.app.tiktok.ui.user.UserDataModel
+import com.app.tiktok.model.*
+import com.app.tiktok.ui.main.MainViewModel
 import com.app.tiktok.utils.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -37,23 +37,18 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import com.google.android.material.imageview.ShapeableImageView
-import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_story_bunch.*
 import kotlinx.android.synthetic.main.include_price_tag.*
+import kotlinx.android.synthetic.main.layout_bottom_sheet.*
 import kotlinx.android.synthetic.main.layout_process_posts_scroll.*
 import kotlinx.android.synthetic.main.layout_story_view.*
 
-
-//https://thumbsnap.com/i/tn1tP9To.mp4
-//https://media.giphy.com/media/7JHtlG3rEkyLLZ1JCs/giphy.gif
-//Sample mp4 of my face
-private const val DEBUG_TAG = "Gestures"
-
 class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
-    private var storyUrl: String? = null
-    private var storiesDataModel: StoriesDataModel? = null
-    private var parentPost: StoriesDataModel? = null
     private var gestureListener: MyGestureListener? = null
+
+    private lateinit var post: Post
+    private lateinit var gallery: Gallery
+    private lateinit var storyUrl: String
 
     private var simplePlayer: SimpleExoPlayer? = null
     private val simpleCache = MyApp.simpleCache
@@ -90,23 +85,21 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
     }
 
     companion object {
-        fun newInstance(storiesDataModel: StoriesDataModel, parentPost: StoriesDataModel) = StoryViewFragment()
+        fun newInstance(post: Post, gallery: Gallery) = StoryViewFragment()
             .apply {
                 arguments = Bundle().apply {
-                    putParcelable(Constants.KEY_STORY_DATA, storiesDataModel)
-                    putParcelable(Constants.KEY_PARENT_STORY, parentPost)
+                    putParcelable(Constants.KEY_POST_DATA, post)
+                    putParcelable(Constants.KEY_GALLERY_DATA, gallery)
                 }
             }
     }
 
 
-    private val viewModel by activityViewModels<MainViewModel>()
-    private val storyBunchViewModel by activityViewModels<StoryBunchViewModel>()
+    private val utilViewModel by activityViewModels<UtilViewModel>()
+    private lateinit var postViewModel: PostViewModel
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        Log.d("lifecyclecheck", "StoryViewFragment onCreateView")
 
         if(parentFragment is StoryBunchFragment){
             parent = parentFragment as StoryBunchFragment
@@ -122,34 +115,31 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
             toggleVolume()
         }
 
-        if(savedInstanceState == null){
-            storiesDataModel = arguments?.getParcelable(Constants.KEY_STORY_DATA)
-            parentPost = arguments?.getParcelable(Constants.KEY_PARENT_STORY)
-        }else{
-            storiesDataModel = savedInstanceState.getParcelable("storiesDataModel")
-            parentPost = savedInstanceState.getParcelable("parentPost")
+        arguments?.let {
+            post = it.getParcelable(Constants.KEY_POST_DATA)!!
+            gallery = it.getParcelable(Constants.KEY_GALLERY_DATA)!!
         }
+
+        //Initialize View Model
+        postViewModel = ViewModelProvider(requireActivity()).get(
+            post.id.toString(),
+            PostViewModel::class.java
+        )
 
         gestureListener = MyGestureListener(parent)
         val myGestureListener = GestureDetectorCompat(context, gestureListener)
+
         options_container.setOnTouchListener(OnTouchListener { view, motionEvent ->
             myGestureListener.onTouchEvent(motionEvent)
             false
         })
 
         //This thing not working
-        if(parent?.top_bar_container?.translationY != 0f){
+        if(parent?.inflatedTopBar?.translationY != 0f){
             gestureListener!!.moveBottomsOff()
         }
 
         setData()
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        Log.d("lifecyclecheck", "ONSAVEDINSTANCESTATE IN STORYVIEWFRAGMENT")
-        outState.putParcelable("storiesDataModel", storiesDataModel)
-        outState.putParcelable("parentPost", parentPost)
     }
 
     inner class MyGestureListener constructor(val parentFragment: StoryBunchFragment?) : GestureDetector.SimpleOnGestureListener() {
@@ -174,10 +164,10 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
 
         override fun onDoubleTap(event: MotionEvent): Boolean {
 
-            if(parentFragment?.top_bar_container?.translationY == 0f){
+            if(parentFragment?.inflatedTopBar?.translationY == 0f){
 
-                val topBarAnim = ObjectAnimator.ofFloat(parentFragment?.top_bar_container, "translationY", -300f)
-                val bottomPostsAnim = ObjectAnimator.ofFloat(parentFragment?.layout_bot_sheet, "translationY", 300f)
+                val topBarAnim = ObjectAnimator.ofFloat(parentFragment.inflatedTopBar, "translationY", -300f)
+                val bottomPostsAnim = ObjectAnimator.ofFloat(parentFragment.layout_bot_sheet, "translationY", 300f)
 
                 moveBottomsOff()
                 AnimatorSet().apply {
@@ -204,7 +194,7 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
                 AnimatorSet().apply {
                     duration = 600
                     playTogether(
-                        create0fAnimator(parentFragment?.top_bar_container),
+                        create0fAnimator(parentFragment?.inflatedTopBar),
                         create0fAnimator(parentFragment?.layout_bot_sheet),
                         create0fAnimator(recycler_view_options),
                         create0fAnimator(caption_profile),
@@ -306,7 +296,7 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
         //Own self is added so it is displayed at the bottom
         Log.d("lag", "Setting data in story view fragment")
 
-        if(storiesDataModel?.productName != null){
+        if(post.products.size > 0){
             //Adding drag functionality
             options_container.setOnDragListener(dragListen)
 
@@ -317,14 +307,16 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
             )
             options_container.addView(binding.root)
 
-            binding.apply {
-                productName = storiesDataModel?.productName
-                productPrice = storiesDataModel?.productPrice
-            }
-
-            product_thumb.loadImageFromUrl(storiesDataModel?.productThumb)
+            postViewModel.getProducts(post).observe(viewLifecycleOwner, Observer<List<Product>>{ products ->
+                binding.apply {
+                    productName = products.get(0).name
+                    productPrice = products.get(0).price
+                }
+                product_thumb.loadImageFromUrl(products.get(0).url)
+            })
 
             val PRICETAG_TAG = "price tag"
+
             val priceTag = binding.root.apply {
                 tag = PRICETAG_TAG
                 setOnLongClickListener { v: View ->
@@ -348,110 +340,97 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
 
         }
 
-        if(storiesDataModel?.processPostIds != null && storiesDataModel?.processPostIds!!.size > 0){
+        if(post.processPosts.size > 0){
+
+            proces_title.text = post.processTitle
 
             val processPostsLayout = layoutInflater.inflate(R.layout.layout_process_posts_scroll, story_view_parent_constraint, false)
             story_view_parent_constraint.addView(processPostsLayout)
 
-//            val processPostUrls: ArrayList<String> = ArrayList(storiesDataModel?.processPostUrls!!);
-//            processPostUrls.add(0, storiesDataModel?.storyUrl!!)
-//
-//            val processPostCaptions: ArrayList<String> = ArrayList(storiesDataModel?.processPostCaptions!!);
-//            processPostCaptions.add(0, storiesDataModel?.storyDescription!!)
+            postViewModel.getProcessPosts(post).observe(viewLifecycleOwner, Observer<List<Post>>{ processPosts ->
 
-            for(processPostId in storiesDataModel?.processPostIds!!){
+                for(processPost in processPosts){
 
-                val processPost : StoriesDataModel = storyBunchViewModel.getPost(processPostId)
+                    val binding: ItemProcessPostBinding = ItemProcessPostBinding.inflate(
+                        getLayoutInflater(),
+                        scroll_linear_layout,
+                        false
+                    )
 
-                val binding: ItemProcessPostBinding = ItemProcessPostBinding.inflate(
-                    getLayoutInflater(),
-                    scroll_linear_layout,
-                    false
-                )
+                    binding.apply {
+                        processCaption = processPost.caption
+                        processPostUrl = processPost.url
+                        onProcessPostClicked = OnProcessPostClicked()
+                    }
 
-                binding.apply {
-                    processCaption = processPost.storyDescription
-                    processPostUrl = processPost.storyUrl
-                    onProcessPostClicked = OnProcessPostClicked()
+                    //binding.processPostImage.loadImageFromUrl(processPostUrlString)
+                    Glide.with(this)
+                        .load(processPost.url)
+                        .thumbnail(0.25f)
+                        .override(50, 50)
+                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                        .into(binding.processPostImage)
+
+                    scroll_linear_layout.addView(binding.root)
+
                 }
 
-                //binding.processPostImage.loadImageFromUrl(processPostUrlString)
-                Glide.with(this)
-                    .load(processPost.storyUrl)
-                    .thumbnail(0.25f)
-                    .override(50, 50)
-                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                    .into(binding.processPostImage)
+                scroll_linear_layout.getChildAt(0).isSelected = true
 
-                scroll_linear_layout.addView(binding.root)
-            }
-
-            scroll_linear_layout.getChildAt(0).isSelected = true
+            })
 
         }
 
-        storyUrl = storiesDataModel?.storyUrl
-        val storyUrlType = Utility.extractS3URLfileType(storyUrl!!)
+        storyUrl = post.url
+        val storyUrlType = Utility.extractS3URLfileType(storyUrl)
 
-        if (storyUrlType.equals("jpg") || storyUrlType.equals("gif") || storyUrlType.equals("jpeg") || storyUrlType.equals("png")) {
+        if (Utility.isImage(storyUrlType)) {
             post_image.visibility = View.VISIBLE
             player_view_story.visibility = View.GONE
 
             //Loading image content from url
             post_image?.loadImageFromUrl(storyUrl)
 
-            Log.d("lag", "Loaded image in story view fragment")
-
-        } else if (storyUrlType.equals("mp4")) {
+        } else {
 
             post_image.visibility = View.GONE
             player_view_story.visibility = View.VISIBLE
 
             //Loading video content from url
-
             val simplePlayer = getPlayer()
 
             setVolumeControl(VolumeState.OFF)
             player_view_story.player = simplePlayer
 
-            storyUrl = storiesDataModel?.storyUrl
-            storyUrl?.let { prepareMedia(it) }
+            //post.url.let { prepareMedia(it) }
+            prepareMedia(storyUrl)
         }
 
         //image_view_group_pic?.loadCenterCropImageFromUrl(storiesDataModel?.storyThumbUrl)
-        text_view_video_description.setTextOrHide(value = storiesDataModel?.storyDescription)
+        text_view_video_description.setTextOrHide(value = post.caption)
 
-        val user: UserDataModel = storyBunchViewModel.getUser(parentPost?.memberIds?.get(0)!!)
+        var user: User
+        if(gallery.members.size > 0){
+            user = utilViewModel.getUser(gallery.members.get(0))
+        }else{
+            user = User(
+                125,
+                "https://collotype.s3.ap-northeast-2.amazonaws.com/squatteamx/members/07+James+Law/07.jpg",
+                "Jack Mueller",
+                arrayListOf(-1L),
+                -1L,
+                -1L,
+                -1L
+            )
+        }
         username.text = user.username
 
         image_view_option_like_title?.text =
-            storiesDataModel?.likesCount?.formatNumberAsReadableFormat()
+            post.likesCount.formatNumberAsReadableFormat()
         image_view_option_comment_title?.text =
-            storiesDataModel?.commentsCount?.formatNumberAsReadableFormat()
+            post.commentsCount.formatNumberAsReadableFormat()
 
-        (caption_profile as ShapeableImageView).loadImageFromUrl(user.userProfilePicUrl)
-
-
-        //group_name?.text =storiesDataModel?.groupName
-        //followers_count?.text = storiesDataModel?.followersCount?.formatNumberAsReadableFormat()
-
-
-//        text_view_account_handle.setTextOrHide(value = storiesDataModel?.userName)
-//        text_view_video_description.setTextOrHide(value = storiesDataModel?.storyDescription)
-//        text_view_music_title.setTextOrHide(value = storiesDataModel?.musicCoverTitle)
-//
-//        image_view_option_comment_title?.text = storiesDataModel?.commentsCount?.formatNumberAsReadableFormat()
-//        image_view_option_like_title?.text = storiesDataModel?.likesCount?.formatNumberAsReadableFormat()
-//
-//        image_view_profile_pic?.loadCenterCropImageFromUrl(storiesDataModel?.userProfilePicUrl)
-//
-//        text_view_music_title.isSelected = true
-//
-//        val simplePlayer = getPlayer()
-//        player_view_story.player = simplePlayer
-//
-//        storyUrl = storiesDataModel?.storyUrl
-//        storyUrl?.let { prepareMedia(it) }
+        (caption_profile as ShapeableImageView).loadImageFromUrl(user.url)
     }
 
     override fun onPause() {
@@ -460,6 +439,12 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
     }
 
     override fun onResume() {
+
+        val storyUrlType = Utility.extractS3URLfileType(storyUrl)
+        if (!Utility.isImage(storyUrlType)) {
+            setVolumeControl(VolumeState.ON)
+        }
+
         restartVideo()
         super.onResume()
     }
@@ -585,7 +570,7 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
 
     private fun restartVideo() {
         if (simplePlayer == null) {
-            storyUrl?.let { prepareMedia(it) }
+            storyUrl.let { prepareMedia(it) }
         } else {
             simplePlayer?.seekToDefaultPosition()
             simplePlayer?.playWhenReady = true

@@ -1,19 +1,14 @@
 package com.app.tiktok.ui.story;
 
-import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavBackStackEntry;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -22,16 +17,13 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.GridLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import com.app.tiktok.R;
 import com.app.tiktok.databinding.FragmentAllPostsBinding;
-import com.app.tiktok.databinding.FragmentBottomSheetBinding;
+import com.app.tiktok.model.Post;
 import com.app.tiktok.model.StoriesDataModel;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.android.material.tabs.TabLayout;
 
 import java.util.List;
 
@@ -44,18 +36,18 @@ public class AllPostsFragment extends Fragment {
 
     private static final String KEY_PARENT_POST = "KEY_PARENT_POST";
 
-    private StoriesDataModel parentPost;
+    private String position;
     private FragmentAllPostsBinding binding;
     private List<StoriesDataModel> childrenPosts;
-    private StoryBunchViewModel viewModel;
+    private PostsViewModel postsViewModel;
 
     public AllPostsFragment() {
     }
 
-    public static AllPostsFragment newInstance(StoriesDataModel parentPost) {
+    public static AllPostsFragment newInstance(String position) {
         AllPostsFragment fragment = new AllPostsFragment();
         Bundle args = new Bundle();
-        args.putParcelable(KEY_PARENT_POST, parentPost);
+        args.putString(KEY_PARENT_POST, position);
         fragment.setArguments(args);
         return fragment;
     }
@@ -64,12 +56,10 @@ public class AllPostsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            parentPost = getArguments().getParcelable(KEY_PARENT_POST);
+            position = getArguments().getString(KEY_PARENT_POST);
         }
 
-        viewModel = new ViewModelProvider(getActivity()).get(StoryBunchViewModel.class);
-
-        setChildrenPosts();
+        postsViewModel = new ViewModelProvider(requireActivity()).get(position, PostsViewModel.class);
     }
 
     @Override
@@ -77,30 +67,36 @@ public class AllPostsFragment extends Fragment {
                              Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_all_posts, container, false);
 
+        getPosts();
+
         return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setHeights();
         initializeNestedScrollViewBehaviour();
     }
 
-    private void setChildrenPosts(){
-        //Own self is added so it is displayed at the bottom
-        childrenPosts = viewModel.getDataList(parentPost.getStoryId());
-        childrenPosts.add(0, parentPost);
+    private void getPosts(){
+        postsViewModel.getPosts().observe(getViewLifecycleOwner(), new Observer<List<Post>>() {
+            @Override
+            public void onChanged(List<Post> posts) {
+                if(posts != null){
+                    setHeights(posts);
+                }
+            }
+        });
     }
 
-    private void setHeights(){
+    private void setHeights(List<Post> posts){
         final ViewTreeObserver observer = binding.nestedScrollView.getViewTreeObserver();
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
 
                 int squareLength = binding.postsGridLayout.getWidth()/4;
-                populatePosts(squareLength);
+                populatePosts(squareLength, posts);
 
                 ViewTreeObserver innerObserver = binding.nestedScrollView.getViewTreeObserver();
                 innerObserver.removeOnGlobalLayoutListener(this);
@@ -108,11 +104,11 @@ public class AllPostsFragment extends Fragment {
         });
     }
 
-    private void populatePosts(int squareLength){
+    private void populatePosts(int squareLength, List<Post> posts){
         LayoutInflater layoutInflator = getLayoutInflater();
 
-        for (int i = 0; i < childrenPosts.size(); i++) {
-            StoriesDataModel storiesDataModel = childrenPosts.get(i);
+        for (int i = 0; i < posts.size(); i++) {
+            String postUrl = posts.get(i).getUrl();
 
             ImageView view = (ImageView)layoutInflator.inflate(R.layout.include_bottom_sheet_grid_image, binding.postsGridLayout, false);
 
@@ -134,7 +130,7 @@ public class AllPostsFragment extends Fragment {
             }
 
             Glide.with(this)
-                    .load(storiesDataModel.getStoryUrl())
+                    .load(postUrl)
                     .thumbnail(0.25f)
                     .override(100, 100)
                     .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
@@ -156,7 +152,7 @@ public class AllPostsFragment extends Fragment {
 
                 switch(motionEvent.getAction()) {
                     case (MotionEvent.ACTION_DOWN):
-                        viewModel.setDraggable(false);
+                        postsViewModel.setDraggable(false);
                         y1 = motionEvent.getY();
                         break;
                     case (MotionEvent.ACTION_MOVE): {
@@ -178,7 +174,7 @@ public class AllPostsFragment extends Fragment {
 //                        if (direction.equals("up") || (direction.equals("down") && view.getScrollY() != 0)) {
 //                            Log.d("scroller", "A");
 
-                            viewModel.setDraggable(false);
+                            //viewModel.setDraggable(false);
 //                        }
 
 //                        if(direction.equals("down") && view.getScrollY() == 0){
@@ -191,7 +187,7 @@ public class AllPostsFragment extends Fragment {
                     }
                     case (MotionEvent.ACTION_CANCEL):
                     case (MotionEvent.ACTION_UP):
-                        viewModel.setDraggable(true);
+                        postsViewModel.setDraggable(true);
 
                         break;
                 }

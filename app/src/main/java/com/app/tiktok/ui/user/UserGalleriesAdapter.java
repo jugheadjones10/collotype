@@ -12,41 +12,33 @@ import androidx.annotation.NonNull;
 import androidx.core.view.GestureDetectorCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.navigation.NavController;
-import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.app.tiktok.R;
-import com.app.tiktok.databinding.LayoutAllUserPostsBinding;
-import com.app.tiktok.databinding.LayoutGoalsBinding;
 import com.app.tiktok.databinding.LayoutUserGalleryBinding;
-import com.app.tiktok.databinding.LayoutUserHeaderBinding;
-import com.app.tiktok.model.StoriesDataModel;
-import com.app.tiktok.ui.home.fragment.HomeFragmentDirections;
+import com.app.tiktok.model.User;
+import com.app.tiktok.ui.home.HomeFragmentDirections;
 import com.app.tiktok.ui.story.BottomPostsAdapter;
-import com.app.tiktok.ui.story.StoryBunchViewModel;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.material.imageview.ShapeableImageView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 class UserGalleriesAdapter extends RecyclerView.Adapter<UserGalleriesAdapter.UserGalleryViewHolder> {
 
-    private List<DataItem> dataItems;
+    private List<UserGallery> userGalleries;
     private Context mContext;
     private int squareLength;
-    private StoryBunchViewModel viewModel;
     private NavController navController;
 
     RecyclerView.RecycledViewPool viewPool;
 
-    public UserGalleriesAdapter(Context mContext, int squareLength, List<DataItem> dataItems, StoryBunchViewModel viewModel, NavController navController){
+    public UserGalleriesAdapter(Context mContext, int squareLength, List<UserGallery> userGalleries, NavController navController){
         this.mContext = mContext;
         this.squareLength = squareLength;
-        this.dataItems = dataItems;
-        this.viewModel = viewModel;
+        this.userGalleries = userGalleries;
         this.navController = navController;
         viewPool = new RecyclerView.RecycledViewPool();
     }
@@ -62,16 +54,14 @@ class UserGalleriesAdapter extends RecyclerView.Adapter<UserGalleriesAdapter.Use
     @Override
     public void onBindViewHolder(@NonNull UserGalleryViewHolder viewHolder, int position) {
 
-        UserGallery userGallery = (UserGallery)dataItems.get(position);
-
+        UserGallery userGallery = userGalleries.get(position);
 
         viewHolder.binding.groupMembers.removeAllViews();
-        for (int j = 0; j < userGallery.parentStory.getMemberIds().size(); j++) {
-            UserDataModel userDataModel = viewModel.getUser(userGallery.parentStory.getMemberIds().get(j));
+        for (User user: userGallery.members) {
 
             LayoutInflater layoutInflator = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-            String profileUrl = userDataModel.getUserProfilePicUrl();
+            String profileUrl = user.getUrl();
             ShapeableImageView view = (ShapeableImageView)layoutInflator.inflate(R.layout.include_member_profile, viewHolder.binding.groupMembers, false);
             Glide.with(mContext)
                     .load(profileUrl)
@@ -84,15 +74,15 @@ class UserGalleriesAdapter extends RecyclerView.Adapter<UserGalleriesAdapter.Use
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    HomeFragmentDirections.ActionNavigationHomeToUserFragment2 action =
-                            HomeFragmentDirections.actionNavigationHomeToUserFragment2(userDataModel);
+                    HomeFragmentDirections.ActionNavigationHomeToUserFragment action =
+                            HomeFragmentDirections.actionNavigationHomeToUserFragment(user);
                     navController.navigate(action);
                 }
             });
         }
 
         Glide.with(mContext)
-                .load(userGallery.parentStory.getStoryThumbUrl())
+                .load(userGallery.gallery.getUrl())
                 .thumbnail(0.25f)
                 .override(100, 100)
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
@@ -119,16 +109,16 @@ class UserGalleriesAdapter extends RecyclerView.Adapter<UserGalleriesAdapter.Use
             }
         });
 
-        viewHolder.binding.setGalleryData(userGallery.parentStory);
+        viewHolder.binding.setGalleryData(userGallery.gallery);
         viewHolder.binding.galleryRecyclerView.setLayoutManager(layoutManager);
-        BottomPostsAdapter bottomPostsAdapter = new BottomPostsAdapter(userGallery.storiesDataModels, mContext, false, squareLength);
+        BottomPostsAdapter bottomPostsAdapter = new BottomPostsAdapter(userGallery.posts, mContext, false, squareLength);
         viewHolder.binding.galleryRecyclerView.setAdapter(bottomPostsAdapter);
         viewHolder.binding.galleryRecyclerView.getItemAnimator().setChangeDuration(0);
     }
 
     @Override
     public int getItemCount() {
-        return dataItems.size();
+        return userGalleries.size();
     }
 
     class UserGalleryViewHolder extends RecyclerView.ViewHolder{

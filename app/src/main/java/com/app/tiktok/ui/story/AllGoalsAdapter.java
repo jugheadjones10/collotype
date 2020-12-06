@@ -1,6 +1,5 @@
 package com.app.tiktok.ui.story;
 
-import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -13,49 +12,37 @@ import androidx.annotation.NonNull;
 import androidx.core.view.GestureDetectorCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.app.tiktok.R;
-import com.app.tiktok.databinding.LayoutAllUserPostsBinding;
 import com.app.tiktok.databinding.LayoutGoalsBinding;
-import com.app.tiktok.databinding.LayoutUserGalleryBinding;
-import com.app.tiktok.databinding.LayoutUserHeaderBinding;
-import com.app.tiktok.model.StoriesDataModel;
-import com.app.tiktok.ui.home.fragment.HomeFragment;
-import com.app.tiktok.ui.home.fragment.HomeFragmentDirections;
-import com.app.tiktok.ui.user.UserDataModel;
+import com.app.tiktok.model.Post;
+import com.app.tiktok.model.User;
+import com.app.tiktok.ui.home.HomeFragmentDirections;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.imageview.ShapeableImageView;
 
 import androidx.recyclerview.widget.RecyclerView.RecycledViewPool;
-import androidx.viewpager2.widget.ViewPager2;
 
 
-import java.util.ArrayList;
 import java.util.List;
 
 class AllGoalsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
-    private List<StoriesDataModel> postsList;
-    private StoriesDataModel parentPost;
+    private List<List<Post>> processPosts;
+    private List<User> members;
     private Context mContext;
     private int squareLength;
-    private StoryBunchViewModel viewModel;
     private NavController navController;
 
     RecycledViewPool viewPool;
 
-    public AllGoalsAdapter(Context mContext, int squareLength, List<StoriesDataModel> postsList, StoriesDataModel parentPost, StoryBunchViewModel viewModel, NavController navController){
+    public AllGoalsAdapter(Context mContext, int squareLength, List<List<Post>> processPosts, List<User> members, NavController navController){
         this.mContext = mContext;
         this.squareLength = squareLength;
-        this.postsList = postsList;
-        this.parentPost = parentPost;
-        this.viewModel = viewModel;
+        this.processPosts = processPosts;
+        this.members = members;
         this.navController = navController;
         viewPool = new RecyclerView.RecycledViewPool();
     }
@@ -74,12 +61,12 @@ class AllGoalsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
         GoalsViewHolder goalsViewHolder = (GoalsViewHolder)holder;
-        StoriesDataModel parentProcessPost = postsList.get(position);
 
-        for (int j = 0; j < parentPost.getMemberIds().size(); j++) {
-            UserDataModel userDataModel = viewModel.getUser(parentPost.getMemberIds().get(j));
+        List<Post> processPostsRow = processPosts.get(position);
 
-            String profileUrl = userDataModel.getUserProfilePicUrl();
+        for (User user: members) {
+
+            String profileUrl = user.getUrl();
             ShapeableImageView view = (ShapeableImageView)LayoutInflater.from(mContext).inflate(
                     R.layout.include_member_profile,
                     ((GoalsViewHolder) holder).binding.groupMembers,
@@ -97,8 +84,8 @@ class AllGoalsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    HomeFragmentDirections.ActionNavigationHomeToUserFragment2 action =
-                            HomeFragmentDirections.actionNavigationHomeToUserFragment2(userDataModel);
+                    HomeFragmentDirections.ActionNavigationHomeToUserFragment action =
+                            HomeFragmentDirections.actionNavigationHomeToUserFragment(user);
                     navController.navigate(action);
                 }
             });
@@ -115,7 +102,7 @@ class AllGoalsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 //            }
 //        };
 
-        goalsViewHolder.binding.setCaption(parentProcessPost.getStoryDescription());
+        goalsViewHolder.binding.setCaption(processPostsRow.get(0).getProcessTitle());
         goalsViewHolder.binding.setPeriod("2021.11.21 ~ 2021.12.27");
 //        goalsViewHolder.binding.goalsRecyclerView.setLayoutManager(layoutManager);
 
@@ -142,7 +129,7 @@ class AllGoalsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                     }
                     case (MotionEvent.ACTION_CANCEL):
                     case (MotionEvent.ACTION_UP):
-                        viewModel.setDraggable(true);
+//                        viewModel.setDraggable(true);
                         Log.d("mama", "onUp");
                         //goalsViewHolder.binding.goalsRecyclerView.requestDisallowInterceptTouchEvent(false);
                         break;
@@ -162,34 +149,8 @@ class AllGoalsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         });
 
 
-        List<StoriesDataModel> processPosts = new ArrayList<>();
-
-        List<Long> processPostIds = parentProcessPost.getProcessPostIds();
-        Log.d("process", processPostIds.toString());
-
-        for (int i = 0; i < processPostIds.size(); i++) {
-            StoriesDataModel processPost = viewModel.getPost(processPostIds.get(i));
-
-            processPosts.add(new StoriesDataModel(
-                0,
-                0,
-                "",
-                "",
-                 new ArrayList<>(),
-                 0L,
-                  processPost.getStoryUrl(),
-                 new ArrayList<>(),
-                processPost.getStoryDescription(),
-                0,
-                0,
-                null,
-                null,
-                null
-            ));
-        }
-
         Log.d("process", processPosts.toString());
-        BottomPostsAdapter bottomPostsAdapter = new BottomPostsAdapter(processPosts, mContext, true, squareLength);
+        BottomPostsAdapter bottomPostsAdapter = new BottomPostsAdapter(processPostsRow, mContext, true, squareLength);
         goalsViewHolder.binding.goalsRecyclerView.setAdapter(bottomPostsAdapter);
     }
 
@@ -228,7 +189,7 @@ class AllGoalsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     @Override
     public int getItemCount() {
-        return postsList.size();
+        return processPosts.size();
     }
 
     class GoalsViewHolder extends RecyclerView.ViewHolder{

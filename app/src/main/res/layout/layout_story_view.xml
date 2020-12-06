@@ -54,12 +54,25 @@
             android:maxLines="2"
             android:textColor="@color/colorStoryDescription"
             android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="@+id/date"
             app:layout_constraintEnd_toStartOf="@+id/recycler_view_options"
             app:layout_constraintHeight_default="wrap"
             app:layout_constraintStart_toEndOf="@id/barrier"
             app:layout_constraintTop_toTopOf="@+id/username"
             tools:text="@tools:sample/lorem/random" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/proces_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/colorStoryDescription"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/text_view_video_description"
+            app:layout_constraintEnd_toStartOf="@+id/recycler_view_options"
+            app:layout_constraintStart_toStartOf="@+id/username" />
 
         <TextView
             android:id="@+id/date"
@@ -97,7 +110,7 @@
                 android:layout_height="28dp"
                 android:layout_marginTop="8dp"
                 android:elevation="10dp"
-                android:src="@drawable/ic_heart_icon"
+                android:src="@drawable/ic_heart_sleek"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -127,7 +140,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/image_view_option_like_title"
-                app:srcCompat="@drawable/ic_message_icon" />
+                app:srcCompat="@drawable/ic_comment_sleek" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/image_view_option_comment_title"
@@ -154,7 +167,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/image_view_option_comment_title"
-                app:srcCompat="@drawable/ic_share_icon" />
+                app:srcCompat="@drawable/ic_share_sleek" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/image_view_option_share_title"

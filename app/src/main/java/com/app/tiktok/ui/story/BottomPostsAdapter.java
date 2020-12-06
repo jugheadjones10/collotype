@@ -20,6 +20,7 @@ import com.app.tiktok.R;
 import com.app.tiktok.app.MyApp;
 import com.app.tiktok.databinding.BottomPostItemBinding;
 import com.app.tiktok.databinding.EnlargedBottomPostItemBinding;
+import com.app.tiktok.model.Post;
 import com.app.tiktok.model.StoriesDataModel;
 import com.app.tiktok.utils.Utility;
 import com.bumptech.glide.Glide;
@@ -42,7 +43,7 @@ import static com.app.tiktok.utils.ExtensionsKt.logError;
 
 public class BottomPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<StoriesDataModel> storiesDataModels;
+    private List<Post> posts;
     private StoryBunchFragment.OnBottomItemClickListener itemClickListener = null;
     private Context mContext;
 
@@ -65,14 +66,14 @@ public class BottomPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private int NORMAL_ITEM = 0;
     private int ENLARGED_ITEM = 1;
 
-    public BottomPostsAdapter(List<StoriesDataModel> storiesDataModels, Context mContext, StoryBunchFragment.OnBottomItemClickListener itemClickListener) {
-        this.storiesDataModels = storiesDataModels;
+    public BottomPostsAdapter(List<Post> posts, Context mContext, StoryBunchFragment.OnBottomItemClickListener itemClickListener) {
+        this.posts = posts;
         this.mContext = mContext;
         this.itemClickListener = itemClickListener;
     }
 
-    public BottomPostsAdapter(List<StoriesDataModel> storiesDataModels, Context mContext, boolean modifyFirst, int squareLength) {
-        this.storiesDataModels = storiesDataModels;
+    public BottomPostsAdapter(List<Post> posts, Context mContext, boolean modifyFirst, int squareLength) {
+        this.posts = posts;
         this.mContext = mContext;
         this.modifyFirst = modifyFirst;
         this.squareLength = squareLength;
@@ -125,13 +126,13 @@ public class BottomPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         holder.itemView.setSelected(selectedPos == position);
-        String storyUrl = storiesDataModels.get(position).getStoryUrl();
+        String storyUrl = posts.get(position).getUrl();
         String storyType = Utility.INSTANCE.extractS3URLfileType(storyUrl);
 
         if(holder.getItemViewType() == ENLARGED_ITEM) {
             EnlargedBottomPostViewHolder viewHolder = (EnlargedBottomPostViewHolder) holder;
 
-            if(storyType.equals("jpg") || storyType.equals("gif") || storyType.equals("png") || storyType.equals("jpeg")){
+            if(Utility.INSTANCE.isImage(storyType)){
 
                 //holder.binding.bottomPlayerViewStory.setVisibility(View.GONE);
                 viewHolder.binding.bottomPostImage.setVisibility(View.VISIBLE);
@@ -143,7 +144,7 @@ public class BottomPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                         .into(viewHolder.binding.bottomPostImage);
 
-            }else if(storyType.equals("mp4")){
+            }else {
 
 //            holder.binding.bottomPlayerViewStory.setVisibility(View.VISIBLE);
 //            holder.binding.bottomPostImage.setVisibility(View.GONE);
@@ -171,7 +172,7 @@ public class BottomPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 viewHolder.binding.bottomPostItemContainer.setLayoutParams(viewPagerMarginParams);
             }
 
-            if(storyType.equals("jpg") || storyType.equals("gif") || storyType.equals("png") || storyType.equals("jpeg")){
+            if(Utility.INSTANCE.isImage(storyType)){
 
                 //holder.binding.bottomPlayerViewStory.setVisibility(View.GONE);
                 viewHolder.binding.bottomPostImage.setVisibility(View.VISIBLE);
@@ -183,7 +184,7 @@ public class BottomPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                         .into(viewHolder.binding.bottomPostImage);
 
-            }else if(storyType.equals("mp4")){
+            }else{
 
 //            holder.binding.bottomPlayerViewStory.setVisibility(View.VISIBLE);
 //            holder.binding.bottomPostImage.setVisibility(View.GONE);
@@ -212,7 +213,7 @@ public class BottomPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public int getItemCount() {
-        return storiesDataModels.size();
+        return posts.size();
     }
 
     //ExoPlayer stuff

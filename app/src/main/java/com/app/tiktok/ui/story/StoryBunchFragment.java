@@ -1,31 +1,21 @@
 package com.app.tiktok.ui.story;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.opengl.Visibility;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.MarginLayoutParams;
 import android.view.ViewTreeObserver;
-import android.widget.GridLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.view.GestureDetectorCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentResultListener;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -34,18 +24,18 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.LayoutManager;
-import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.app.tiktok.R;
 import com.app.tiktok.databinding.FragmentStoryBunchBinding;
+import com.app.tiktok.model.Gallery;
+import com.app.tiktok.model.Post;
 import com.app.tiktok.model.StoriesDataModel;
-import com.app.tiktok.ui.home.fragment.HomeFragment;
-import com.app.tiktok.ui.home.fragment.HomeFragmentDirections;
-import com.app.tiktok.ui.user.UserDataModel;
+import com.app.tiktok.model.User;
+import com.app.tiktok.ui.home.HomeFragment;
+import com.app.tiktok.ui.home.HomeFragmentDirections;
 import com.app.tiktok.utils.Constants;
 import com.app.tiktok.utils.ExtensionsKt;
-import com.app.tiktok.utils.ImageExtensionsKt;
 import com.app.tiktok.utils.Utility;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -55,8 +45,6 @@ import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -69,7 +57,12 @@ public class StoryBunchFragment extends Fragment {
     String direction;
 
     public FragmentStoryBunchBinding binding;
-    private StoryBunchViewModel viewModel;
+
+    private PostsViewModel postsViewModel;
+
+    private NavController navController;
+    private String position;
+
     private StoryBunchPagerAdapter pagerAdapter;
     private LayoutManager layoutManager;
 
@@ -77,14 +70,17 @@ public class StoryBunchFragment extends Fragment {
 
     public BottomSheetBehavior bottomSheetBehavior;
     private BottomPostsAdapter bottomPostsAdapter;
-    private StoriesDataModel parentPost;
+    private Gallery gallery;
     private List<StoriesDataModel> childrenPosts;
 
-    public static StoryBunchFragment newInstance(StoriesDataModel storiesDataModel) {
+    public ConstraintLayout inflatedTopBar;
+
+    public static StoryBunchFragment newInstance(Gallery gallery, String position) {
         StoryBunchFragment storyBunchFragment = new StoryBunchFragment();
 
         Bundle args = new Bundle();
-        args.putParcelable(Constants.KEY_STORY_DATA, storiesDataModel);
+        args.putParcelable(Constants.KEY_STORY_DATA, gallery);
+        args.putString(Constants.KEY_GALLERY_POSITION, position);
         storyBunchFragment.setArguments(args);
 
         return storyBunchFragment;
@@ -147,10 +143,14 @@ public class StoryBunchFragment extends Fragment {
         instance = this;
 
         //Get Arguments
-        parentPost = getArguments().getParcelable(Constants.KEY_STORY_DATA);
+        gallery = getArguments().getParcelable(Constants.KEY_STORY_DATA);
+        position = getArguments().getString(Constants.KEY_GALLERY_POSITION);
+
+        //Initialize navController
+        navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
 
         //Initialize View Model
-        viewModel = new ViewModelProvider(getActivity()).get(StoryBunchViewModel.class);
+        postsViewModel = new ViewModelProvider(requireActivity()).get(position, PostsViewModel.class);
 
         //Set bottom sheet behaviour
         bottomSheetBehavior = BottomSheetBehavior.from(binding.layoutBotSheet.botSheet);
@@ -158,41 +158,47 @@ public class StoryBunchFragment extends Fragment {
         binding.postsViewPager.setCameraDistance(1000000000000000000000000000f);
         binding.storyBunchParent.setCameraDistance(1000000000000000000000000000f);
 
+        initializeTopBar();
         //Get data from view model
-        setChildrenPosts();
-
-        setHeights();
+        getPosts();
 
         initializeBottomSheetFragment();
-        initializeViewPager();
         initializeNestedScrollViewBehaviour();
-        injectDataIntoView();
 
         return binding.getRoot();
     }
 
-    private void setChildrenPosts(){
-        //Own self is added so it is displayed at the bottom
-        childrenPosts = viewModel.getDataList(parentPost.getStoryId());
-
-        List<StoriesDataModel> postsWithProcess = new ArrayList<>();
-        List<StoriesDataModel> childrenPostsCopy = new ArrayList<>(childrenPosts);
-
-        for(StoriesDataModel storiesDataModel : childrenPosts){
-            if(storiesDataModel.getProcessPostIds().size() > 0){
-                childrenPostsCopy.remove(storiesDataModel);
-                postsWithProcess.add(storiesDataModel);
-            }
-        }
-
-        List<StoriesDataModel> finalList = new ArrayList<StoriesDataModel>(postsWithProcess);
-        finalList.addAll(childrenPostsCopy);
-
-        finalList.add(0, parentPost);
-        childrenPosts = finalList;
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        injectDataIntoView();
     }
 
-    private void setHeights(){
+    private void initializeTopBar(){
+        if(gallery.getCollab()){
+            binding.topBarStub.getViewStub().setLayoutResource(R.layout.include_gallery_top_bar_collab);
+            inflatedTopBar = (ConstraintLayout) binding.topBarStub.getViewStub().inflate();
+        }else{
+            binding.topBarStub.getViewStub().setLayoutResource(R.layout.include_gallery_top_bar);
+            inflatedTopBar = (ConstraintLayout) binding.topBarStub.getViewStub().inflate();
+        }
+    }
+
+    private void getPosts(){
+        //Own self is added so it is displayed at the bottom
+
+        postsViewModel.getPosts(gallery.getId()).observe(getViewLifecycleOwner(), new Observer<List<Post>>() {
+            @Override
+            public void onChanged(List<Post> posts) {
+                if(posts != null){
+                    setHeights(posts);
+                    initializeViewPager(posts);
+                }
+            }
+        });
+    }
+
+    private void setHeights(List<Post> posts){
 
         final ViewTreeObserver observer= binding.layoutBotSheet.botSheet.getViewTreeObserver();
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -204,7 +210,7 @@ public class StoryBunchFragment extends Fragment {
                 int squareLength = binding.storyBunchParent.getWidth()/4;
                 bigSquareLength = squareLength;
 
-                setSquareDependentLengths(squareLength);
+                setSquareDependentLengths(squareLength, posts);
 
                 ViewTreeObserver innerObserver = binding.layoutBotSheet.botSheet.getViewTreeObserver();
                 innerObserver.removeOnGlobalLayoutListener(this);
@@ -212,7 +218,7 @@ public class StoryBunchFragment extends Fragment {
         });
     }
 
-    private void setSquareDependentLengths(int squareLength){
+    private void setSquareDependentLengths(int squareLength, List<Post> posts){
         //Set peek height with square length
         bottomSheetBehavior.setPeekHeight(squareLength);
 
@@ -226,19 +232,19 @@ public class StoryBunchFragment extends Fragment {
         binding.layoutBotSheet.thumbnailsRecyclerView.setLayoutParams(recyclerViewLayoutParams);
 
         //Below are methods that need squareLength
-        initializeRecyclerView(squareLength);
+        initializeRecyclerView(squareLength, posts);
         initializeBottomSheetBehaviour(squareLength);
     }
 
     private void initializeBottomSheetFragment(){
-        Fragment bottomSheetFragment = BottomSheetFragment.newInstance(parentPost);
+        Fragment bottomSheetFragment = BottomSheetFragment.newInstance(position, gallery);
 
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         transaction.add(R.id.bot_sheet_fragment, bottomSheetFragment, "BottomSheetFragment");
         transaction.commit();
     }
 
-    private void initializeRecyclerView(int squareLength){
+    private void initializeRecyclerView(int squareLength, List<Post> posts){
         layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL ,false){
             @Override
             public boolean checkLayoutParams(RecyclerView.LayoutParams lp) {
@@ -251,7 +257,7 @@ public class StoryBunchFragment extends Fragment {
         };
 
         binding.layoutBotSheet.thumbnailsRecyclerView.setLayoutManager(layoutManager);
-        bottomPostsAdapter = new BottomPostsAdapter(childrenPosts, getContext(), recyclerViewClickCallback);
+        bottomPostsAdapter = new BottomPostsAdapter(posts, getContext(), recyclerViewClickCallback);
         binding.layoutBotSheet.thumbnailsRecyclerView.setAdapter(bottomPostsAdapter);
 
         //This removes recyclerView blinking on selected item change
@@ -262,11 +268,6 @@ public class StoryBunchFragment extends Fragment {
             public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
                 if (e.getAction() == MotionEvent.ACTION_DOWN) {
                     HomeFragment.Companion.getViewPager2().setUserInputEnabled(false);
-
-//                    if(getChildFragmentManager().findFragmentByTag("BottomSheetFragment") == null) {
-//                        initializeBottomSheetFragment();
-//                    }
-
                 }else if(e.getAction() == MotionEvent.ACTION_UP){
                     //This clause prevents home fragment view pager 2 from getting disabled if user clicks on recycler view items
                     if(bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED){
@@ -292,7 +293,6 @@ public class StoryBunchFragment extends Fragment {
         bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
-
                 if(newState == BottomSheetBehavior.STATE_COLLAPSED){
                     HomeFragment.Companion.getViewPager2().setUserInputEnabled(true);
 
@@ -321,7 +321,7 @@ public class StoryBunchFragment extends Fragment {
 
                 //How come I don't need to set layout params again after specifying margins? Unlike in the setHeights method
                 MarginLayoutParams tabMarginParams = (MarginLayoutParams) tabLayout.getLayoutParams();
-                tabMarginParams.topMargin = (int) ((tabVerticalPadding + binding.topBarContainer.getHeight()) * slideOffset);
+                tabMarginParams.topMargin = (int) ((tabVerticalPadding + inflatedTopBar.getHeight()) * slideOffset);
                 tabMarginParams.bottomMargin = (int) (tabVerticalPadding * slideOffset);
                 tabMarginParams.leftMargin = (int) (Utility.INSTANCE.dpToPx(50, getContext()) * slideOffset);
                 tabMarginParams.rightMargin = (int) (Utility.INSTANCE.dpToPx(50, getContext()) * slideOffset);
@@ -340,11 +340,11 @@ public class StoryBunchFragment extends Fragment {
         });
     }
 
-    private void initializeViewPager(){
+    private void initializeViewPager(List<Post> posts){
         Log.d("lag", "IN view pager intitaize");
 
         //Pass in everything first. Later we may need to filter.
-        pagerAdapter = new StoryBunchPagerAdapter(this, childrenPosts);
+        pagerAdapter = new StoryBunchPagerAdapter(this, posts, gallery);
 
         //binding.postsViewPager.setOffscreenPageLimit(1);
         binding.postsViewPager.setAdapter(pagerAdapter);
@@ -352,10 +352,9 @@ public class StoryBunchFragment extends Fragment {
     }
 
     private void initializeNestedScrollViewBehaviour(){
-        viewModel.getDraggable().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+        postsViewModel.getDraggable().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean draggable) {
-                Log.d("observe", draggable + "");
                 if(draggable != null){
                     bottomSheetBehavior.setDraggable(draggable);
                 }
@@ -365,61 +364,126 @@ public class StoryBunchFragment extends Fragment {
 
     int i;
     private void injectDataIntoView(){
-        Log.d("lag", "IN inject data into view");
 
-        //Set data for member profile images
-        LayoutInflater layoutInflator = getActivity().getLayoutInflater();
+        if(gallery.getCollab()){
 
-        if(parentPost.getMemberIds() != null){
-            for (int j = 0; j < parentPost.getMemberIds().size(); j++) {
-                UserDataModel userDataModel = viewModel.getUser(parentPost.getMemberIds().get(j));
+            ShapeableImageView collaboratorOne = inflatedTopBar.findViewById(R.id.collaborator_one);
+            ShapeableImageView collaboratorTwo = inflatedTopBar.findViewById(R.id.collaborator_two);
 
-                String profileUrl = userDataModel.getUserProfilePicUrl();
-                ShapeableImageView view = (ShapeableImageView)layoutInflator.inflate(R.layout.include_member_profile, binding.groupMembers, false);
-                Glide.with(this)
-                        .load(profileUrl)
-                        .thumbnail(0.25f)
-                        .override(25,25)
-                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                        .into(view);
-                binding.groupMembers.addView(view);
+            postsViewModel.getCollaborators(gallery.getCollaborators()).observe(getViewLifecycleOwner(), new Observer<List<Gallery>>() {
+                @Override
+                public void onChanged(List<Gallery> galleries) {
+                    if(galleries != null){
 
-                view.setOnClickListener(new View.OnClickListener() {
+                        Glide.with(StoryBunchFragment.this)
+                                .load(galleries.get(0).getUrl())
+                                .thumbnail(0.25f)
+                                .override(25,25)
+                                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                                .into(collaboratorOne);
+
+                        Glide.with(StoryBunchFragment.this)
+                                .load(galleries.get(1).getUrl())
+                                .thumbnail(0.25f)
+                                .override(25,25)
+                                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                                .into(collaboratorTwo);
+
+                        TextView collaboratorOneName = inflatedTopBar.findViewById(R.id.collab_one_name);
+                        TextView collaboratorTwoName = inflatedTopBar.findViewById(R.id.collab_two_name);
+                        collaboratorOneName.setText(galleries.get(0).getName());
+                        collaboratorTwoName.setText(galleries.get(1).getName());
+
+                        if(!collaboratorOne.hasOnClickListeners()){
+                            collaboratorOne.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    goToDetailedGallery(galleries.get(0));
+                                }
+                            });
+                        }
+                        if(!collaboratorTwo.hasOnClickListeners()){
+                            collaboratorTwo.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    goToDetailedGallery(galleries.get(1));
+                                }
+                            });
+                        }
+
+                    }
+                }
+            });
+
+
+        }else{
+            //Set data for member profile images
+            LayoutInflater layoutInflator = getActivity().getLayoutInflater();
+
+            postsViewModel.getMembers(gallery.getId()).observe(getViewLifecycleOwner(), new Observer<List<User>>() {
+                @Override
+                public void onChanged(List<User> users) {
+
+                    LinearLayout groupMembers = inflatedTopBar.findViewById(R.id.group_members);
+
+                    if(users != null){
+                        for (User user: users) {
+                            String profileUrl = user.getUrl();
+                            ShapeableImageView view = (ShapeableImageView)layoutInflator.inflate(R.layout.include_member_profile, groupMembers, false);
+                            Glide.with(StoryBunchFragment.this)
+                                    .load(profileUrl)
+                                    .thumbnail(0.25f)
+                                    .override(25,25)
+                                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                                    .into(view);
+                            groupMembers.addView(view);
+
+                            view.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    HomeFragmentDirections.ActionNavigationHomeToUserFragment action =
+                                            HomeFragmentDirections.actionNavigationHomeToUserFragment(user);
+                                    navController.navigate(action);
+                                }
+                            });
+                        }
+                    }
+                }
+            });
+
+            ShapeableImageView galleryPic = inflatedTopBar.findViewById(R.id.image_view_group_pic);
+
+            Glide.with(this)
+                    .load(gallery.getUrl())
+                    .thumbnail(0.25f)
+                    .override(55,55)
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                    .into(galleryPic);
+
+            if(!galleryPic.hasOnClickListeners()){
+                galleryPic.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
-                        HomeFragmentDirections.ActionNavigationHomeToUserFragment2 action =
-                                HomeFragmentDirections.actionNavigationHomeToUserFragment2(userDataModel);
-                        navController.navigate(action);
+                        goToDetailedGallery(gallery);
                     }
                 });
             }
-        }else{
-//            for (i = 0; i < parentPost.getMemberIds().size(); i++) {
-//
-//                UserDataModel user = viewModel.getUser(parentPost.getMemberIds().get(i));
-//
-//                String profileUrl = user.getUserProfilePicUrl();
-//                ShapeableImageView view = (ShapeableImageView)layoutInflator.inflate(R.layout.include_member_profile, binding.groupMembers, false);
-//                Glide.with(this)
-//                        .load(profileUrl)
-//                        .thumbnail(0.25f)
-//                        .override(25,25)
-//                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-//                        .into(view);
-//                binding.groupMembers.addView(view);
-//            }
+
+            TextView groupName = inflatedTopBar.findViewById(R.id.group_name2);
+            groupName.setText(gallery.getName());
         }
 
-        Glide.with(this)
-                .load(parentPost.getStoryThumbUrl())
-                .thumbnail(0.25f)
-                .override(55,55)
-                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                .into(binding.imageViewGroupPic);
+        TextView followersCount = inflatedTopBar.findViewById(R.id.followers_count2);
+        followersCount.setText(ExtensionsKt.formatNumberAsReadableFormat(gallery.getFollowersCount()));
 
-        binding.groupName2.setText(parentPost.getGroupName());
-        binding.followersCount2.setText(ExtensionsKt.formatNumberAsReadableFormat(parentPost.getFollowersCount()));
+    }
+
+    private void goToDetailedGallery(Gallery gallery){
+        Fragment galleryInfoFragment = GalleryInfoFragment.newInstance(position, gallery, (int)inflatedTopBar.getHeight());
+
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+        transaction.add(R.id.detailed_gallery_info, galleryInfoFragment, "GalleryInfoFragment");
+        transaction.commit();
     }
 
     private void transitionBottomSheetBackgroundColor(float slideOffset) {

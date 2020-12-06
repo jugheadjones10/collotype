@@ -4,29 +4,31 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
+import com.app.tiktok.model.Gallery;
+import com.app.tiktok.model.Post;
 import com.app.tiktok.model.StoriesDataModel;
 
 import java.util.List;
 
 public class StoryBunchPagerAdapter extends FragmentStateAdapter {
 
-    private List<StoriesDataModel> mPostData;
+    private List<Post> posts;
+    private Gallery gallery;
 
-    public StoryBunchPagerAdapter(Fragment storyBunchFragment, List<StoriesDataModel> mPostData){
+    public StoryBunchPagerAdapter(Fragment storyBunchFragment, List<Post> posts, Gallery gallery){
         super(storyBunchFragment);
-        this.mPostData = mPostData;
+        this.posts = posts;
+        this.gallery = gallery;
     }
 
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        return StoryViewFragment.Companion.newInstance(mPostData.get(position), mPostData.get(0));
+        return StoryViewFragment.Companion.newInstance(posts.get(position), gallery);
     }
 
-
-
-    @Override
+   @Override
     public int getItemCount() {
-        return mPostData.size();
+        return posts.size();
     }
 }

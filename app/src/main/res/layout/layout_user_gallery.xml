@@ -5,7 +5,7 @@
     <data>
         <variable
             name="GalleryData"
-            type="com.app.tiktok.model.StoriesDataModel" />
+            type="com.app.tiktok.model.Gallery" />
     </data>
 
 <androidx.constraintlayout.widget.ConstraintLayout
@@ -53,7 +53,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="10dp"
-            android:text="@{GalleryData.groupName}"
+            android:text="@{GalleryData.name}"
             android:textColor="@color/colorBlack"
             android:textSize="18sp"
             app:layout_constraintStart_toEndOf="@+id/container_profile"

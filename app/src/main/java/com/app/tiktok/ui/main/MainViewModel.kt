@@ -1,4 +1,4 @@
-package com.app.tiktok.ui.main.viewmodel
+package com.app.tiktok.ui.main
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData

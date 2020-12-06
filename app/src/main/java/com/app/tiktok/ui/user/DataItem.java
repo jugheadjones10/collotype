@@ -1,21 +1,20 @@
 package com.app.tiktok.ui.user;
 
-import android.service.autofill.UserData;
-
 import com.app.tiktok.model.StoriesDataModel;
+import com.app.tiktok.model.User;
 
 import java.util.List;
 
-abstract class DataItem {
+public abstract class DataItem {
     long id;
 }
 
 class UserHeader extends DataItem {
 
-    UserDataModel userDataModel;
+    User user;
 
-    UserHeader(UserDataModel userDataModel){
-        this.userDataModel = userDataModel;
+    UserHeader(User user){
+        this.user = user;
         this.id = Long.MAX_VALUE;
     }
 }
@@ -29,13 +28,3 @@ class AllUserPosts extends DataItem {
     }
 }
 
-class UserGallery extends DataItem {
-    StoriesDataModel parentStory;
-    List<StoriesDataModel> storiesDataModels;
-
-    UserGallery(StoriesDataModel parentStory, List<StoriesDataModel> storiesDataModels){
-        this.parentStory = parentStory;
-        this.storiesDataModels = storiesDataModels;
-        this.id = parentStory.getStoryId();
-    }
-}

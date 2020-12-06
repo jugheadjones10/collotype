@@ -1,4 +1,4 @@
-package com.app.tiktok.ui.home.adapter;
+package com.app.tiktok.ui.home;
 
 import android.view.View;
 

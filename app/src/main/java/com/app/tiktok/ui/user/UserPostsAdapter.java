@@ -13,14 +13,11 @@ import androidx.annotation.NonNull;
 import androidx.core.view.GestureDetectorCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.navigation.NavController;
-import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.SnapHelper;
 
 import com.app.tiktok.R;
 import com.app.tiktok.databinding.LayoutUserPostsBinding;
-import com.app.tiktok.ui.story.BottomPostsAdapter;
-import com.app.tiktok.ui.story.StoryBunchViewModel;
+import com.app.tiktok.ui.story.GalleriesViewModel;
 import com.azoft.carousellayoutmanager.CarouselLayoutManager;
 import com.azoft.carousellayoutmanager.CarouselZoomPostLayoutListener;
 import com.azoft.carousellayoutmanager.CenterScrollListener;
@@ -31,12 +28,12 @@ class UserPostsAdapter extends RecyclerView.Adapter<UserPostsAdapter.UserPostsVi
 
     private List<DataItem> dataItems;
     private Context mContext;
-    private StoryBunchViewModel viewModel;
+    private GalleriesViewModel viewModel;
     private NavController navController;
 
     RecyclerView.RecycledViewPool viewPool;
 
-    public UserPostsAdapter(Context mContext, List<DataItem> dataItems, StoryBunchViewModel viewModel, NavController navController){
+    public UserPostsAdapter(Context mContext, List<DataItem> dataItems, GalleriesViewModel viewModel, NavController navController){
         this.mContext = mContext;
         this.dataItems = dataItems;
         this.viewModel = viewModel;
@@ -67,16 +64,16 @@ class UserPostsAdapter extends RecyclerView.Adapter<UserPostsAdapter.UserPostsVi
             }
         });
 
-        CarouselLayoutManager layoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL, false);
-        layoutManager.setMaxVisibleItems(2);
-        layoutManager.setPostLayoutListener(new CarouselZoomPostLayoutListener());
-        viewHolder.binding.postRecyclerView.addOnScrollListener(new CenterScrollListener());
-
-        viewHolder.binding.postRecyclerView.setLayoutManager(layoutManager);
-        UserPostAdapter userPostsAdapter = new UserPostAdapter(mContext, userGallery.storiesDataModels, userGallery.parentStory);
-        viewHolder.binding.postRecyclerView.scrollToPosition(userGallery.storiesDataModels.size()/2);
-        viewHolder.binding.postRecyclerView.setAdapter(userPostsAdapter);
-        viewHolder.binding.postRecyclerView.getItemAnimator().setChangeDuration(0);
+//        CarouselLayoutManager layoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL, false);
+//        layoutManager.setMaxVisibleItems(2);
+//        layoutManager.setPostLayoutListener(new CarouselZoomPostLayoutListener());
+//        viewHolder.binding.postRecyclerView.addOnScrollListener(new CenterScrollListener());
+//
+//        viewHolder.binding.postRecyclerView.setLayoutManager(layoutManager);
+//        UserPostAdapter userPostsAdapter = new UserPostAdapter(mContext, userGallery.storiesDataModels, userGallery.parentStory);
+//        viewHolder.binding.postRecyclerView.scrollToPosition(userGallery.storiesDataModels.size()/2);
+//        viewHolder.binding.postRecyclerView.setAdapter(userPostsAdapter);
+//        viewHolder.binding.postRecyclerView.getItemAnimator().setChangeDuration(0);
     }
 
     @Override

@@ -1,8 +1,7 @@
 package com.app.tiktok.repository
 
 import com.app.tiktok.mock.Mock
-import com.app.tiktok.model.StoriesDataModel
-import com.app.tiktok.ui.user.UserDataModel
+import com.app.tiktok.model.*
 import javax.inject.Inject
 
 class DataRepository @Inject constructor(private val mock: Mock) {
@@ -11,8 +10,23 @@ class DataRepository @Inject constructor(private val mock: Mock) {
         return dataList
     }
 
-    fun getUsersData(): ArrayList<UserDataModel>? {
+    fun getGalleriesData(): ArrayList<Gallery>? {
+        val dataList = mock.loadMockGalleriesData()
+        return dataList
+    }
+
+    fun getPostsData(): ArrayList<Post>? {
+        val dataList = mock.loadMockPostsData()
+        return dataList
+    }
+
+    fun getUsersData(): ArrayList<User>? {
         val dataList = mock.loadMockUsersData()
+        return dataList
+    }
+
+    fun getProductsData(): ArrayList<Product>? {
+        val dataList = mock.loadMockProductsData()
         return dataList
     }
 

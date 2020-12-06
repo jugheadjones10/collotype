@@ -9,7 +9,7 @@
         android:id="@+id/tab_layout"
         android:layout_width="match_parent"
         android:background="@color/colorTransparent"
-        app:tabIndicatorColor="@android:color/holo_red_dark"
+        app:tabIndicatorColor="@color/colorDarkGray"
         app:tabIndicatorHeight="0dp"
         app:tabIndicatorFullWidth="false"
         app:tabGravity="center"

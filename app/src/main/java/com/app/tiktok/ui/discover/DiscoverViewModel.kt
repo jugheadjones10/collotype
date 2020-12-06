@@ -1,4 +1,4 @@
-package com.app.tiktok.ui.discover.viewmodel
+package com.app.tiktok.ui.discover
 
 import androidx.lifecycle.ViewModel
 

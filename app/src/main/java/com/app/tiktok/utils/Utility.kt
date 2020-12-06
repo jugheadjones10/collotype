@@ -2,6 +2,7 @@ package com.app.tiktok.utils
 
 import android.content.Context
 import android.util.DisplayMetrics
+import java.lang.Exception
 import java.util.*
 
 object Utility {
@@ -44,6 +45,16 @@ object Utility {
     }
 
     fun extractS3URLfileType(url: String): String{
-        return url.split("?")[0].takeLast(3).toLowerCase()
+        return url.split("/").last().split(".").last().toLowerCase()
+    }
+
+    fun isImage(storyUrlType: String): Boolean{
+        if (storyUrlType.equals("jpg") || storyUrlType.equals("gif") || storyUrlType.equals("jpeg") || storyUrlType.equals("png") || storyUrlType.equals("webp")) {
+            return true;
+        }else if(storyUrlType.equals("mp4")){
+            return false;
+        }else{
+            throw Exception("Unrecognized file type")
+        }
     }
 }

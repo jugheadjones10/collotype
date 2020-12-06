@@ -1,17 +1,13 @@
 package com.app.tiktok.ui.user;
 
-import android.app.Activity;
 import android.content.Context;
-import android.os.UserHandle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,12 +17,9 @@ import com.app.tiktok.R;
 import com.app.tiktok.databinding.LayoutAllUserPostsBinding;
 import com.app.tiktok.databinding.LayoutUserGalleryBinding;
 import com.app.tiktok.databinding.LayoutUserHeaderBinding;
-import com.app.tiktok.ui.home.fragment.HomeFragmentDirections;
-import com.app.tiktok.ui.story.BottomPostsAdapter;
-import com.app.tiktok.ui.story.StoryBunchViewModel;
+import com.app.tiktok.ui.story.GalleriesViewModel;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.google.android.material.imageview.ShapeableImageView;
 
 import java.util.List;
 
@@ -39,12 +32,12 @@ class UserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     private List<DataItem> dataItems;
     private Context mContext;
     private int squareLength;
-    private StoryBunchViewModel viewModel;
+    private GalleriesViewModel viewModel;
     private NavController navController;
 
     RecycledViewPool viewPool;
 
-    public UserAdapter(Context mContext, int squareLength, List<DataItem> dataItems, StoryBunchViewModel viewModel, NavController navController){
+    public UserAdapter(Context mContext, int squareLength, List<DataItem> dataItems, GalleriesViewModel viewModel, NavController navController){
         this.mContext = mContext;
         this.squareLength = squareLength;
         this.dataItems = dataItems;
@@ -83,11 +76,11 @@ class UserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             UserHeaderViewHolder viewHolder = (UserHeaderViewHolder)holder;
             UserHeader userHeader = (UserHeader)dataItems.get(position);
 
-            Log.d("type", holder.getItemViewType() + userHeader.userDataModel.getUsername());
+            Log.d("type", holder.getItemViewType() + userHeader.user.getUsername());
 
-            viewHolder.binding.setUserData(userHeader.userDataModel);
+            viewHolder.binding.setUserData(userHeader.user);
             Glide.with(mContext)
-                    .load(userHeader.userDataModel.getUserProfilePicUrl())
+                    .load(userHeader.user.getUrl())
                     .thumbnail(0.25f)
                     .override(150, 150)
                     .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
@@ -110,68 +103,68 @@ class UserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                 }
             };
 
-            viewHolder.binding.allUserPostsRecyclerView.setLayoutManager(layoutManager);
-            BottomPostsAdapter bottomPostsAdapter = new BottomPostsAdapter(allUserPosts.storiesDataModels, mContext, null);
-            viewHolder.binding.allUserPostsRecyclerView.setAdapter(bottomPostsAdapter);
-            viewHolder.binding.allUserPostsRecyclerView.getItemAnimator().setChangeDuration(0);
+//            viewHolder.binding.allUserPostsRecyclerView.setLayoutManager(layoutManager);
+//            BottomPostsAdapter bottomPostsAdapter = new BottomPostsAdapter(allUserPosts.storiesDataModels, mContext, null);
+//            viewHolder.binding.allUserPostsRecyclerView.setAdapter(bottomPostsAdapter);
+//            viewHolder.binding.allUserPostsRecyclerView.getItemAnimator().setChangeDuration(0);
 
         }else if(holder.getItemViewType() == ITEM_VIEW_TYPE_USER_GALLERY){
 
-            UserGalleryViewHolder viewHolder = (UserGalleryViewHolder)holder;
-            UserGallery userGallery = (UserGallery)dataItems.get(position);
+//            UserGalleryViewHolder viewHolder = (UserGalleryViewHolder)holder;
+//            UserGallery userGallery = (UserGallery)dataItems.get(position);
+//
+//            Log.d("type", holder.getItemViewType() + userGallery.parentStory.getGroupName());
+//
+//            viewHolder.binding.groupMembers.removeAllViews();
+//            for (int j = 0; j < userGallery.parentStory.getMemberIds().size(); j++) {
+//                User user = viewModel.getUser(userGallery.parentStory.getMemberIds().get(j));
+//
+//                LayoutInflater layoutInflator = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//
+//                String profileUrl = user.getUserProfilePicUrl();
+//                ShapeableImageView view = (ShapeableImageView)layoutInflator.inflate(R.layout.include_member_profile, viewHolder.binding.groupMembers, false);
+//                Glide.with(mContext)
+//                        .load(profileUrl)
+//                        .thumbnail(0.25f)
+//                        .override(25,25)
+//                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+//                        .into(view);
+//                viewHolder.binding.groupMembers.addView(view);
+//
+//                view.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        HomeFragmentDirections.ActionNavigationHomeToUserFragment action =
+//                                HomeFragmentDirections.actionNavigationHomeToUserFragment(user);
+//                        navController.navigate(action);
+//                    }
+//                });
+//            }
+//
+//            Glide.with(mContext)
+//                    .load(userGallery.parentStory.getStoryThumbUrl())
+//                    .thumbnail(0.25f)
+//                    .override(100, 100)
+//                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+//                    .into(viewHolder.binding.imageViewGroupPic);
+//
+//            LinearLayoutManager layoutManager = new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL ,false){
+//                @Override
+//                public boolean checkLayoutParams(RecyclerView.LayoutParams lp) {
+//                    // force height of viewHolder here, this will override layout_height from xml
+//                    lp.width = squareLength;
+//                    lp.height = squareLength;
+//
+//                    return true;
+//                }
+//            };
+//
+//            viewHolder.binding.setGalleryData(userGallery.parentStory);
 
-            Log.d("type", holder.getItemViewType() + userGallery.parentStory.getGroupName());
-
-            viewHolder.binding.groupMembers.removeAllViews();
-            for (int j = 0; j < userGallery.parentStory.getMemberIds().size(); j++) {
-                UserDataModel userDataModel = viewModel.getUser(userGallery.parentStory.getMemberIds().get(j));
-
-                LayoutInflater layoutInflator = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-                String profileUrl = userDataModel.getUserProfilePicUrl();
-                ShapeableImageView view = (ShapeableImageView)layoutInflator.inflate(R.layout.include_member_profile, viewHolder.binding.groupMembers, false);
-                Glide.with(mContext)
-                        .load(profileUrl)
-                        .thumbnail(0.25f)
-                        .override(25,25)
-                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                        .into(view);
-                viewHolder.binding.groupMembers.addView(view);
-
-                view.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        HomeFragmentDirections.ActionNavigationHomeToUserFragment2 action =
-                                HomeFragmentDirections.actionNavigationHomeToUserFragment2(userDataModel);
-                        navController.navigate(action);
-                    }
-                });
-            }
-
-            Glide.with(mContext)
-                    .load(userGallery.parentStory.getStoryThumbUrl())
-                    .thumbnail(0.25f)
-                    .override(100, 100)
-                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                    .into(viewHolder.binding.imageViewGroupPic);
-
-            LinearLayoutManager layoutManager = new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL ,false){
-                @Override
-                public boolean checkLayoutParams(RecyclerView.LayoutParams lp) {
-                    // force height of viewHolder here, this will override layout_height from xml
-                    lp.width = squareLength;
-                    lp.height = squareLength;
-
-                    return true;
-                }
-            };
-
-            viewHolder.binding.setGalleryData(userGallery.parentStory);
-
-            viewHolder.binding.galleryRecyclerView.setLayoutManager(layoutManager);
-            BottomPostsAdapter bottomPostsAdapter = new BottomPostsAdapter(userGallery.storiesDataModels, mContext, null);
-            viewHolder.binding.galleryRecyclerView.setAdapter(bottomPostsAdapter);
-            viewHolder.binding.galleryRecyclerView.getItemAnimator().setChangeDuration(0);
+//            viewHolder.binding.galleryRecyclerView.setLayoutManager(layoutManager);
+//            BottomPostsAdapter bottomPostsAdapter = new BottomPostsAdapter(userGallery.storiesDataModels, mContext, null);
+//            viewHolder.binding.galleryRecyclerView.setAdapter(bottomPostsAdapter);
+//            viewHolder.binding.galleryRecyclerView.getItemAnimator().setChangeDuration(0);
         }
     }
 

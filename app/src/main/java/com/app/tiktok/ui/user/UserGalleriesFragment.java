@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -17,12 +18,7 @@ import android.view.ViewTreeObserver;
 
 import com.app.tiktok.R;
 import com.app.tiktok.databinding.FragmentUserGalleriesBinding;
-import com.app.tiktok.databinding.FragmentUserGalleriesBindingImpl;
-import com.app.tiktok.databinding.FragmentUserPostsBinding;
-import com.app.tiktok.model.StoriesDataModel;
-import com.app.tiktok.ui.story.StoryBunchViewModel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -31,7 +27,6 @@ public class UserGalleriesFragment extends Fragment {
 
     private long userId;
     private FragmentUserGalleriesBinding binding;
-    private StoryBunchViewModel storyBunchViewModel;
     private UserViewModel userViewModel;
     private NavController navController;
 
@@ -51,10 +46,6 @@ public class UserGalleriesFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        storyBunchViewModel = new ViewModelProvider(getActivity()).get(StoryBunchViewModel.class);
-        userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
-        navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
-
         if (getArguments() != null) {
             userId = getArguments().getLong(USER_ID_PARAM);
         }
@@ -65,15 +56,31 @@ public class UserGalleriesFragment extends Fragment {
                              Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_user_galleries, container, false);
 
+        userViewModel = new ViewModelProvider(requireActivity()).get(Long.toString(userId), UserViewModel.class);
+        navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
+
+        getUserGalleries();
+
         return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        listenForWidth();
+//        listenForWidth();
     }
 
-    private void listenForWidth(){
+    private void getUserGalleries(){
+        userViewModel.getUserGalleries(userId).observe(getViewLifecycleOwner(), new Observer<List<UserGallery>>() {
+            @Override
+            public void onChanged(List<UserGallery> userGalleries) {
+                if(userGalleries != null){
+                    listenForWidth(userGalleries);
+                }
+            }
+        });
+    }
+
+    private void listenForWidth(List<UserGallery> userGalleries){
         final ViewTreeObserver observer = binding.userGalleriesRecyclerView.getViewTreeObserver();
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -81,7 +88,7 @@ public class UserGalleriesFragment extends Fragment {
                 // I don't understand onGlobalLayout. What exactly does it listen for?
                 int squareLength = binding.userGalleriesRecyclerView.getWidth()/4;
 
-                initializeRecyclerView(squareLength);
+                initializeRecyclerView(squareLength, userGalleries);
 
                 ViewTreeObserver innerObserver = binding.userGalleriesRecyclerView.getViewTreeObserver();
                 innerObserver.removeOnGlobalLayoutListener(this);
@@ -89,20 +96,8 @@ public class UserGalleriesFragment extends Fragment {
         });
     }
 
-    private void initializeRecyclerView(int squareLength){
-
-        List<DataItem> dataItems = new ArrayList<>();
-
-        UserDataModel userDataModel = storyBunchViewModel.getUser(userId);
-
-        for(long galleryId : userDataModel.getGalleries()){
-            //Adding user galleries to data items
-            StoriesDataModel parentPost = userViewModel.getParentPostWithGhosts(galleryId);
-            List<StoriesDataModel> children = userViewModel.getChildrenPosts(galleryId);
-            dataItems.add(new UserGallery(parentPost, children));
-        }
-
-        UserGalleriesAdapter userGalleriesAdapter = new UserGalleriesAdapter(getContext(), squareLength, dataItems, storyBunchViewModel, navController);
+    private void initializeRecyclerView(int squareLength, List<UserGallery> userGalleries){
+        UserGalleriesAdapter userGalleriesAdapter = new UserGalleriesAdapter(getContext(), squareLength, userGalleries, navController);
         binding.userGalleriesRecyclerView.setAdapter(userGalleriesAdapter);
     }
 }
