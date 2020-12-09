@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.ViewTreeObserver
+import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.viewpager2.widget.ViewPager2
@@ -12,7 +14,6 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.app.tiktok.R
 import com.app.tiktok.base.BaseFragment
-import com.app.tiktok.model.ResultData
 import com.app.tiktok.model.StoriesDataModel
 import com.app.tiktok.ui.main.MainViewModel
 import com.app.tiktok.ui.story.GalleriesViewModel
@@ -22,7 +23,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_home.*
 
 @AndroidEntryPoint
-class HomeFragment : BaseFragment(R.layout.fragment_home) {
+class  HomeFragment : BaseFragment(R.layout.fragment_home) {
     private val homeViewModel by activityViewModels<MainViewModel>()
     private val galleriesViewModel by activityViewModels<GalleriesViewModel>()
 
@@ -41,12 +42,16 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
         viewPager2?.setPageTransformer(
             VerticalCubeTransformer()
         )
-        viewPager2?.offscreenPageLimit = 4
+        viewPager2?.offscreenPageLimit = 3
 
+        initializeGalleries()
+    }
 
+    private fun initializeGalleries(){
         galleriesViewModel.galleries.observe(viewLifecycleOwner, Observer { galleries ->
             if (!galleries.isNullOrEmpty()) {
 
+                Log.d("observer", "Home Fragment observed Galleries")
                 storiesPagerAdapter =
                     StoriesPagerAdapter(
                         this,

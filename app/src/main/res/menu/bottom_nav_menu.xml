@@ -16,16 +16,6 @@
         android:icon="@drawable/ic_bottom_search"
         android:title="Search" />
 
-<!--    <item-->
-<!--        android:id="@+id/navigation_single_tick"-->
-<!--        android:icon="@drawable/ic_bottom_single_tick"-->
-<!--        android:title="single_tick" />-->
-
-    <item
-        android:id="@+id/navigation_double_tick"
-        android:icon="@drawable/ic_bottom_double_tick"
-        android:title="double_tick" />
-
     <item
         android:id="@+id/navigation_me"
         android:icon="@drawable/ic_person_icon"

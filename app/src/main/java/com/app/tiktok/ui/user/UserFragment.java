@@ -12,13 +12,20 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.app.tiktok.R;
+import com.app.tiktok.databinding.FragmentGalleryInfoBinding;
 import com.app.tiktok.databinding.FragmentUserBinding;
+import com.app.tiktok.model.Gallery;
 import com.app.tiktok.model.Post;
 import com.app.tiktok.model.User;
+import com.app.tiktok.ui.galleryinfo.GalleryInfoFragment;
+import com.app.tiktok.ui.home.HomeFragment;
+import com.app.tiktok.ui.story.PostsViewModel;
 import com.app.tiktok.ui.story.UtilViewModel;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -37,20 +44,42 @@ public class UserFragment extends Fragment {
     private User userData;
     private NavController navController;
 
+    private static final String USER_KEY = "USER_KEY";
+    public static UserFragment newInstance(User userData) {
+        UserFragment fragment = new UserFragment();
+        Bundle args = new Bundle();
+        args.putParcelable(USER_KEY, userData);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        HomeFragment.Companion.getViewPager2().setUserInputEnabled(false);
+
+        //Get Argument
+        if(getArguments() != null){
+            userData = getArguments().getParcelable(USER_KEY);
+        }
+
+        utilViewModel = new ViewModelProvider(requireActivity()).get(UtilViewModel.class);
+        navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        HomeFragment.Companion.getViewPager2().setUserInputEnabled(true);
+    }
+
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_user, container, false);
 
-        navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
-
-        //Get Argument
-        if(getArguments() != null){
-            userData = UserFragmentArgs.fromBundle(getArguments()).getUser();
-        }
-
-//        //View Model
-        utilViewModel = new ViewModelProvider(requireActivity()).get(UtilViewModel.class);
 
         return binding.getRoot();
     }
@@ -113,7 +142,8 @@ public class UserFragment extends Fragment {
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                navController.navigateUp();
+//                navController.navigateUp();
+                getParentFragmentManager().beginTransaction().remove(UserFragment.this).commit();
             }
         });
     }

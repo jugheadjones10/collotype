@@ -1,4 +1,4 @@
-package com.app.tiktok.ui.story;
+package com.app.tiktok.ui.galleryinfo;
 
 import android.os.Bundle;
 
@@ -12,9 +12,9 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,14 +23,14 @@ import com.app.tiktok.R;
 import com.app.tiktok.databinding.FragmentGalleryInfoBinding;
 import com.app.tiktok.model.Gallery;
 import com.app.tiktok.model.Post;
+import com.app.tiktok.ui.home.HomeFragment;
+import com.app.tiktok.ui.story.PostsViewModel;
 import com.app.tiktok.ui.user.DataItem;
 import com.app.tiktok.ui.user.UserEvent;
 import com.app.tiktok.ui.user.UserProduct;
-import com.app.tiktok.utils.Utility;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class GalleryInfoFragment extends Fragment {
 
@@ -63,6 +63,9 @@ public class GalleryInfoFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        HomeFragment.Companion.getViewPager2().setUserInputEnabled(false);
+
         if (getArguments() != null) {
             position = getArguments().getString(POSITION_KEY);
             gallery = getArguments().getParcelable(GALLERY_KEY);
@@ -71,11 +74,16 @@ public class GalleryInfoFragment extends Fragment {
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        HomeFragment.Companion.getViewPager2().setUserInputEnabled(true);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_gallery_info, container, false);
-
         postsViewModel = new ViewModelProvider(requireActivity()).get(position, PostsViewModel.class);
 
         getGalleryInfo();
@@ -87,70 +95,40 @@ public class GalleryInfoFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setTopMargin();
-
-
-        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-//                FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-//                transaction.addToBackStack(null);
-//                transaction.commit();
-
-                getActivity().getSupportFragmentManager().popBackStack();
-
-//                getChildFragmentManager().popBackStack("GalleryInfoFragment");
-//                        .remove((Fragment)GalleryInfoFragment.this).commit();
-
-            }
-        });
+        interceptBackButton();
     }
 
     private void getGalleryInfo(){
-        postsViewModel.getPosts(gallery.getId()).observe(getViewLifecycleOwner(), new Observer<List<Post>>() {
+        Log.d("hoo", "Within GalleryInfoFragment... gallery members  : " + gallery.getMembers() + "");
+        postsViewModel.getFakeGalleryInfoData(gallery).observe(getViewLifecycleOwner(), new Observer<List<GalleryInfoRecyclerDataItem>>() {
             @Override
-            public void onChanged(List<Post> posts) {
-                if(posts != null){
-                    List<DataItem> finalList = new ArrayList<>();
-                    for(int i = 0; i < posts.size(); i++){
-                        if(i < 4){
-                            UserEvent userEvent = new UserEvent("Water painting tutorial",
-                                    "@5pm 09:24",
-                                    postsViewModel.getMembers().getValue().subList(0,1),
-                                    posts.get(i).getUrl());
-                            finalList.add(userEvent);
-                        }else{
-                            UserProduct userProduct = new UserProduct(
-                                    posts.get(i).getId(),
-                                    "Ironman water painting",
-                                    35L,
-                                    posts.get(i).getUrl(),
-                                    4288743308L
-                            );
-                            finalList.add(userProduct);
-                        }
-                    }
-                    initializeRecyclerView(finalList);
+            public void onChanged(List<GalleryInfoRecyclerDataItem> recyclerDataItems) {
+                if(recyclerDataItems != null){
+
+                    initializeRecyclerView(recyclerDataItems);
                 }
             }
         });
     }
 
     private void setTopMargin(){
-//        ViewGroup.MarginLayoutParams tabMarginParams = (ViewGroup.MarginLayoutParams) binding.fragmentGalleryInfoContainer.getLayoutParams();
-//        tabMarginParams.paddingTop = topBarHeight;
-
-//        binding.fragmentGalleryInfoContainer.setPadding(0, topBarHeight + 20, 0, 0);
-
         ViewGroup.LayoutParams blackBgLayoutParams = binding.blackBg.getLayoutParams();
-        blackBgLayoutParams.height = topBarHeight + 20;
+        blackBgLayoutParams.height = topBarHeight + 40;
         binding.blackBg.setLayoutParams(blackBgLayoutParams);
-        
         binding.detailedGalleryInfoRecyclerView.invalidate();
     }
 
+    private void interceptBackButton() {
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                Log.d("GG", "gig");
+                getParentFragmentManager().beginTransaction().remove(GalleryInfoFragment.this).commit();
+            }
+        });
+    }
 
-    private void initializeRecyclerView(List<DataItem> finalList){
-
+    private void initializeRecyclerView(List<GalleryInfoRecyclerDataItem> finalList){
         NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
 
         GalleryInfoAdapter galleryInfoAdapter = new GalleryInfoAdapter(getContext(), finalList, navController);

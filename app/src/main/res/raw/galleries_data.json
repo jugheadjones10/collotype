@@ -269,6 +269,20 @@
   },
   {
     "id": 6,
+    "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/cokapepsi/Nike Advertisement.JPG",
+    "name": "Coka Pepsi",
+    "posts": [
+      1245790644
+    ],
+    "members": [],
+    "events": [],
+    "collab": false,
+    "collaborators": [],
+    "official": true,
+    "followersCount": 1293
+  },
+  {
+    "id": 7,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/captvsironman/00.jpg",
     "name": "Captain vs Ironman",
     "posts": [
@@ -318,7 +332,7 @@
     "followersCount": 1293
   },
   {
-    "id": 7,
+    "id": 8,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/kimchiparty/00.jpg",
     "name": "Kimchi Party",
     "posts": [
@@ -384,7 +398,7 @@
     "followersCount": 1293
   },
   {
-    "id": 8,
+    "id": 9,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/dancingmachine/00.jpg",
     "name": "Dancing Machine",
     "posts": [
@@ -453,7 +467,7 @@
     "followersCount": 1293
   },
   {
-    "id": 9,
+    "id": 10,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/sweetheart/01.gif",
     "name": "Sweet Heart",
     "posts": [
@@ -505,7 +519,7 @@
     "followersCount": 1293
   },
   {
-    "id": 10,
+    "id": 11,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/foxaspet/01.gif",
     "name": "Fox as Pet",
     "posts": [
@@ -548,7 +562,7 @@
     "followersCount": 1293
   },
   {
-    "id": 11,
+    "id": 12,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/legomaniacs/01.gif",
     "name": "Lego Maniacs",
     "posts": [
@@ -604,69 +618,6 @@
     "followersCount": 1293
   },
   {
-    "id": 12,
-    "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/cokapepsi/00.jpg",
-    "name": "Coka Pepsi",
-    "posts": [
-      1472274304,
-      4039580276,
-      4009760484,
-      1869059361,
-      1381389271,
-      2729485762,
-      2786009014,
-      3126270819,
-      3276274705,
-      2711547652,
-      2800306928,
-      3108332709,
-      142115923,
-      3968759110,
-      1546735666,
-      1516915874,
-      2615046813,
-      3866740360,
-      4266671796,
-      1430722007,
-      786894454,
-      67495825,
-      3718635568,
-      1568785857,
-      77013344,
-      315214595,
-      3118409378,
-      2808059205,
-      1316286692,
-      1554487943,
-      1524777315,
-      3963251913,
-      2471479400,
-      4159682690,
-      4154772710,
-      2584481984,
-      438870881,
-      1103988742,
-      3253344935,
-      3823755332,
-      1678144229,
-      2259181450,
-      113570347,
-      1713789635
-    ],
-    "members": [
-      2087423911,
-      180021818
-    ],
-    "events": [],
-    "collab": true,
-    "collaborators": [
-      17,
-      15
-    ],
-    "official": true,
-    "followersCount": 1293
-  },
-  {
     "id": 13,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/apple/Apple.png",
     "name": "Apple",
@@ -700,7 +651,7 @@
   },
   {
     "id": 15,
-    "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/cokapepsi/collabs/pepsi/1 (2).png",
+    "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/pepsi/1 (2).png",
     "name": "Pepsi",
     "posts": [
       3727445920
@@ -732,7 +683,7 @@
   },
   {
     "id": 17,
-    "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/cokapepsi/collabs/coke/coke.jpg",
+    "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/coke/coke.jpg",
     "name": "Coke",
     "posts": [
       1557329881

@@ -22,7 +22,8 @@ public class GalleriesViewModel extends ViewModel {
         this.dataRepository = dataRepository;
     }
 
-    private List<Long> forbiddenCollabGalleries = new ArrayList<>(List.of(13L, 14L, 15L, 16L, 17L));
+    public static List<Long> forbiddenCollabGalleries = new ArrayList<>(List.of(13L, 14L, 15L, 16L, 17L));
+
     public LiveData<List<Gallery>> getGalleries() {
         if (galleries == null) {
             List<Gallery> filteredGalleries = dataRepository

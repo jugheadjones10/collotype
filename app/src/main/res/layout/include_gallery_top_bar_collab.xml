@@ -109,21 +109,13 @@
         android:layout_width="15dp"
         android:layout_height="15dp"
         android:layout_marginStart="8dp"
-        android:background="@drawable/following_bg"
+        android:src="@drawable/ic_to_follow"
         app:layout_constraintBottom_toBottomOf="@+id/collab_one_name"
         app:layout_constraintStart_toEndOf="@id/collab_one_name"
         app:layout_constraintTop_toTopOf="@+id/collab_one_name">
 
     </View>
 
-    <View
-        android:layout_width="7dp"
-        android:layout_height="7dp"
-        android:background="@drawable/dot_bg"
-        app:layout_constraintBottom_toBottomOf="@+id/view"
-        app:layout_constraintEnd_toEndOf="@+id/view"
-        app:layout_constraintStart_toStartOf="@+id/view"
-        app:layout_constraintTop_toTopOf="@+id/view" />
 
     <TextView
         android:id="@+id/textView"

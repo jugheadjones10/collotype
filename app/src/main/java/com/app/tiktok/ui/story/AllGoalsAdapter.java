@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.core.view.GestureDetectorCompat;
 import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -35,15 +36,17 @@ class AllGoalsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     private Context mContext;
     private int squareLength;
     private NavController navController;
+    private PostsViewModel postsViewModel;
 
     RecycledViewPool viewPool;
 
-    public AllGoalsAdapter(Context mContext, int squareLength, List<List<Post>> processPosts, List<User> members, NavController navController){
+    public AllGoalsAdapter(Context mContext, PostsViewModel postsViewModel, int squareLength, List<List<Post>> processPosts, List<User> members, NavController navController){
         this.mContext = mContext;
         this.squareLength = squareLength;
         this.processPosts = processPosts;
         this.members = members;
         this.navController = navController;
+        this.postsViewModel = postsViewModel;
         viewPool = new RecyclerView.RecycledViewPool();
     }
 
@@ -84,9 +87,7 @@ class AllGoalsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    HomeFragmentDirections.ActionNavigationHomeToUserFragment action =
-                            HomeFragmentDirections.actionNavigationHomeToUserFragment(user);
-                    navController.navigate(action);
+
                 }
             });
         }
@@ -123,12 +124,14 @@ class AllGoalsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                 switch(e.getAction()) {
 
                     case (MotionEvent.ACTION_DOWN):
+                        postsViewModel.setDraggable(false);
                         break;
                     case (MotionEvent.ACTION_MOVE): {
                         break;
                     }
                     case (MotionEvent.ACTION_CANCEL):
                     case (MotionEvent.ACTION_UP):
+                        postsViewModel.setDraggable(true);
 //                        viewModel.setDraggable(true);
                         Log.d("mama", "onUp");
                         //goalsViewHolder.binding.goalsRecyclerView.requestDisallowInterceptTouchEvent(false);

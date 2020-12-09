@@ -21,9 +21,12 @@ public class StoryBunchPagerAdapter extends FragmentStateAdapter {
         this.gallery = gallery;
     }
 
+
+
     @NonNull
     @Override
     public Fragment createFragment(int position) {
+//        return BlankFragment.newInstance();
         return StoryViewFragment.Companion.newInstance(posts.get(position), gallery);
     }
 

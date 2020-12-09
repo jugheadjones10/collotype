@@ -3,6 +3,7 @@ package com.app.tiktok.ui.user;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
+
 import com.app.tiktok.ui.story.BlankFragment;
 
 class UserPagerAdapter extends FragmentStateAdapter {

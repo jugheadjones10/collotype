@@ -29,7 +29,6 @@ class MainActivity: BaseActivity(), NavController.OnDestinationChangedListener {
         setContentView(R.layout.activity_main)
 
         bottomNavBar = nav_view
-        //nav_view.visibility = View.GONE
 
         navController = findNavController(R.id.nav_host_fragment)
         nav_view.setupWithNavController(navController)

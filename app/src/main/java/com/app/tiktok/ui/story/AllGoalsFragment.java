@@ -107,7 +107,6 @@ public class AllGoalsFragment extends Fragment {
                 innerObserver.removeOnGlobalLayoutListener(this);
             }
         });
-
     }
 
     private void initializeRecyclerView(int squareLength, List<List<Post>> processPosts){
@@ -115,7 +114,7 @@ public class AllGoalsFragment extends Fragment {
             @Override
             public void onChanged(List<User> members) {
                 if(members != null){
-                    allGoalsAdapter = new AllGoalsAdapter(getContext(), squareLength, processPosts, members, navController);
+                    allGoalsAdapter = new AllGoalsAdapter(getContext(), postsViewModel, squareLength, processPosts, members, navController);
                     binding.allGoalsRecyclerView.setAdapter(allGoalsAdapter);
                 }
             }

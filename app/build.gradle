@@ -79,6 +79,7 @@ dependencies {
     kapt 'androidx.hilt:hilt-compiler:1.0.0-alpha01'
 
     implementation 'com.github.bumptech.glide:glide:4.11.0'
+    compile 'com.github.bumptech.glide:annotations:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
 
     implementation 'com.google.code.gson:gson:2.8.6'
@@ -91,6 +92,8 @@ dependencies {
 
     //Rotating carousell view
     implementation 'com.azoft.carousellayoutmanager:carousel:1.2.4'
+    implementation 'com.littlemango:stacklayoutmanager:1.0.5'
+
 }
 
 kapt {

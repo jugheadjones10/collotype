@@ -21,4 +21,4 @@ data class Gallery(
 
     val official: Boolean
 
-    ): Parcelable
+): Parcelable

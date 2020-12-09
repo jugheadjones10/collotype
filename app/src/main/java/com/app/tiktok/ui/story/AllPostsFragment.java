@@ -23,6 +23,7 @@ import com.app.tiktok.databinding.FragmentAllPostsBinding;
 import com.app.tiktok.model.Post;
 import com.app.tiktok.model.StoriesDataModel;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.MemoryCategory;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.List;
@@ -40,6 +41,7 @@ public class AllPostsFragment extends Fragment {
     private FragmentAllPostsBinding binding;
     private List<StoriesDataModel> childrenPosts;
     private PostsViewModel postsViewModel;
+    private int squareLength;
 
     public AllPostsFragment() {
     }
@@ -58,6 +60,8 @@ public class AllPostsFragment extends Fragment {
         if (getArguments() != null) {
             position = getArguments().getString(KEY_PARENT_POST);
         }
+
+        squareLength = getResources().getDisplayMetrics().widthPixels/4;
 
         postsViewModel = new ViewModelProvider(requireActivity()).get(position, PostsViewModel.class);
     }
@@ -83,28 +87,13 @@ public class AllPostsFragment extends Fragment {
             @Override
             public void onChanged(List<Post> posts) {
                 if(posts != null){
-                    setHeights(posts);
+                    populatePosts(posts);
                 }
             }
         });
     }
 
-    private void setHeights(List<Post> posts){
-        final ViewTreeObserver observer = binding.nestedScrollView.getViewTreeObserver();
-        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-
-                int squareLength = binding.postsGridLayout.getWidth()/4;
-                populatePosts(squareLength, posts);
-
-                ViewTreeObserver innerObserver = binding.nestedScrollView.getViewTreeObserver();
-                innerObserver.removeOnGlobalLayoutListener(this);
-            }
-        });
-    }
-
-    private void populatePosts(int squareLength, List<Post> posts){
+    private void populatePosts(List<Post> posts){
         LayoutInflater layoutInflator = getLayoutInflater();
 
         for (int i = 0; i < posts.size(); i++) {
@@ -129,6 +118,7 @@ public class AllPostsFragment extends Fragment {
                 view.setLayoutParams(layoutParams);
             }
 
+            Glide.get(getContext()).setMemoryCategory(MemoryCategory.HIGH);
             Glide.with(this)
                     .load(postUrl)
                     .thumbnail(0.25f)

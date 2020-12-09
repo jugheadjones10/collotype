@@ -12,6 +12,7 @@ import android.util.Log
 import android.view.*
 import android.view.View.GONE
 import android.view.View.OnTouchListener
+import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.core.view.GestureDetectorCompat
 import androidx.fragment.app.Fragment
@@ -98,8 +99,24 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
     private val utilViewModel by activityViewModels<UtilViewModel>()
     private lateinit var postViewModel: PostViewModel
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        arguments?.let {
+            post = it.getParcelable(Constants.KEY_POST_DATA)!!
+            gallery = it.getParcelable(Constants.KEY_GALLERY_DATA)!!
+        }
+
+        //Initialize View Model
+        postViewModel = ViewModelProvider(requireActivity()).get(
+            post.id.toString(),
+            PostViewModel::class.java
+        )
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
 
         if(parentFragment is StoryBunchFragment){
             parent = parentFragment as StoryBunchFragment
@@ -114,17 +131,6 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
             Log.d("volume", "options container on click listener")
             toggleVolume()
         }
-
-        arguments?.let {
-            post = it.getParcelable(Constants.KEY_POST_DATA)!!
-            gallery = it.getParcelable(Constants.KEY_GALLERY_DATA)!!
-        }
-
-        //Initialize View Model
-        postViewModel = ViewModelProvider(requireActivity()).get(
-            post.id.toString(),
-            PostViewModel::class.java
-        )
 
         gestureListener = MyGestureListener(parent)
         val myGestureListener = GestureDetectorCompat(context, gestureListener)
@@ -176,7 +182,7 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
                     start()
                 }
 
-                ValueAnimator.ofFloat(parentFragment!!.bigSquareLength?.toFloat(), 0f).apply {
+                ValueAnimator.ofFloat(parentFragment!!.squareLength?.toFloat(), 0f).apply {
                     duration = 600
                     start()
                     addUpdateListener { updatedAnimation ->
@@ -205,7 +211,7 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
                     start()
                 }
 
-                ValueAnimator.ofFloat(0f, parentFragment!!.bigSquareLength?.toFloat()).apply {
+                ValueAnimator.ofFloat(0f, parentFragment!!.squareLength?.toFloat()).apply {
                     duration = 600
                     start()
                     addUpdateListener { updatedAnimation ->
@@ -275,7 +281,7 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
                 Glide.with(it)
                     .load(processPostUrl)
                     .thumbnail(0.25f)
-                    .override(50, 50)
+                    .override(250, 450)
                     .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                     .into(post_image)
             }
@@ -363,7 +369,7 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
                         onProcessPostClicked = OnProcessPostClicked()
                     }
 
-                    //binding.processPostImage.loadImageFromUrl(processPostUrlString)
+                    binding.processPostImage.loadImageFromUrl(processPost.url)
                     Glide.with(this)
                         .load(processPost.url)
                         .thumbnail(0.25f)
@@ -402,11 +408,13 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
             setVolumeControl(VolumeState.OFF)
             player_view_story.player = simplePlayer
 
-            //post.url.let { prepareMedia(it) }
+            post.url.let { prepareMedia(it) }
             prepareMedia(storyUrl)
         }
 
         //image_view_group_pic?.loadCenterCropImageFromUrl(storiesDataModel?.storyThumbUrl)
+
+
         text_view_video_description.setTextOrHide(value = post.caption)
 
         var user: User
@@ -430,27 +438,37 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
         image_view_option_comment_title?.text =
             post.commentsCount.formatNumberAsReadableFormat()
 
-        (caption_profile as ShapeableImageView).loadImageFromUrl(user.url)
+        Glide.with(this)
+            .load(user.url)
+            .thumbnail(0.25f)
+            .override(50, 50)
+            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+            .into(caption_profile as ShapeableImageView)
     }
 
     override fun onPause() {
-        pauseVideo()
+        if(simplePlayer != null){
+            pauseVideo()
+        }
         super.onPause()
     }
 
     override fun onResume() {
+        if(simplePlayer != null){
+            val storyUrlType = Utility.extractS3URLfileType(storyUrl)
+            if (!Utility.isImage(storyUrlType)) {
+                setVolumeControl(VolumeState.ON)
+            }
 
-        val storyUrlType = Utility.extractS3URLfileType(storyUrl)
-        if (!Utility.isImage(storyUrlType)) {
-            setVolumeControl(VolumeState.ON)
+            restartVideo()
         }
-
-        restartVideo()
         super.onResume()
     }
 
     override fun onDestroy() {
-        releasePlayer()
+        if(simplePlayer != null){
+            releasePlayer()
+        }
         super.onDestroy()
     }
 

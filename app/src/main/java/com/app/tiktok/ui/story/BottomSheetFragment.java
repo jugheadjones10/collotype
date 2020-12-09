@@ -7,6 +7,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,6 +34,7 @@ public class BottomSheetFragment extends Fragment {
     private Gallery gallery;
     public FragmentBottomSheetBinding binding;
     private static BottomSheetFragment instance;
+    private PostsViewModel postsViewModel;
 
     public BottomSheetFragment() {
     }
@@ -58,6 +61,7 @@ public class BottomSheetFragment extends Fragment {
             position = getArguments().getString(KEY_PARENT_POST);
             gallery = getArguments().getParcelable(KEY_GALLERY);
         }
+        postsViewModel = new ViewModelProvider(requireActivity()).get(position, PostsViewModel.class);
     }
 
     @Override
@@ -71,6 +75,20 @@ public class BottomSheetFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+//        postsViewModel.getExpanding().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+//            @Override
+//            public void onChanged(Boolean expanding) {
+//                if(expanding != null){
+//                    if(expanding){
+                        initializeContents();
+//                    }
+//                }
+//            }
+//        });
+    }
+
+    private void initializeContents(){
 
         initializeViewPager();
         TabLayout tabLayout = binding.tabLayout;
@@ -100,29 +118,29 @@ public class BottomSheetFragment extends Fragment {
 
         tabLayout.setSelectedTabIndicator(R.drawable.tab_indicator);
         new TabLayoutMediator(tabLayout, binding.bottomSheetPager,
-            (tab, position) -> {
-                LayoutTabBinding tabBinding = DataBindingUtil.inflate(getLayoutInflater(), R.layout.layout_tab, binding.tabLayout, false);
-                switch (position){
-                    case 0:
-                        tabBinding.iconBg.setBackgroundResource(R.drawable.clock_30);
-                        break;
-                    case 1:
-                        tabBinding.iconBg.setBackgroundResource(R.drawable.ic_goals);
-                        break;
-                    case 2:
-                        tabBinding.iconBg.setBackgroundResource(R.drawable.short_vid_30);
-                        break;
-                    case 3:
-                        tabBinding.iconBg.setBackgroundResource(R.drawable.ic_long_vid);
-                        break;
-                    case 4:
-                        tabBinding.iconBg.setBackgroundResource(R.drawable.pictures_30);
-                        break;
-                    default:
+                (tab, position) -> {
+                    LayoutTabBinding tabBinding = DataBindingUtil.inflate(getLayoutInflater(), R.layout.layout_tab, binding.tabLayout, false);
+                    switch (position){
+                        case 0:
+                            tabBinding.iconBg.setBackgroundResource(R.drawable.clock_30);
+                            break;
+                        case 1:
+                            tabBinding.iconBg.setBackgroundResource(R.drawable.ic_goals);
+                            break;
+                        case 2:
+                            tabBinding.iconBg.setBackgroundResource(R.drawable.short_vid_30);
+                            break;
+                        case 3:
+                            tabBinding.iconBg.setBackgroundResource(R.drawable.ic_long_vid);
+                            break;
+                        case 4:
+                            tabBinding.iconBg.setBackgroundResource(R.drawable.pictures_30);
+                            break;
+                        default:
+                    }
+                    tabBinding.iconBg.getBackground().setColorFilter(getResources().getColor(android.R.color.white), PorterDuff.Mode.SRC_IN);
+                    tab.setCustomView(tabBinding.getRoot());
                 }
-                tabBinding.iconBg.getBackground().setColorFilter(getResources().getColor(android.R.color.white), PorterDuff.Mode.SRC_IN);
-                tab.setCustomView(tabBinding.getRoot());
-            }
         ).attach();
     }
 

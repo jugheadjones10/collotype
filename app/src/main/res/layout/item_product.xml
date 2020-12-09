@@ -5,18 +5,18 @@
     <data>
         <variable
             name="Product"
-            type="com.app.tiktok.ui.user.UserProduct" />
+            type="com.app.tiktok.model.Product" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_margin="8dp"
-        android:layout_width="match_parent"
+        android:layout_width="100dp"
         android:layout_height="wrap_content">
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/product_image"
             android:layout_width="match_parent"
-            android:layout_height="250dp"
+            android:layout_height="100dp"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
             app:layout_constraintEnd_toEndOf="parent"
