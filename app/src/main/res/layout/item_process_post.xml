@@ -6,7 +6,7 @@
     <data>
         <variable name="processCaption" type="String"/>
         <variable name="processPostUrl" type="String"/>
-        <variable name="onProcessPostClicked" type="com.app.tiktok.ui.story.StoryViewFragment.OnProcessPostClicked"/>
+        <variable name="onProcessPostClicked" type="com.app.tiktok.ui.story.post.StoryViewFragment.OnProcessPostClicked"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

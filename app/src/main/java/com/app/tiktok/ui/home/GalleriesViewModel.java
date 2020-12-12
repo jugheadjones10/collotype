@@ -1,4 +1,4 @@
-package com.app.tiktok.ui.story;
+package com.app.tiktok.ui.home;
 
 import androidx.hilt.lifecycle.ViewModelInject;
 import androidx.lifecycle.LiveData;

@@ -6,7 +6,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.app.tiktok.model.Gallery;
 import com.app.tiktok.model.Post;
-import com.app.tiktok.model.StoriesDataModel;
+import com.app.tiktok.ui.story.post.StoryViewFragment;
 
 import java.util.List;
 
@@ -20,8 +20,6 @@ public class StoryBunchPagerAdapter extends FragmentStateAdapter {
         this.posts = posts;
         this.gallery = gallery;
     }
-
-
 
     @NonNull
     @Override

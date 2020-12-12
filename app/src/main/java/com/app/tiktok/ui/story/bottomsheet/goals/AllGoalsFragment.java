@@ -22,11 +22,13 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 
 import com.app.tiktok.R;
+import com.app.tiktok.app.MyApp;
 import com.app.tiktok.databinding.FragmentAllGoalsBinding;
 import com.app.tiktok.model.Post;
 import com.app.tiktok.model.User;
 
 import java.util.List;
+import java.util.concurrent.Executor;
 
 public class AllGoalsFragment extends Fragment {
 
@@ -39,6 +41,7 @@ public class AllGoalsFragment extends Fragment {
     private AllGoalsAdapter allGoalsAdapter;
     private PostsViewModel postsViewModel;
     private NavController navController;
+    private List<List<Post>> mProcessPosts;
 
     public AllGoalsFragment() {
         // Required empty public constructor
@@ -82,39 +85,34 @@ public class AllGoalsFragment extends Fragment {
         initializeNestedScrollViewBehaviour();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("feel", "AllGolasFragment RESUME");
+        if(mProcessPosts != null && binding.allGoalsRecyclerView.getAdapter() == null){
+            initializeRecyclerView(mProcessPosts);
+        }
+    }
+
     private void getProcessPosts() {
-        postsViewModel.getProcessPosts(galleryId).observe(getViewLifecycleOwner(), new Observer<List<List<Post>>>() {
+        Executor executor = MyApp.Companion.getExecutorService();
+        postsViewModel.getProcessPosts(galleryId, executor).observe(getViewLifecycleOwner(), new Observer<List<List<Post>>>() {
             @Override
             public void onChanged(List<List<Post>> processPosts) {
                 if (processPosts != null) {
-                    listenForWidth(processPosts);
+                    mProcessPosts = processPosts;
                 }
             }
         });
     }
 
-    private void listenForWidth(List<List<Post>> processPosts){
-        final ViewTreeObserver observer = binding.allGoalsRecyclerView.getViewTreeObserver();
-        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                // I don't understand onGlobalLayout. What exactly does it listen for?
-                int squareLength = binding.allGoalsRecyclerView.getWidth()/4;
 
-                initializeRecyclerView(squareLength, processPosts);
-
-                ViewTreeObserver innerObserver = binding.allGoalsRecyclerView.getViewTreeObserver();
-                innerObserver.removeOnGlobalLayoutListener(this);
-            }
-        });
-    }
-
-    private void initializeRecyclerView(int squareLength, List<List<Post>> processPosts){
+    private void initializeRecyclerView(List<List<Post>> processPosts){
         postsViewModel.getMembers().observe(getViewLifecycleOwner(), new Observer<List<User>>() {
             @Override
             public void onChanged(List<User> members) {
                 if(members != null){
-                    allGoalsAdapter = new AllGoalsAdapter(getContext(), postsViewModel, squareLength, processPosts, members, navController);
+                    allGoalsAdapter = new AllGoalsAdapter(getContext(), postsViewModel, processPosts, members, navController);
                     binding.allGoalsRecyclerView.setAdapter(allGoalsAdapter);
                 }
             }

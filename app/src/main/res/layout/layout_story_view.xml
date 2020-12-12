@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/story_view_parent_constraint"
@@ -22,17 +23,29 @@
 <!--    android:layout_marginTop="300dp"-->
 <!--    android:layout_marginEnd="200dp"-->
 <!--    android:layout_marginBottom="300dp"-->
-    <com.google.android.material.imageview.ShapeableImageView
-        android:adjustViewBounds="true"
-        android:scaleType="centerCrop"
+    <ImageView
         android:id="@+id/post_image"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
+        android:adjustViewBounds="true"
         android:background="@color/colorBlack"
+        android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/player_view_story"
         app:layout_constraintTop_toTopOf="parent" />
+
+<!--    <com.google.android.material.imageview.ShapeableImageView-->
+<!--        android:adjustViewBounds="true"-->
+<!--        android:scaleType="centerCrop"-->
+<!--        android:id="@+id/post_image"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:background="@color/colorBlack"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="@+id/player_view_story"-->
+<!--        app:layout_constraintTop_toTopOf="parent" />-->
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/options_container"

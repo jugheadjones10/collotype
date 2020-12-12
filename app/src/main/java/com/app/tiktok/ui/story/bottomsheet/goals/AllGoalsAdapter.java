@@ -13,6 +13,7 @@ import androidx.core.view.GestureDetectorCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.app.tiktok.R;
@@ -40,9 +41,9 @@ class AllGoalsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     RecycledViewPool viewPool;
 
-    public AllGoalsAdapter(Context mContext, PostsViewModel postsViewModel, int squareLength, List<List<Post>> processPosts, List<User> members, NavController navController){
+    public AllGoalsAdapter(Context mContext, PostsViewModel postsViewModel, List<List<Post>> processPosts, List<User> members, NavController navController){
         this.mContext = mContext;
-        this.squareLength = squareLength;
+        this.squareLength = mContext.getResources().getDisplayMetrics().widthPixels/4;
         this.processPosts = processPosts;
         this.members = members;
         this.navController = navController;
@@ -153,7 +154,21 @@ class AllGoalsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
 
         Log.d("process", processPosts.toString());
-        BottomPostsAdapter bottomPostsAdapter = new BottomPostsAdapter(processPostsRow, mContext, true, squareLength);
+        BottomPostsAdapter bottomPostsAdapter = new BottomPostsAdapter(processPostsRow, mContext, true);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL ,false);
+        goalsViewHolder.binding.goalsRecyclerView.setLayoutManager(layoutManager);
+        goalsViewHolder.binding.goalsRecyclerView.setRecyclerListener(new RecyclerView.RecyclerListener() {
+            @Override
+            public void onViewRecycled(@NonNull RecyclerView.ViewHolder holder) {
+                if(holder.getItemViewType() == BottomPostsAdapter.NORMAL_ITEM){
+                    BottomPostsAdapter.BottomPostViewHolder viewHolder = (BottomPostsAdapter.BottomPostViewHolder) holder;
+                    Glide.with(mContext).clear(viewHolder.binding.bottomPostImage);
+                }else{
+                    BottomPostsAdapter.EnlargedBottomPostViewHolder viewHolder = (BottomPostsAdapter.EnlargedBottomPostViewHolder) holder;
+                    Glide.with(mContext).clear(viewHolder.binding.bottomPostImage);
+                }
+            }
+        });
         goalsViewHolder.binding.goalsRecyclerView.setAdapter(bottomPostsAdapter);
     }
 

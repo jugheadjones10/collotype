@@ -18,7 +18,6 @@ import android.view.ViewGroup;
 
 import com.app.tiktok.R;
 import com.app.tiktok.databinding.FragmentUserEventsBinding;
-import com.app.tiktok.ui.story.GalleriesViewModel;
 import com.app.tiktok.ui.story.UtilViewModel;
 
 import java.util.List;

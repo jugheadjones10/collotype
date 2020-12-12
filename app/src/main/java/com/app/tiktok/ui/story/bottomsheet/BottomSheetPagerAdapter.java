@@ -27,7 +27,9 @@ class BottomSheetPagerAdapter extends FragmentStateAdapter {
         switch(position) {
             case 0:
                 return AllPostsFragment.newInstance(galleryPosition);
+//                return BlankFragment.newInstance();
             case 1:
+//                return BlankFragment.newInstance();
             return AllGoalsFragment.newInstance(galleryPosition, gallery.getId());
             case 2:
                 return BlankFragment.newInstance();

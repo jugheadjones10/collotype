@@ -26,6 +26,7 @@ import com.app.tiktok.model.User;
 import com.app.tiktok.ui.galleryinfo.GalleryInfoFragment;
 import com.app.tiktok.ui.home.HomeFragment;
 import com.app.tiktok.ui.story.PostsViewModel;
+import com.app.tiktok.ui.story.StoryBunchFragment;
 import com.app.tiktok.ui.story.UtilViewModel;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -40,15 +41,20 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class UserFragment extends Fragment {
 
     private UtilViewModel utilViewModel;
+    private PostsViewModel postsViewModel;
     private FragmentUserBinding binding;
     private User userData;
     private NavController navController;
+    private String position;
 
     private static final String USER_KEY = "USER_KEY";
-    public static UserFragment newInstance(User userData) {
+    private static final String POSITION_KEY = "POSITION_KEY";
+
+    public static UserFragment newInstance(String position, User userData) {
         UserFragment fragment = new UserFragment();
         Bundle args = new Bundle();
         args.putParcelable(USER_KEY, userData);
+        args.putString(POSITION_KEY, position);
         fragment.setArguments(args);
         return fragment;
     }
@@ -57,21 +63,26 @@ public class UserFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        HomeFragment.Companion.getViewPager2().setUserInputEnabled(false);
+//        HomeFragment.Companion.getViewPager2().setUserInputEnabled(false);
+//        StoryBunchFragment.getInstance().bottomSheetBehavior.setDraggable(false);
 
         //Get Argument
         if(getArguments() != null){
             userData = getArguments().getParcelable(USER_KEY);
+            position = getArguments().getString(POSITION_KEY);
         }
 
         utilViewModel = new ViewModelProvider(requireActivity()).get(UtilViewModel.class);
+        postsViewModel = new ViewModelProvider(requireActivity()).get(position, PostsViewModel.class);
         navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        HomeFragment.Companion.getViewPager2().setUserInputEnabled(true);
+        //FIX THIS
+//        StoryBunchFragment.getInstance().bottomSheetBehavior.setDraggable(true);
+//        HomeFragment.Companion.getViewPager2().setUserInputEnabled(true);
     }
 
 
@@ -142,8 +153,8 @@ public class UserFragment extends Fragment {
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-//                navController.navigateUp();
-                getParentFragmentManager().beginTransaction().remove(UserFragment.this).commit();
+                getParentFragmentManager().popBackStackImmediate();
+                postsViewModel.setEnableInteractions(true);
             }
         });
     }

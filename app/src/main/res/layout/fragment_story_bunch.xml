@@ -41,16 +41,25 @@
             android:id="@+id/layout_bot_sheet"
             layout="@layout/layout_bottom_sheet" />
 
-        <FrameLayout
+
+        <androidx.fragment.app.FragmentContainerView
             android:id="@+id/detailed_gallery_info"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent">
+        </androidx.fragment.app.FragmentContainerView>
+
 
         <ViewStub
             android:id="@+id/top_bar_stub"
             android:inflatedId="@+id/top_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/user_fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </androidx.fragment.app.FragmentContainerView>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

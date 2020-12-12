@@ -6,25 +6,7 @@ import com.app.tiktok.model.User;
 import java.util.List;
 
 public abstract class DataItem {
-    long id;
+    public long id;
 }
 
-class UserHeader extends DataItem {
-
-    User user;
-
-    UserHeader(User user){
-        this.user = user;
-        this.id = Long.MAX_VALUE;
-    }
-}
-
-class AllUserPosts extends DataItem {
-    List<StoriesDataModel> storiesDataModels;
-
-    AllUserPosts(List<StoriesDataModel> storiesDataModels){
-        this.storiesDataModels = storiesDataModels;
-        this.id = Long.MAX_VALUE;
-    }
-}
 

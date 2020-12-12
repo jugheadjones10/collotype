@@ -6,7 +6,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.user.UserEventsFragment">
+    tools:context=".ui.user.events.UserEventsFragment">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/user_galleries_recycler_view"

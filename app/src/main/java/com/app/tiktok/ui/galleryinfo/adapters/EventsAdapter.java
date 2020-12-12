@@ -1,4 +1,4 @@
-package com.app.tiktok.ui.galleryinfo;
+package com.app.tiktok.ui.galleryinfo.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -11,9 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.app.tiktok.R;
 import com.app.tiktok.databinding.ItemGalleryInfoEventBinding;
-import com.app.tiktok.databinding.ItemMemberGalleryBinding;
-import com.app.tiktok.databinding.ItemUserEventBinding;
-import com.app.tiktok.model.Gallery;
 import com.app.tiktok.model.HydratedEvent;
 import com.app.tiktok.model.User;
 import com.bumptech.glide.Glide;
@@ -22,7 +19,7 @@ import com.google.android.material.imageview.ShapeableImageView;
 
 import java.util.List;
 
-class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewHolder> {
+public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewHolder> {
 
     private List<HydratedEvent> events;
     private Context mContext;

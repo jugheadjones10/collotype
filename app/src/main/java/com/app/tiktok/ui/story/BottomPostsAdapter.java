@@ -22,6 +22,7 @@ import com.app.tiktok.databinding.BottomPostItemBinding;
 import com.app.tiktok.databinding.EnlargedBottomPostItemBinding;
 import com.app.tiktok.model.Post;
 import com.app.tiktok.model.StoriesDataModel;
+import com.app.tiktok.ui.story.StoryBunchFragment;
 import com.app.tiktok.utils.Utility;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.MemoryCategory;
@@ -64,8 +65,8 @@ public class BottomPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private boolean modifyFirst = false;
     private int squareLength = -1;
 
-    private int NORMAL_ITEM = 0;
-    private int ENLARGED_ITEM = 1;
+    public static final int NORMAL_ITEM = 0;
+    private static final int ENLARGED_ITEM = 1;
 
     public BottomPostsAdapter(List<Post> posts, Context mContext, StoryBunchFragment.OnBottomItemClickListener itemClickListener) {
         this.posts = posts;
@@ -73,17 +74,17 @@ public class BottomPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         this.itemClickListener = itemClickListener;
     }
 
-    public BottomPostsAdapter(List<Post> posts, Context mContext, boolean modifyFirst, int squareLength) {
+    public BottomPostsAdapter(List<Post> posts, Context mContext, boolean modifyFirst) {
         this.posts = posts;
         this.mContext = mContext;
         this.modifyFirst = modifyFirst;
-        this.squareLength = squareLength;
+        this.squareLength = mContext.getResources().getDisplayMetrics().widthPixels/4;
     }
 
 
     public class BottomPostViewHolder extends RecyclerView.ViewHolder {
 
-        BottomPostItemBinding binding;
+        public BottomPostItemBinding binding;
 
         public BottomPostViewHolder(BottomPostItemBinding binding) {
             super(binding.getRoot());
@@ -93,7 +94,7 @@ public class BottomPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     public class EnlargedBottomPostViewHolder extends RecyclerView.ViewHolder {
 
-        EnlargedBottomPostItemBinding binding;
+        public EnlargedBottomPostItemBinding binding;
 
         public EnlargedBottomPostViewHolder(EnlargedBottomPostItemBinding binding) {
             super(binding.getRoot());
@@ -119,6 +120,16 @@ public class BottomPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             return new EnlargedBottomPostViewHolder(binding);
         }else{
             BottomPostItemBinding binding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.bottom_post_item, parent, false);
+
+            ViewGroup.LayoutParams params = binding.bottomPostItemContainer.getLayoutParams();
+            params.width = squareLength;
+            params.height = squareLength;
+
+            if(modifyFirst){
+                ViewGroup.MarginLayoutParams viewPagerMarginParams = (ViewGroup.MarginLayoutParams)binding.bottomPostItemContainer.getLayoutParams();
+                viewPagerMarginParams.topMargin = Utility.INSTANCE.dpToPx(130, mContext) - squareLength;
+                binding.bottomPostItemContainer.setLayoutParams(viewPagerMarginParams);
+            }
 
             return new BottomPostViewHolder(binding);
         }
@@ -162,16 +173,16 @@ public class BottomPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             BottomPostViewHolder viewHolder = (BottomPostViewHolder) holder;
 
             Log.d("Goalsscroller", "modify first ran");
-            if(squareLength > 0 && modifyFirst){
-                ViewGroup.LayoutParams itemContainerLayoutParams = viewHolder.binding.bottomPostItemContainer.getLayoutParams();
-                itemContainerLayoutParams.height = squareLength;
-                itemContainerLayoutParams.width = squareLength;
-                viewHolder.binding.bottomPostItemContainer.setLayoutParams(itemContainerLayoutParams);
-
-                ViewGroup.MarginLayoutParams viewPagerMarginParams = (ViewGroup.MarginLayoutParams)viewHolder.binding.bottomPostItemContainer.getLayoutParams();
-                viewPagerMarginParams.topMargin = Utility.INSTANCE.dpToPx(130, mContext) - squareLength;
-                viewHolder.binding.bottomPostItemContainer.setLayoutParams(viewPagerMarginParams);
-            }
+//            if(squareLength > 0 && modifyFirst){
+//                ViewGroup.LayoutParams itemContainerLayoutParams = viewHolder.binding.bottomPostItemContainer.getLayoutParams();
+//                itemContainerLayoutParams.height = squareLength;
+//                itemContainerLayoutParams.width = squareLength;
+//                viewHolder.binding.bottomPostItemContainer.setLayoutParams(itemContainerLayoutParams);
+//
+//                ViewGroup.MarginLayoutParams viewPagerMarginParams = (ViewGroup.MarginLayoutParams)viewHolder.binding.bottomPostItemContainer.getLayoutParams();
+//                viewPagerMarginParams.topMargin = Utility.INSTANCE.dpToPx(130, mContext) - squareLength;
+//                viewHolder.binding.bottomPostItemContainer.setLayoutParams(viewPagerMarginParams);
+//            }
 
             if(Utility.INSTANCE.isImage(storyType)){
 

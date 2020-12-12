@@ -10,6 +10,8 @@ import com.app.tiktok.model.Post;
 import com.app.tiktok.model.StoriesDataModel;
 import com.app.tiktok.model.User;
 import com.app.tiktok.repository.DataRepository;
+import com.app.tiktok.ui.user.galleries.UserGallery;
+import com.app.tiktok.ui.user.posts.UserPost;
 
 import java.util.ArrayList;
 import java.util.Collections;

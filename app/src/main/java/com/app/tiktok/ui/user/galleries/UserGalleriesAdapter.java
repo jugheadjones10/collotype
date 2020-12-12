@@ -111,7 +111,7 @@ class UserGalleriesAdapter extends RecyclerView.Adapter<UserGalleriesAdapter.Use
 
         viewHolder.binding.setGalleryData(userGallery.gallery);
         viewHolder.binding.galleryRecyclerView.setLayoutManager(layoutManager);
-        BottomPostsAdapter bottomPostsAdapter = new BottomPostsAdapter(userGallery.posts, mContext, false, squareLength);
+        BottomPostsAdapter bottomPostsAdapter = new BottomPostsAdapter(userGallery.posts, mContext, false);
         viewHolder.binding.galleryRecyclerView.setAdapter(bottomPostsAdapter);
         viewHolder.binding.galleryRecyclerView.getItemAnimator().setChangeDuration(0);
     }

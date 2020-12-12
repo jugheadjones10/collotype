@@ -3,14 +3,14 @@ package com.app.tiktok.ui.main
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
-import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.app.tiktok.R
 import com.app.tiktok.base.BaseActivity
-import com.app.tiktok.model.Post
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.prefill.PreFillType
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
@@ -36,6 +36,19 @@ class MainActivity: BaseActivity(), NavController.OnDestinationChangedListener {
         container.cameraDistance = 1000000000000000000000000000f
 
         navController.addOnDestinationChangedListener(this)
+
+        if (savedInstanceState == null) {
+            // Weight values determined experimentally by measuring the number of incurred GCs while
+            // scrolling through the various photo grids/lists.
+//            val squareLength = getResources().getDisplayMetrics().widthPixels/4
+//            val postHeight = getResources().getDisplayMetrics().heightPixels - squareLength
+//            val postWidth = getResources().getDisplayMetrics().widthPixels
+//            Glide.get(this)
+//                .preFillBitmapPool(
+//                    PreFillType.Builder(squareLength).setWeight(3),
+//                    PreFillType.Builder(postWidth, postHeight).setWeight(2)
+//                )
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {

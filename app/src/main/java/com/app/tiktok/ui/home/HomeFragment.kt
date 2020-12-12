@@ -4,8 +4,6 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.view.ViewTreeObserver
-import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.viewpager2.widget.ViewPager2
@@ -16,7 +14,6 @@ import com.app.tiktok.R
 import com.app.tiktok.base.BaseFragment
 import com.app.tiktok.model.StoriesDataModel
 import com.app.tiktok.ui.main.MainViewModel
-import com.app.tiktok.ui.story.GalleriesViewModel
 import com.app.tiktok.utils.Constants
 import com.app.tiktok.work.PreCachingService
 import dagger.hilt.android.AndroidEntryPoint
@@ -61,13 +58,6 @@ class  HomeFragment : BaseFragment(R.layout.fragment_home) {
                 view_pager_stories.adapter =
                     storiesPagerAdapter
 
-//                view_pager_stories.registerOnPageChangeCallback(object :
-//                    ViewPager2.OnPageChangeCallback() {
-//                    override fun onPageSelected(position: Int) {
-//                        galleriesViewModel.setDraggable(true)
-//                        super.onPageSelected(position)
-//                    }
-//                })
                 //startPreCaching(dataList)
             }
         })

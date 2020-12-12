@@ -7,7 +7,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.MarginLayoutParams;
-import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -27,14 +26,17 @@ import androidx.recyclerview.widget.RecyclerView.LayoutManager;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.app.tiktok.R;
+import com.app.tiktok.app.MyApp;
 import com.app.tiktok.databinding.FragmentStoryBunchBinding;
 import com.app.tiktok.model.Gallery;
 import com.app.tiktok.model.Post;
 import com.app.tiktok.model.StoriesDataModel;
 import com.app.tiktok.model.User;
 import com.app.tiktok.ui.galleryinfo.GalleryInfoFragment;
+import com.app.tiktok.ui.galleryinfo.GalleryInfoRecyclerDataItem;
+import com.app.tiktok.ui.home.GalleriesViewModel;
 import com.app.tiktok.ui.home.HomeFragment;
-import com.app.tiktok.ui.home.HomeFragmentDirections;
+import com.app.tiktok.ui.story.bottomsheet.BottomSheetFragment;
 import com.app.tiktok.ui.user.UserFragment;
 import com.app.tiktok.utils.Constants;
 import com.app.tiktok.utils.ExtensionsKt;
@@ -46,6 +48,7 @@ import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.List;
+import java.util.concurrent.Executor;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -91,7 +94,6 @@ public class StoryBunchFragment extends Fragment {
     public static StoryBunchFragment getInstance(){
         return instance;
     }
-
 
     // Set bottom recycler view item as selected when view pager is swiped
     private final ViewPager2.OnPageChangeCallback viewPagerChangeCallback = new ViewPager2.OnPageChangeCallback() {
@@ -162,6 +164,7 @@ public class StoryBunchFragment extends Fragment {
         binding.postsViewPager.setCameraDistance(1000000000000000000000000000f);
         binding.storyBunchParent.setCameraDistance(1000000000000000000000000000f);
 
+
         //Get data from view model
 
         if(gallery.getId() != 6L){
@@ -203,7 +206,9 @@ public class StoryBunchFragment extends Fragment {
 
     private void getPosts(){
         //Own self is added so it is displayed at the bottom
-        postsViewModel.getPosts(gallery.getId()).observe(getViewLifecycleOwner(), new Observer<List<Post>>() {
+        Executor executor = MyApp.Companion.getExecutorService();
+
+        postsViewModel.getPosts(gallery.getId(), executor).observe(getViewLifecycleOwner(), new Observer<List<Post>>() {
             @Override
             public void onChanged(List<Post> posts) {
                 if(posts != null){
@@ -220,7 +225,24 @@ public class StoryBunchFragment extends Fragment {
             @Override
             public void onChanged(Boolean draggable) {
                 if(draggable != null){
+                    Log.d("findingnemo", "Draggable property in StoryBunchFragment : " + draggable);
                     bottomSheetBehavior.setDraggable(draggable);
+                }
+            }
+        });
+
+        postsViewModel.getEnableInteractions().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean enableInteractions) {
+                if(enableInteractions != null){
+                    Log.d("findingnemo", "Enable interactions property in StoryBunchFragment : " + enableInteractions);
+
+                    Log.d("hey", getChildFragmentManager().getBackStackEntryCount() + "");
+                    //TODO better way to get around the below hack? Prevent touch events on fragment from getting intercepted.
+                    if(getChildFragmentManager().getBackStackEntryCount() == 0) {
+                        HomeFragment.Companion.getViewPager2().setUserInputEnabled(enableInteractions);
+                        postsViewModel.setDraggable(enableInteractions);
+                    }
                 }
             }
         });
@@ -256,6 +278,7 @@ public class StoryBunchFragment extends Fragment {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 if(newState == BottomSheetBehavior.STATE_COLLAPSED){
+                    Log.d("frog", "Bottom sheet sate collapsed");
                     HomeFragment.Companion.getViewPager2().setUserInputEnabled(true);
 
                     ViewGroup.LayoutParams recyclerViewLayoutParams = binding.layoutBotSheet.thumbnailsRecyclerView.getLayoutParams();
@@ -280,26 +303,29 @@ public class StoryBunchFragment extends Fragment {
 
                 binding.layoutBotSheet.botSheet.setVisibility(View.VISIBLE);
 
-                TabLayout tabLayout = getChildFragmentManager().findFragmentById(R.id.bot_sheet_fragment).getView().findViewById(R.id.tab_layout);
-                ViewGroup.LayoutParams tabLayoutParams = tabLayout.getLayoutParams();
-                tabLayoutParams.height = (int) (thirtyPx * slideOffset);
-                tabLayout.setLayoutParams(tabLayoutParams);
+                if(getChildFragmentManager().findFragmentById(R.id.bot_sheet_fragment) != null) {
+                    TabLayout tabLayout = getChildFragmentManager().findFragmentById(R.id.bot_sheet_fragment).getView().findViewById(R.id.tab_layout);
+                    ViewGroup.LayoutParams tabLayoutParams = tabLayout.getLayoutParams();
+                    tabLayoutParams.height = (int) (thirtyPx * slideOffset);
+                    tabLayout.setLayoutParams(tabLayoutParams);
 
-                //How come I don't need to set layout params again after specifying margins? Unlike in the setHeights method
-                MarginLayoutParams tabMarginParams = (MarginLayoutParams) tabLayout.getLayoutParams();
-                tabMarginParams.topMargin = (int) ((tabVerticalPadding + inflatedTopBar.getHeight()) * slideOffset);
-                tabMarginParams.bottomMargin = (int) (tabVerticalPadding * slideOffset);
-                tabMarginParams.leftMargin = (int) (Utility.INSTANCE.dpToPx(50, getContext()) * slideOffset);
-                tabMarginParams.rightMargin = (int) (Utility.INSTANCE.dpToPx(50, getContext()) * slideOffset);
 
-                for (int i = 0; i < tabLayout.getTabCount(); i++) {
-                    ViewGroup.LayoutParams tabViewLayoutParams = tabLayout.getTabAt(i).getCustomView().getLayoutParams();
-                    tabViewLayoutParams.width = (int) (Utility.INSTANCE.dpToPx(BottomSheetFragment.TAB_ITEM_WIDTH, getContext()) * slideOffset);
-                    tabViewLayoutParams.height = (int) (Utility.INSTANCE.dpToPx(BottomSheetFragment.TAB_ITEM_WIDTH, getContext()) * slideOffset);
-                    tabLayout.getTabAt(i).getCustomView().setLayoutParams(tabViewLayoutParams);
+                    //How come I don't need to set layout params again after specifying margins? Unlike in the setHeights method
+                    MarginLayoutParams tabMarginParams = (MarginLayoutParams) tabLayout.getLayoutParams();
+                    tabMarginParams.topMargin = (int) ((tabVerticalPadding + inflatedTopBar.getHeight()) * slideOffset);
+                    tabMarginParams.bottomMargin = (int) (tabVerticalPadding * slideOffset);
+                    tabMarginParams.leftMargin = (int) (Utility.INSTANCE.dpToPx(50, getContext()) * slideOffset);
+                    tabMarginParams.rightMargin = (int) (Utility.INSTANCE.dpToPx(50, getContext()) * slideOffset);
+
+                    for (int i = 0; i < tabLayout.getTabCount(); i++) {
+                        ViewGroup.LayoutParams tabViewLayoutParams = tabLayout.getTabAt(i).getCustomView().getLayoutParams();
+                        tabViewLayoutParams.width = (int) (Utility.INSTANCE.dpToPx(BottomSheetFragment.TAB_ITEM_WIDTH, getContext()) * slideOffset);
+                        tabViewLayoutParams.height = (int) (Utility.INSTANCE.dpToPx(BottomSheetFragment.TAB_ITEM_WIDTH, getContext()) * slideOffset);
+                        tabLayout.getTabAt(i).getCustomView().setLayoutParams(tabViewLayoutParams);
+                    }
+
+                    tabLayout.setSelectedTabIndicatorHeight((int) (Utility.INSTANCE.dpToPx(BottomSheetFragment.TAB_ITEM_WIDTH, getContext()) * slideOffset));
                 }
-
-                tabLayout.setSelectedTabIndicatorHeight((int) (Utility.INSTANCE.dpToPx(BottomSheetFragment.TAB_ITEM_WIDTH, getContext()) * slideOffset));
 
                 transitionBottomSheetBackgroundColor(slideOffset);
             }
@@ -366,34 +392,31 @@ public class StoryBunchFragment extends Fragment {
             postsViewModel.getMembers(gallery.getId()).observe(getViewLifecycleOwner(), new Observer<List<User>>() {
                 @Override
                 public void onChanged(List<User> users) {
-
-                    LinearLayout groupMembers = inflatedTopBar.findViewById(R.id.group_members);
-
                     if(users != null){
-                        for (User user: users) {
-                            String profileUrl = user.getUrl();
-                            ShapeableImageView view = (ShapeableImageView)layoutInflator.inflate(R.layout.include_member_profile, groupMembers, false);
+                        LinearLayout groupMembers = inflatedTopBar.findViewById(R.id.group_members);
 
-                            Glide.with(StoryBunchFragment.this)
-                                    .load(profileUrl)
-                                    .thumbnail(0.25f)
-                                    .override(Utility.INSTANCE.dpToPx(25, requireContext()))
-                                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                                    .into(view);
+                        if(users != null){
+                            for (User user: users) {
+                                String profileUrl = user.getUrl();
+                                ShapeableImageView view = (ShapeableImageView)layoutInflator.inflate(R.layout.include_member_profile, groupMembers, false);
 
-                            groupMembers.addView(view);
+                                Glide.with(StoryBunchFragment.this)
+                                        .load(profileUrl)
+                                        .thumbnail(0.25f)
+                                        .override(Utility.INSTANCE.dpToPx(25, requireContext()))
+                                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                                        .into(view);
 
-                            view.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    Fragment userFragment = UserFragment.newInstance(user);
+                                groupMembers.addView(view);
 
-                                    FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-                                    transaction.add(R.id.story_bunch_parent, userFragment, "UserFragment");
-                                    transaction.addToBackStack(null);
-                                    transaction.commit();
-                                }
-                            });
+                                view.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        Fragment userFragment = UserFragment.newInstance(position, user);
+                                        navigateToFragment(userFragment, R.id.user_fragment_container, "UserFragment");
+                                    }
+                                });
+                            }
                         }
                     }
                 }
@@ -445,7 +468,6 @@ public class StoryBunchFragment extends Fragment {
                 Log.d("lag", "RecyclerView square lenght : " + squareLength);
                 lp.width = squareLength;
                 lp.height = squareLength;
-
                 return true;
             }
         };
@@ -456,15 +478,27 @@ public class StoryBunchFragment extends Fragment {
 
         //This removes recyclerView blinking on selected item change
         binding.layoutBotSheet.thumbnailsRecyclerView.getItemAnimator().setChangeDuration(0);
-
+        binding.layoutBotSheet.thumbnailsRecyclerView.setRecyclerListener(new RecyclerView.RecyclerListener() {
+            @Override
+            public void onViewRecycled(@NonNull RecyclerView.ViewHolder holder) {
+                if(holder.getItemViewType() == BottomPostsAdapter.NORMAL_ITEM){
+                    BottomPostsAdapter.BottomPostViewHolder viewHolder = (BottomPostsAdapter.BottomPostViewHolder) holder;
+                    Glide.with(StoryBunchFragment.this).clear(viewHolder.binding.bottomPostImage);
+                }else{
+                    BottomPostsAdapter.EnlargedBottomPostViewHolder viewHolder = (BottomPostsAdapter.EnlargedBottomPostViewHolder) holder;
+                    Glide.with(StoryBunchFragment.this).clear(viewHolder.binding.bottomPostImage);
+                }
+            }
+        });
         binding.layoutBotSheet.thumbnailsRecyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
             @Override
             public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
                 if (e.getAction() == MotionEvent.ACTION_DOWN) {
-                    Log.d("jay", "Bottom Recycler View Action DOWN");
+                    Log.d("findingnemo", "Bottom Recycler view DOWN ");
+
                     HomeFragment.Companion.getViewPager2().setUserInputEnabled(false);
                 }else if(e.getAction() == MotionEvent.ACTION_UP){
-                    Log.d("jay", "Bottom Recycler View Action UP");
+                    Log.d("findingnemo", "Bottom Recycler view UP ");
                     //This clause prevents home fragment view pager 2 from getting disabled if user clicks on recycler view items
                     if(bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED){
                         HomeFragment.Companion.getViewPager2().setUserInputEnabled(true);
@@ -487,27 +521,30 @@ public class StoryBunchFragment extends Fragment {
 
     private void initializeViewPager(List<Post> posts){
         Log.d("lag", "IN view pager intitaize");
+        
+        new Thread(new Runnable() {
+            public void run() {
+                //Not sure if the asynchronous feature below is required.
+                //Pass in everything first. Later we may need to filter.
+                pagerAdapter = new StoryBunchPagerAdapter(StoryBunchFragment.this, posts, gallery);
 
-        //Pass in everything first. Later we may need to filter.
-        pagerAdapter = new StoryBunchPagerAdapter(this, posts, gallery);
-
-        binding.postsViewPager.setOffscreenPageLimit(1);
-        binding.postsViewPager.setAdapter(pagerAdapter);
-        binding.postsViewPager.registerOnPageChangeCallback(viewPagerChangeCallback);
+                binding.postsViewPager.post(new Runnable() {
+                    public void run() {
+//                        binding.postsViewPager.setOffscreenPageLimit(1);
+                        binding.postsViewPager.setAdapter(pagerAdapter);
+                        binding.postsViewPager.registerOnPageChangeCallback(viewPagerChangeCallback);
+                    }
+                });
+            }
+        }).start();
     }
-
 
     private void goToDetailedGallery(Gallery gallery){
         if(!GalleriesViewModel.forbiddenCollabGalleries.contains(gallery.getId())) {
-
             Fragment fragment = getChildFragmentManager().findFragmentByTag("GalleryInfoFragment");
-            if(fragment == null || !fragment.isVisible()) {
+            if(fragment == null) {
                 Fragment galleryInfoFragment = GalleryInfoFragment.newInstance(position, gallery, (int)inflatedTopBar.getHeight());
-
-                FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-                transaction.add(R.id.detailed_gallery_info, galleryInfoFragment, "GalleryInfoFragment");
-                transaction.addToBackStack(null);
-                transaction.commit();
+                navigateToFragment(galleryInfoFragment, R.id.detailed_gallery_info, "GalleryInfoFragment");
             }
         }
     }
@@ -515,8 +552,18 @@ public class StoryBunchFragment extends Fragment {
     private void transitionBottomSheetBackgroundColor(float slideOffset) {
         int colorFrom = getResources().getColor(R.color.colorTransparent);
         int colorTo = getResources().getColor(R.color.colorBlack);
-        binding.layoutBotSheet.botSheet.setBackgroundColor(interpolateColor(slideOffset,
-                colorFrom, colorTo));
+        binding.layoutBotSheet.botSheet.setBackgroundColor(interpolateColor(slideOffset, colorFrom, colorTo));
+    }
+
+    private void navigateToFragment(Fragment fragment, int fragmentHost, String fragmentTag){
+
+        postsViewModel.setEnableInteractions(false);
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+        transaction.add(fragmentHost, fragment, fragmentTag);
+
+        //Do I need the below line?
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
     /**

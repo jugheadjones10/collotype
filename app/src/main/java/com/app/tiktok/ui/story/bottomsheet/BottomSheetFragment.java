@@ -75,22 +75,20 @@ public class BottomSheetFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        initializeContents();
+        Log.d("chill", "Bottom Sheet Fragment ON VIEW CREATED : " + position);
+    }
 
-//        postsViewModel.getExpanding().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-//            @Override
-//            public void onChanged(Boolean expanding) {
-//                if(expanding != null){
-//                    if(expanding){
-                        initializeContents();
-//                    }
-//                }
-//            }
-//        });
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("chill", "Bottom Sheet Fragment ON RESUMESD : " + position);
     }
 
     private void initializeContents(){
 
         initializeViewPager();
+
         TabLayout tabLayout = binding.tabLayout;
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {

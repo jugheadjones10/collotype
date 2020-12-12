@@ -6,7 +6,7 @@
 <!--    <data>-->
 <!--        <variable-->
 <!--            name="UserPost"-->
-<!--            type="com.app.tiktok.ui.user.UserPost" />-->
+<!--            type="com.app.tiktok.ui.user.posts.UserPost" />-->
 <!--    </data>-->
 
     <androidx.constraintlayout.widget.ConstraintLayout

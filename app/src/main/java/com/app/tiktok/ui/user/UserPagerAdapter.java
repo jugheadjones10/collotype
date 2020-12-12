@@ -5,6 +5,9 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.app.tiktok.ui.story.BlankFragment;
+import com.app.tiktok.ui.user.events.UserEventsFragment;
+import com.app.tiktok.ui.user.galleries.UserGalleriesFragment;
+import com.app.tiktok.ui.user.posts.UserPostsFragment;
 
 class UserPagerAdapter extends FragmentStateAdapter {
 

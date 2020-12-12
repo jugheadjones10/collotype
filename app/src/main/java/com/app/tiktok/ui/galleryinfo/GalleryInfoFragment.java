@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -22,14 +21,8 @@ import android.view.ViewGroup;
 import com.app.tiktok.R;
 import com.app.tiktok.databinding.FragmentGalleryInfoBinding;
 import com.app.tiktok.model.Gallery;
-import com.app.tiktok.model.Post;
-import com.app.tiktok.ui.home.HomeFragment;
 import com.app.tiktok.ui.story.PostsViewModel;
-import com.app.tiktok.ui.user.DataItem;
-import com.app.tiktok.ui.user.UserEvent;
-import com.app.tiktok.ui.user.UserProduct;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class GalleryInfoFragment extends Fragment {
@@ -64,7 +57,9 @@ public class GalleryInfoFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        HomeFragment.Companion.getViewPager2().setUserInputEnabled(false);
+//        HomeFragment.Companion.getViewPager2().setUserInputEnabled(false);
+//        StoryBunchFragment.getInstance().bottomSheetBehavior.setDraggable(false);
+//        Log.d("frog", "Draggability of bottom sheet fragment"  + StoryBunchFragment.getInstance().bottomSheetBehavior.isDraggable())
 
         if (getArguments() != null) {
             position = getArguments().getString(POSITION_KEY);
@@ -76,7 +71,8 @@ public class GalleryInfoFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        HomeFragment.Companion.getViewPager2().setUserInputEnabled(true);
+//        HomeFragment.Companion.getViewPager2().setUserInputEnabled(true);
+//        StoryBunchFragment.getInstance().bottomSheetBehavior.setDraggable(true);
     }
 
     @Override
@@ -104,7 +100,6 @@ public class GalleryInfoFragment extends Fragment {
             @Override
             public void onChanged(List<GalleryInfoRecyclerDataItem> recyclerDataItems) {
                 if(recyclerDataItems != null){
-
                     initializeRecyclerView(recyclerDataItems);
                 }
             }
@@ -123,7 +118,8 @@ public class GalleryInfoFragment extends Fragment {
             @Override
             public void handleOnBackPressed() {
                 Log.d("GG", "gig");
-                getParentFragmentManager().beginTransaction().remove(GalleryInfoFragment.this).commit();
+                getParentFragmentManager().popBackStackImmediate();
+                postsViewModel.setEnableInteractions(true);
             }
         });
     }

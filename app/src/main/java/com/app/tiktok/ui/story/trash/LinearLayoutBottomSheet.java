@@ -1,4 +1,4 @@
-package com.app.tiktok.ui.story;
+package com.app.tiktok.ui.story.trash;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.app.tiktok.R;
+import com.app.tiktok.ui.story.StoryBunchFragment;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 public class LinearLayoutBottomSheet extends LinearLayout {

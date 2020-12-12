@@ -12,19 +12,19 @@ import android.util.Log
 import android.view.*
 import android.view.View.GONE
 import android.view.View.OnTouchListener
-import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.core.view.GestureDetectorCompat
+import androidx.core.view.isEmpty
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.app.tiktok.R
 import com.app.tiktok.app.MyApp
+import com.app.tiktok.app.MyApp.Companion.executorService
 import com.app.tiktok.databinding.IncludePriceTagBinding
 import com.app.tiktok.databinding.ItemProcessPostBinding
 import com.app.tiktok.model.*
-import com.app.tiktok.ui.main.MainViewModel
 import com.app.tiktok.utils.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -40,9 +40,9 @@ import com.google.android.exoplayer2.util.Util
 import com.google.android.material.imageview.ShapeableImageView
 import kotlinx.android.synthetic.main.fragment_story_bunch.*
 import kotlinx.android.synthetic.main.include_price_tag.*
-import kotlinx.android.synthetic.main.layout_bottom_sheet.*
 import kotlinx.android.synthetic.main.layout_process_posts_scroll.*
 import kotlinx.android.synthetic.main.layout_story_view.*
+import java.util.concurrent.Executor
 
 class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
     private var gestureListener: MyGestureListener? = null
@@ -297,6 +297,20 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
         }
     }
 
+    override fun onResume() {
+        if(simplePlayer != null){
+            val storyUrlType = Utility.extractS3URLfileType(storyUrl)
+            if (!Utility.isImage(storyUrlType)) {
+                setVolumeControl(VolumeState.ON)
+            }
+
+            restartVideo()
+        }
+
+        super.onResume()
+    }
+
+
     private fun setData() {
 
         //Own self is added so it is displayed at the bottom
@@ -350,39 +364,42 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
 
             proces_title.text = post.processTitle
 
-            val processPostsLayout = layoutInflater.inflate(R.layout.layout_process_posts_scroll, story_view_parent_constraint, false)
-            story_view_parent_constraint.addView(processPostsLayout)
+            val executor: Executor? = executorService
+            postViewModel.getProcessPostsAsync(post, executor).observe(viewLifecycleOwner, Observer<List<Post>> { processPosts ->
+                if(processPosts != null){
 
-            postViewModel.getProcessPosts(post).observe(viewLifecycleOwner, Observer<List<Post>>{ processPosts ->
+                    if(scroll_linear_layout ==  null){
+                        val processPostsLayout = layoutInflater.inflate(R.layout.layout_process_posts_scroll, story_view_parent_constraint, false)
+                        story_view_parent_constraint.addView(processPostsLayout)
 
-                for(processPost in processPosts){
+                        for(processPost in processPosts){
 
-                    val binding: ItemProcessPostBinding = ItemProcessPostBinding.inflate(
-                        getLayoutInflater(),
-                        scroll_linear_layout,
-                        false
-                    )
+                            val binding: ItemProcessPostBinding = ItemProcessPostBinding.inflate(
+                                getLayoutInflater(),
+                                scroll_linear_layout,
+                                false
+                            )
 
-                    binding.apply {
-                        processCaption = processPost.caption
-                        processPostUrl = processPost.url
-                        onProcessPostClicked = OnProcessPostClicked()
+                            binding.apply {
+                                processCaption = processPost.caption
+                                processPostUrl = processPost.url
+                                onProcessPostClicked = OnProcessPostClicked()
+                            }
+
+                            //binding.processPostImage.loadImageFromUrl(processPostUrlString)
+                            Glide.with(this)
+                                .load(processPost.url)
+                                .thumbnail(0.25f)
+                                .override(50, 50)
+                                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                                .into(binding.processPostImage)
+
+                            scroll_linear_layout.addView(binding.root)
+                        }
+
+                        scroll_linear_layout.getChildAt(0).isSelected = true
                     }
-
-                    binding.processPostImage.loadImageFromUrl(processPost.url)
-                    Glide.with(this)
-                        .load(processPost.url)
-                        .thumbnail(0.25f)
-                        .override(50, 50)
-                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                        .into(binding.processPostImage)
-
-                    scroll_linear_layout.addView(binding.root)
-
                 }
-
-                scroll_linear_layout.getChildAt(0).isSelected = true
-
             })
 
         }
@@ -398,7 +415,6 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
             post_image?.loadImageFromUrl(storyUrl)
 
         } else {
-
             post_image.visibility = View.GONE
             player_view_story.visibility = View.VISIBLE
 
@@ -413,7 +429,6 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
         }
 
         //image_view_group_pic?.loadCenterCropImageFromUrl(storiesDataModel?.storyThumbUrl)
-
 
         text_view_video_description.setTextOrHide(value = post.caption)
 
@@ -451,18 +466,6 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
             pauseVideo()
         }
         super.onPause()
-    }
-
-    override fun onResume() {
-        if(simplePlayer != null){
-            val storyUrlType = Utility.extractS3URLfileType(storyUrl)
-            if (!Utility.isImage(storyUrlType)) {
-                setVolumeControl(VolumeState.ON)
-            }
-
-            restartVideo()
-        }
-        super.onResume()
     }
 
     override fun onDestroy() {

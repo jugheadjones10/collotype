@@ -1,4 +1,4 @@
-package com.app.tiktok.ui.galleryinfo;
+package com.app.tiktok.ui.galleryinfo.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,18 +10,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.app.tiktok.R;
 import com.app.tiktok.databinding.ItemProductBinding;
-import com.app.tiktok.databinding.ItemProductsBinding;
-import com.app.tiktok.databinding.ItemUserEventBinding;
-import com.app.tiktok.model.HydratedEvent;
 import com.app.tiktok.model.Product;
-import com.app.tiktok.model.User;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.google.android.material.imageview.ShapeableImageView;
 
 import java.util.List;
 
-class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ProductViewHolder> {
+public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ProductViewHolder> {
 
     private List<Product> products;
     private Context mContext;
