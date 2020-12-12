@@ -1,4 +1,4 @@
-package com.app.tiktok.ui.user;
+package com.app.tiktok.ui.user.events;
 
 import android.os.Bundle;
 
@@ -19,6 +19,8 @@ import android.view.ViewGroup;
 import com.app.tiktok.R;
 import com.app.tiktok.databinding.FragmentUserEventsBinding;
 import com.app.tiktok.ui.story.UtilViewModel;
+import com.app.tiktok.ui.user.UserViewModel;
+import com.app.tiktok.ui.user.galleries.UserGallery;
 
 import java.util.List;
 

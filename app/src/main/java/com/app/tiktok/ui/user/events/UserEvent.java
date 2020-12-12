@@ -1,11 +1,12 @@
-package com.app.tiktok.ui.user;
+package com.app.tiktok.ui.user.events;
 
 import com.app.tiktok.model.User;
+import com.app.tiktok.ui.user.DataItem;
 
 import java.util.List;
 
 //Below classes are for the purposes of using a multiple item type RecyclerView
-public class UserEvent extends DataItem{
+public class UserEvent extends DataItem {
     public String eventTitle;
     public String timestamp;
     public List<User> members;

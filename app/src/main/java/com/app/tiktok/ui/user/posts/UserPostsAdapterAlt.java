@@ -1,15 +1,10 @@
-package com.app.tiktok.ui.user;
+package com.app.tiktok.ui.user.posts;
 
 import android.content.Context;
-import android.util.Log;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.core.view.GestureDetectorCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.navigation.NavController;
 import androidx.recyclerview.widget.RecyclerView;

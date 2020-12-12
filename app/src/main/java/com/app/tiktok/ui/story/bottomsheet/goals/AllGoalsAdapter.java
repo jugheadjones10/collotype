@@ -1,4 +1,4 @@
-package com.app.tiktok.ui.story;
+package com.app.tiktok.ui.story.bottomsheet.goals;
 
 import android.content.Context;
 import android.util.Log;
@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.core.view.GestureDetectorCompat;
 import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,7 +19,8 @@ import com.app.tiktok.R;
 import com.app.tiktok.databinding.LayoutGoalsBinding;
 import com.app.tiktok.model.Post;
 import com.app.tiktok.model.User;
-import com.app.tiktok.ui.home.HomeFragmentDirections;
+import com.app.tiktok.ui.story.PostsViewModel;
+import com.app.tiktok.ui.story.BottomPostsAdapter;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.material.imageview.ShapeableImageView;

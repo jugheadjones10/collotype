@@ -1,13 +1,13 @@
-package com.app.tiktok.ui.story;
+package com.app.tiktok.ui.story.bottomsheet;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.app.tiktok.model.Gallery;
-import com.app.tiktok.model.StoriesDataModel;
-
-import java.util.List;
+import com.app.tiktok.ui.story.BlankFragment;
+import com.app.tiktok.ui.story.bottomsheet.goals.AllGoalsFragment;
+import com.app.tiktok.ui.story.bottomsheet.posts.AllPostsFragment;
 
 class BottomSheetPagerAdapter extends FragmentStateAdapter {
 

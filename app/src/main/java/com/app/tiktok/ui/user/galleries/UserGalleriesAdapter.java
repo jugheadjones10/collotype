@@ -1,4 +1,4 @@
-package com.app.tiktok.ui.user;
+package com.app.tiktok.ui.user.galleries;
 
 import android.content.Context;
 import android.util.Log;

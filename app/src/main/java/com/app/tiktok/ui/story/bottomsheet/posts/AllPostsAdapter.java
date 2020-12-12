@@ -1,4 +1,4 @@
-package com.app.tiktok.ui.story;
+package com.app.tiktok.ui.story.bottomsheet.posts;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -13,7 +13,7 @@ import com.app.tiktok.databinding.IncludeBottomSheetGridImageBinding;
 import com.app.tiktok.model.Post;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import java.util.ArrayList;
+
 import java.util.List;
 
 class AllPostsAdapter extends RecyclerView.Adapter<AllPostsAdapter.PostViewHolder>{

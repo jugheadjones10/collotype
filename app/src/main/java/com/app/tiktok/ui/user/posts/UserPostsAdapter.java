@@ -1,4 +1,4 @@
-package com.app.tiktok.ui.user;
+package com.app.tiktok.ui.user.posts;
 
 
 import android.content.Context;
@@ -18,6 +18,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.app.tiktok.R;
 import com.app.tiktok.databinding.LayoutUserPostsBinding;
 import com.app.tiktok.ui.galleryinfo.GalleryInfoRecyclerDataItem;
+import com.app.tiktok.ui.home.GalleriesViewModel;
+import com.app.tiktok.ui.user.DataItem;
+import com.app.tiktok.ui.user.galleries.UserGallery;
 
 import java.util.List;
 
@@ -25,12 +28,12 @@ class UserPostsAdapter extends RecyclerView.Adapter<UserPostsAdapter.UserPostsVi
 
     private List<DataItem> dataItems;
     private Context mContext;
-    private GalleryInfoRecyclerDataItem.GalleriesViewModel viewModel;
+    private GalleriesViewModel viewModel;
     private NavController navController;
 
     RecyclerView.RecycledViewPool viewPool;
 
-    public UserPostsAdapter(Context mContext, List<DataItem> dataItems, GalleryInfoRecyclerDataItem.GalleriesViewModel viewModel, NavController navController){
+    public UserPostsAdapter(Context mContext, List<DataItem> dataItems, GalleriesViewModel viewModel, NavController navController){
         this.mContext = mContext;
         this.dataItems = dataItems;
         this.viewModel = viewModel;

@@ -1,4 +1,4 @@
-package com.app.tiktok.ui.story
+package com.app.tiktok.ui.story.post
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
@@ -14,7 +14,6 @@ import android.view.View.GONE
 import android.view.View.OnTouchListener
 import android.widget.LinearLayout
 import androidx.core.view.GestureDetectorCompat
-import androidx.core.view.isEmpty
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -25,6 +24,8 @@ import com.app.tiktok.app.MyApp.Companion.executorService
 import com.app.tiktok.databinding.IncludePriceTagBinding
 import com.app.tiktok.databinding.ItemProcessPostBinding
 import com.app.tiktok.model.*
+import com.app.tiktok.ui.story.StoryBunchFragment
+import com.app.tiktok.ui.story.UtilViewModel
 import com.app.tiktok.utils.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -117,12 +118,14 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        Log.d("fuhh", "StoryViewFragment onViewCreated");
 
         if(parentFragment is StoryBunchFragment){
             parent = parentFragment as StoryBunchFragment
         }
 
-        playbackStateListener = PlaybackStateListener()
+        playbackStateListener =
+            PlaybackStateListener()
 
         post_image.cameraDistance = 1000000000000000000000000000f
         story_view_parent_constraint.cameraDistance = 1000000000000000000000000000f

@@ -1,10 +1,9 @@
-package com.app.tiktok.ui.story;
+package com.app.tiktok.ui.story.bottomsheet.goals;
 
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.view.GestureDetectorCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -14,18 +13,17 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 
 import com.app.tiktok.R;
 import com.app.tiktok.app.MyApp;
 import com.app.tiktok.databinding.FragmentAllGoalsBinding;
 import com.app.tiktok.model.Post;
 import com.app.tiktok.model.User;
+import com.app.tiktok.ui.story.PostsViewModel;
 
 import java.util.List;
 import java.util.concurrent.Executor;

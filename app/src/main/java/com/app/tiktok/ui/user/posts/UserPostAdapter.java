@@ -1,4 +1,4 @@
-package com.app.tiktok.ui.user;
+package com.app.tiktok.ui.user.posts;
 
 
 import android.content.Context;
@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.app.tiktok.R;
 import com.app.tiktok.databinding.ItemUserPostBinding;
-import com.app.tiktok.databinding.LayoutUserPostsBinding;
 import com.app.tiktok.model.StoriesDataModel;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;

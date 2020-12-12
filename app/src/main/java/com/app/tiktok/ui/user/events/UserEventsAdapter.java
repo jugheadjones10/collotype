@@ -1,4 +1,4 @@
-package com.app.tiktok.ui.user;
+package com.app.tiktok.ui.user.events;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -13,6 +13,7 @@ import com.app.tiktok.R;
 import com.app.tiktok.databinding.ItemUserEventBinding;
 import com.app.tiktok.model.User;
 import com.app.tiktok.ui.story.UtilViewModel;
+import com.app.tiktok.ui.user.galleries.UserGallery;
 import com.app.tiktok.utils.Utility;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;

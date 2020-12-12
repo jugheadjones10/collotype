@@ -1,4 +1,4 @@
-package com.app.tiktok.ui.story;
+package com.app.tiktok.ui.story.post;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -15,7 +15,6 @@ import androidx.lifecycle.ViewModel;
 import com.app.tiktok.R;
 import com.app.tiktok.databinding.ItemProcessPostBinding;
 import com.app.tiktok.model.Post;
-import com.app.tiktok.model.ProcessPost;
 import com.app.tiktok.model.Product;
 import com.app.tiktok.repository.DataRepository;
 import com.bumptech.glide.Glide;

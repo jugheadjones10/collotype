@@ -1,4 +1,4 @@
-package com.app.tiktok.ui.story;
+package com.app.tiktok.ui.story.bottomsheet;
 
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.util.Log;
@@ -20,6 +19,7 @@ import com.app.tiktok.R;
 import com.app.tiktok.databinding.FragmentBottomSheetBinding;
 import com.app.tiktok.databinding.LayoutTabBinding;
 import com.app.tiktok.model.Gallery;
+import com.app.tiktok.ui.story.PostsViewModel;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 

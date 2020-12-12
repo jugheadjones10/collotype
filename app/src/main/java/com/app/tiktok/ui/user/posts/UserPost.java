@@ -1,9 +1,10 @@
-package com.app.tiktok.ui.user;
+package com.app.tiktok.ui.user.posts;
 
 import com.app.tiktok.model.Gallery;
 import com.app.tiktok.model.Post;
+import com.app.tiktok.ui.user.DataItem;
 
-class UserPost extends DataItem {
+public class UserPost extends DataItem {
 
     private Gallery gallery;
     private Post post;
@@ -24,7 +25,7 @@ class UserPost extends DataItem {
         this.post = post;
     }
 
-    UserPost(Gallery gallery, Post post){
+    public UserPost(Gallery gallery, Post post){
         this.gallery = gallery;
         this.post = post;
         this.id = post.getId();

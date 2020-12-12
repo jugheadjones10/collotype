@@ -1,4 +1,4 @@
-package com.app.tiktok.ui.user;
+package com.app.tiktok.ui.user.galleries;
 
 import android.os.Bundle;
 
@@ -18,6 +18,7 @@ import android.view.ViewTreeObserver;
 
 import com.app.tiktok.R;
 import com.app.tiktok.databinding.FragmentUserGalleriesBinding;
+import com.app.tiktok.ui.user.UserViewModel;
 
 import java.util.List;
 
