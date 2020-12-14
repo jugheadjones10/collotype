@@ -204,6 +204,14 @@ public class StoryBunchFragment extends Fragment {
 
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d("grin", "StoryBunchFragment destroyed at position : " + position);
+        binding.layoutBotSheet.thumbnailsRecyclerView.setAdapter(null);
+    }
+
+
     private void getPosts(){
         //Own self is added so it is displayed at the bottom
         Executor executor = MyApp.Companion.getExecutorService();
@@ -473,8 +481,11 @@ public class StoryBunchFragment extends Fragment {
         };
 
         binding.layoutBotSheet.thumbnailsRecyclerView.setLayoutManager(layoutManager);
+        binding.layoutBotSheet.thumbnailsRecyclerView.setPosts(posts);
+
         bottomPostsAdapter = new BottomPostsAdapter(posts, getContext(), recyclerViewClickCallback);
         binding.layoutBotSheet.thumbnailsRecyclerView.setAdapter(bottomPostsAdapter);
+        binding.layoutBotSheet.thumbnailsRecyclerView.scrollToPosition(0);
 
         //This removes recyclerView blinking on selected item change
         binding.layoutBotSheet.thumbnailsRecyclerView.getItemAnimator().setChangeDuration(0);

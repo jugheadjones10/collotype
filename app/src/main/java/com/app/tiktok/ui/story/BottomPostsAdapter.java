@@ -30,13 +30,16 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory;
 import com.google.android.exoplayer2.upstream.cache.SimpleCache;
+import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
 
 import java.util.List;
@@ -59,11 +62,10 @@ public class BottomPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     private int selectedPos = RecyclerView.NO_POSITION;
 
-    private SimpleExoPlayer simplePlayer;
-    private CacheDataSourceFactory cacheDataSourceFactory;
-    private SimpleCache simpleCache = MyApp.Companion.getSimpleCache();
     private boolean modifyFirst = false;
     private int squareLength = -1;
+
+    protected SimpleExoPlayer player;
 
     public static final int NORMAL_ITEM = 0;
     private static final int ENLARGED_ITEM = 1;
@@ -72,6 +74,7 @@ public class BottomPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         this.posts = posts;
         this.mContext = mContext;
         this.itemClickListener = itemClickListener;
+//        initVideoPlayer();
     }
 
     public BottomPostsAdapter(List<Post> posts, Context mContext, boolean modifyFirst) {
@@ -79,6 +82,22 @@ public class BottomPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         this.mContext = mContext;
         this.modifyFirst = modifyFirst;
         this.squareLength = mContext.getResources().getDisplayMetrics().widthPixels/4;
+//        initVideoPlayer();
+    }
+
+    private void initVideoPlayer(){
+        //Initialize Video Player
+        if (player == null) {
+            DefaultTrackSelector trackSelector = new DefaultTrackSelector(mContext);
+            trackSelector.setParameters(
+                    trackSelector.buildUponParameters().setMaxVideoSizeSd());
+            player = new SimpleExoPlayer.Builder(mContext)
+//                    .setTrackSelector(trackSelector)
+                    .build();
+            player.setVolume(0f);
+            player.setPlayWhenReady(true);
+            player.setRepeatMode(Player.REPEAT_MODE_ONE);
+        }
     }
 
 
@@ -89,6 +108,7 @@ public class BottomPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         public BottomPostViewHolder(BottomPostItemBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
+            this.binding.bottomPostItemContainer.setTag(this);
         }
     }
 
@@ -138,14 +158,15 @@ public class BottomPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         holder.itemView.setSelected(selectedPos == position);
+
         String storyUrl = posts.get(position).getUrl();
         String storyType = Utility.INSTANCE.extractS3URLfileType(storyUrl);
 
         if(holder.getItemViewType() == ENLARGED_ITEM) {
             EnlargedBottomPostViewHolder viewHolder = (EnlargedBottomPostViewHolder) holder;
 
+            //May need to add support for video for enlarged bottom posts.
             if(Utility.INSTANCE.isImage(storyType)){
-
                 //holder.binding.bottomPlayerViewStory.setVisibility(View.GONE);
                 viewHolder.binding.bottomPostImage.setVisibility(View.VISIBLE);
 
@@ -155,38 +176,14 @@ public class BottomPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         .override(100, 100)
                         .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                         .into(viewHolder.binding.bottomPostImage);
-
-            }else {
-
-//            holder.binding.bottomPlayerViewStory.setVisibility(View.VISIBLE);
-//            holder.binding.bottomPostImage.setVisibility(View.GONE);
-//
-//            holder.binding.bottomPlayerViewStory.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_ZOOM);
-//
-//            SimpleExoPlayer simplePlayer = getPlayer();
-//            holder.binding.bottomPlayerViewStory.setPlayer(simplePlayer);
-//
-//            prepareMedia(storyUrl);
             }
 
         }else{
             BottomPostViewHolder viewHolder = (BottomPostViewHolder) holder;
 
-            Log.d("Goalsscroller", "modify first ran");
-//            if(squareLength > 0 && modifyFirst){
-//                ViewGroup.LayoutParams itemContainerLayoutParams = viewHolder.binding.bottomPostItemContainer.getLayoutParams();
-//                itemContainerLayoutParams.height = squareLength;
-//                itemContainerLayoutParams.width = squareLength;
-//                viewHolder.binding.bottomPostItemContainer.setLayoutParams(itemContainerLayoutParams);
-//
-//                ViewGroup.MarginLayoutParams viewPagerMarginParams = (ViewGroup.MarginLayoutParams)viewHolder.binding.bottomPostItemContainer.getLayoutParams();
-//                viewPagerMarginParams.topMargin = Utility.INSTANCE.dpToPx(130, mContext) - squareLength;
-//                viewHolder.binding.bottomPostItemContainer.setLayoutParams(viewPagerMarginParams);
-//            }
-
             if(Utility.INSTANCE.isImage(storyType)){
 
-                //holder.binding.bottomPlayerViewStory.setVisibility(View.GONE);
+                viewHolder.binding.bottomPlayerViewStory.setVisibility(View.GONE);
                 viewHolder.binding.bottomPostImage.setVisibility(View.VISIBLE);
 
                 Glide.with(mContext)
@@ -195,18 +192,17 @@ public class BottomPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         .override(100, 100)
                         .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                         .into(viewHolder.binding.bottomPostImage);
-
             }else{
 
-//            holder.binding.bottomPlayerViewStory.setVisibility(View.VISIBLE);
-//            holder.binding.bottomPostImage.setVisibility(View.GONE);
+                viewHolder.binding.bottomPlayerViewStory.setVisibility(View.VISIBLE);
+                viewHolder.binding.bottomPostImage.setVisibility(View.GONE);
+
+//                viewHolder.binding.bottomPlayerViewStory.setPlayer(player);
 //
-//            holder.binding.bottomPlayerViewStory.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_ZOOM);
+//                MediaItem mediaItem = MediaItem.fromUri(storyUrl);
 //
-//            SimpleExoPlayer simplePlayer = getPlayer();
-//            holder.binding.bottomPlayerViewStory.setPlayer(simplePlayer);
-//
-//            prepareMedia(storyUrl);
+//                player.setMediaItem(mediaItem);
+//                player.prepare();
             }
 
         }
@@ -223,51 +219,23 @@ public class BottomPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     }
 
+//    @Override
+//    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
+//        super.onDetachedFromRecyclerView(recyclerView);
+//        player.release();
+//        player = null;
+//    }
+
+    //Clear player when StoryBunchFragment is paused
+//    @Override
+//    public void onViewRecycled(@NonNull RecyclerView.ViewHolder holder) {
+//        super.onViewRecycled(holder);
+//        ((BottomPostViewHolder)holder).binding.bottomPlayerViewStory.
+//    }
+
     @Override
     public int getItemCount() {
         return posts.size();
-    }
-
-    //ExoPlayer stuff
-    private Player.EventListener playerCallback = new Player.EventListener(){
-        @Override
-        public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-            //logError("onPlayerStateChanged playbackState: $playbackState");
-        }
-
-        @Override
-        public void onPlayerError(ExoPlaybackException error) {
-            Player.EventListener.super.onPlayerError(error);
-        }
-    };
-
-    private void prepareMedia(String linkUrl){
-        Uri uri = Uri.parse(linkUrl);
-
-        ProgressiveMediaSource mediaSource = new ProgressiveMediaSource.Factory(cacheDataSourceFactory).createMediaSource(uri);
-
-        simplePlayer.prepare(mediaSource, true, true);
-        simplePlayer.setRepeatMode(Player.REPEAT_MODE_ONE);
-        simplePlayer.setPlayWhenReady(true);
-
-        simplePlayer.setVolume(0f);
-        simplePlayer.addListener(playerCallback);
-    }
-
-    private SimpleExoPlayer getPlayer(){
-        if (simplePlayer == null) {
-            prepareVideoPlayer();
-        }
-        return simplePlayer;
-    }
-
-    private void prepareVideoPlayer() {
-        simplePlayer = ExoPlayerFactory.newSimpleInstance(mContext);
-        cacheDataSourceFactory = new CacheDataSourceFactory(simpleCache,
-            new DefaultHttpDataSourceFactory(
-                    Util.getUserAgent(mContext,
-                            "exo"))
-        );
     }
 
 }

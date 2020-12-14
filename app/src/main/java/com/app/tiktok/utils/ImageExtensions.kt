@@ -31,7 +31,8 @@ fun ImageView.loadImageFromUrl(imageUrl: String?){
     Glide.with(this)
         .load(imageUrl)
         .thumbnail(0.25f)
-        .override(250, 450)
+        .override(500, 900)
+//        .override(250, 450)
         .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
         .into(this)
 

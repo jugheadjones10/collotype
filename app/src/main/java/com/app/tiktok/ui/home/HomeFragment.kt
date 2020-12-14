@@ -15,7 +15,6 @@ import com.app.tiktok.base.BaseFragment
 import com.app.tiktok.model.StoriesDataModel
 import com.app.tiktok.ui.main.MainViewModel
 import com.app.tiktok.utils.Constants
-import com.app.tiktok.work.PreCachingService
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_home.*
 
@@ -64,14 +63,14 @@ class  HomeFragment : BaseFragment(R.layout.fragment_home) {
     }
 
     private fun startPreCaching(dataList: ArrayList<StoriesDataModel>) {
-        val urlList = arrayOfNulls<String>(dataList.size)
-        dataList.mapIndexed { index, storiesDataModel ->
-            urlList[index] = storiesDataModel.storyUrl
-        }
-        val inputData = Data.Builder().putStringArray(Constants.KEY_STORIES_LIST_DATA, urlList).build()
-        val preCachingWork = OneTimeWorkRequestBuilder<PreCachingService>().setInputData(inputData)
-            .build()
-        WorkManager.getInstance(requireContext())
-            .enqueue(preCachingWork)
+//        val urlList = arrayOfNulls<String>(dataList.size)
+//        dataList.mapIndexed { index, storiesDataModel ->
+//            urlList[index] = storiesDataModel.storyUrl
+//        }
+//        val inputData = Data.Builder().putStringArray(Constants.KEY_STORIES_LIST_DATA, urlList).build()
+//        val preCachingWork = OneTimeWorkRequestBuilder<PreCachingService>().setInputData(inputData)
+//            .build()
+//        WorkManager.getInstance(requireContext())
+//            .enqueue(preCachingWork)
     }
 }
