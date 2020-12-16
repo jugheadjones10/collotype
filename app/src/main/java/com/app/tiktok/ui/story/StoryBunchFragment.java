@@ -7,6 +7,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.MarginLayoutParams;
+import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -53,7 +54,7 @@ import java.util.concurrent.Executor;
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
-public class StoryBunchFragment extends Fragment {
+public class StoryBunchFragment extends Fragment implements BottomPostsAdapter.BottomItemClicked {
 
     float y1 = 0;
     float y2 = 0;
@@ -125,13 +126,11 @@ public class StoryBunchFragment extends Fragment {
 
     };
 
-    //Set view pager post when bottom recycler view item is clicked
-    private final OnBottomItemClickListener recyclerViewClickCallback = new OnBottomItemClickListener() {
-        @Override
-        public void onBottomItemClicked(int position) {
-            binding.postsViewPager.setCurrentItem(position, false);
-        }
-    };
+    @Override
+    public void onBottomItemClicked(int clickPosition) {
+        Log.d("recycled",  "Recycler ITEM has been CLICKED ! " + clickPosition);
+        binding.postsViewPager.setCurrentItem(clickPosition, false);
+    }
 
     public interface OnBottomItemClickListener{
         void onBottomItemClicked(int position);
@@ -210,7 +209,6 @@ public class StoryBunchFragment extends Fragment {
         Log.d("grin", "StoryBunchFragment destroyed at position : " + position);
         binding.layoutBotSheet.thumbnailsRecyclerView.setAdapter(null);
     }
-
 
     private void getPosts(){
         //Own self is added so it is displayed at the bottom
@@ -387,7 +385,6 @@ public class StoryBunchFragment extends Fragment {
                                 }
                             });
                         }
-
                     }
                 }
             });
@@ -468,24 +465,16 @@ public class StoryBunchFragment extends Fragment {
         }
     }
 
+
+
+
     private void initializeRecyclerView(List<Post> posts){
-        layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL ,false){
-            @Override
-            public boolean checkLayoutParams(RecyclerView.LayoutParams lp) {
-                // force height of viewHolder here, this will override layout_height from xml
-                Log.d("lag", "RecyclerView square lenght : " + squareLength);
-                lp.width = squareLength;
-                lp.height = squareLength;
-                return true;
-            }
-        };
+        layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL ,false);
 
         binding.layoutBotSheet.thumbnailsRecyclerView.setLayoutManager(layoutManager);
-        binding.layoutBotSheet.thumbnailsRecyclerView.setPosts(posts);
 
-        bottomPostsAdapter = new BottomPostsAdapter(posts, getContext(), recyclerViewClickCallback);
+        bottomPostsAdapter = new BottomPostsAdapter(posts, getContext(), this);
         binding.layoutBotSheet.thumbnailsRecyclerView.setAdapter(bottomPostsAdapter);
-        binding.layoutBotSheet.thumbnailsRecyclerView.scrollToPosition(0);
 
         //This removes recyclerView blinking on selected item change
         binding.layoutBotSheet.thumbnailsRecyclerView.getItemAnimator().setChangeDuration(0);
@@ -495,7 +484,7 @@ public class StoryBunchFragment extends Fragment {
                 if(holder.getItemViewType() == BottomPostsAdapter.NORMAL_ITEM){
                     BottomPostsAdapter.BottomPostViewHolder viewHolder = (BottomPostsAdapter.BottomPostViewHolder) holder;
                     Glide.with(StoryBunchFragment.this).clear(viewHolder.binding.bottomPostImage);
-                }else{
+                }else if(holder.getItemViewType() == BottomPostsAdapter.ENLARGED_ITEM){
                     BottomPostsAdapter.EnlargedBottomPostViewHolder viewHolder = (BottomPostsAdapter.EnlargedBottomPostViewHolder) holder;
                     Glide.with(StoryBunchFragment.this).clear(viewHolder.binding.bottomPostImage);
                 }

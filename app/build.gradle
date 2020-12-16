@@ -94,21 +94,17 @@ dependencies {
     implementation 'com.azoft.carousellayoutmanager:carousel:1.2.4'
     implementation 'com.littlemango:stacklayoutmanager:1.0.5'
 
-//    //FRESCO
-//    implementation 'com.facebook.fresco:fresco:2.3.0'
-//    // For animated GIF support
-//    implementation 'com.facebook.fresco:animated-gif:2.3.0'
-//    // For WebP support, without animations
-//    implementation 'com.facebook.fresco:webpsupport:2.3.0'
-//
-//    // Provide the Android support library (you might already have this or a similar dependency)
-//    implementation 'com.android.support:support-core-utils:24.2.1'
-
     //Staggered grid layout manager with varying height and width
     implementation 'com.arasthel:spannedgridlayoutmanager:3.0.2'
 
+    //Expoxy
+    implementation "com.airbnb.android:epoxy:4.1.0"
+    // Add the annotation processor if you are using Epoxy's annotations (recommended)
+    kapt "com.airbnb.android:epoxy-processor:4.1.0"
+    compile 'com.airbnb.android:epoxy-databinding:4.1.0' // (or latest Epoxy version)
+
 }
 
-//kapt {
-//    correctErrorTypes true
-//}
+kapt {
+    correctErrorTypes true
+}

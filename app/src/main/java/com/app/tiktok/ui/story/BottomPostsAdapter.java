@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.app.tiktok.R;
 import com.app.tiktok.app.MyApp;
 import com.app.tiktok.databinding.BottomPostItemBinding;
+import com.app.tiktok.databinding.BottomPostVideoItemBinding;
 import com.app.tiktok.databinding.EnlargedBottomPostItemBinding;
 import com.app.tiktok.model.Post;
 import com.app.tiktok.model.StoriesDataModel;
@@ -29,6 +30,7 @@ import com.bumptech.glide.MemoryCategory;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
@@ -49,7 +51,6 @@ import static com.app.tiktok.utils.ExtensionsKt.logError;
 public class BottomPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<Post> posts;
-    private StoryBunchFragment.OnBottomItemClickListener itemClickListener = null;
     private Context mContext;
 
     public void setSelectedPos(int selectedPos) {
@@ -63,18 +64,21 @@ public class BottomPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private int selectedPos = RecyclerView.NO_POSITION;
 
     private boolean modifyFirst = false;
-    private int squareLength = -1;
+    private int squareLength;
 
-    protected SimpleExoPlayer player;
+//    protected SimpleExoPlayer player;
+    private BottomItemClicked bottomItemClicked;
 
     public static final int NORMAL_ITEM = 0;
-    private static final int ENLARGED_ITEM = 1;
+    public static final int ENLARGED_ITEM = 1;
+    public static final int VIDEO_ITEM = 2;
 
-    public BottomPostsAdapter(List<Post> posts, Context mContext, StoryBunchFragment.OnBottomItemClickListener itemClickListener) {
+    public BottomPostsAdapter(List<Post> posts, Context mContext, BottomItemClicked bottomItemClicked) {
         this.posts = posts;
         this.mContext = mContext;
-        this.itemClickListener = itemClickListener;
-//        initVideoPlayer();
+        this.bottomItemClicked = bottomItemClicked;
+        this.squareLength = mContext.getResources().getDisplayMetrics().widthPixels/4;
+        //initVideoPlayer();
     }
 
     public BottomPostsAdapter(List<Post> posts, Context mContext, boolean modifyFirst) {
@@ -82,33 +86,73 @@ public class BottomPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         this.mContext = mContext;
         this.modifyFirst = modifyFirst;
         this.squareLength = mContext.getResources().getDisplayMetrics().widthPixels/4;
-//        initVideoPlayer();
+        //initVideoPlayer();
     }
 
-    private void initVideoPlayer(){
-        //Initialize Video Player
-        if (player == null) {
-            DefaultTrackSelector trackSelector = new DefaultTrackSelector(mContext);
-            trackSelector.setParameters(
-                    trackSelector.buildUponParameters().setMaxVideoSizeSd());
-            player = new SimpleExoPlayer.Builder(mContext)
-//                    .setTrackSelector(trackSelector)
-                    .build();
-            player.setVolume(0f);
-            player.setPlayWhenReady(true);
-            player.setRepeatMode(Player.REPEAT_MODE_ONE);
+
+    public class BottomPostViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+        public BottomPostItemBinding binding;
+        private BottomItemClicked bottomItemClicked;
+
+        public BottomPostViewHolder(BottomPostItemBinding binding, BottomItemClicked bottomItemClicked) {
+            super(binding.getRoot());
+            this.binding = binding;
+            if(bottomItemClicked != null){
+                this.bottomItemClicked = bottomItemClicked;
+                binding.bottomPostItemContainer.setOnClickListener(this);
+            }
+            this.binding.bottomPostItemContainer.setTag(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            int oldPos = selectedPos;
+            selectedPos = getLayoutPosition();
+            notifyItemChanged(oldPos);
+            notifyItemChanged(selectedPos);
+
+            bottomItemClicked.onBottomItemClicked(getBindingAdapterPosition());
         }
     }
 
+    public class BottomPostVideoHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
-    public class BottomPostViewHolder extends RecyclerView.ViewHolder {
+        public BottomPostVideoItemBinding binding;
+        private BottomItemClicked bottomItemClicked;
+        public SimpleExoPlayer player;
+        public Long playbackPosition;
 
-        public BottomPostItemBinding binding;
-
-        public BottomPostViewHolder(BottomPostItemBinding binding) {
+        public BottomPostVideoHolder(BottomPostVideoItemBinding binding, BottomItemClicked bottomItemClicked) {
             super(binding.getRoot());
             this.binding = binding;
+            if(bottomItemClicked != null){
+                this.bottomItemClicked = bottomItemClicked;
+                binding.bottomPostItemContainer.setOnClickListener(this);
+            }
             this.binding.bottomPostItemContainer.setTag(this);
+            initVideoPlayer();
+        }
+
+        @Override
+        public void onClick(View v) {
+            int oldPos = selectedPos;
+            selectedPos = getLayoutPosition();
+            notifyItemChanged(oldPos);
+            notifyItemChanged(selectedPos);
+
+            bottomItemClicked.onBottomItemClicked(getBindingAdapterPosition());
+        }
+
+        private void initVideoPlayer(){
+            //Initialize Video Player
+            if (player == null) {
+                player = new SimpleExoPlayer.Builder(mContext)
+                        .build();
+                player.setVolume(0f);
+                player.setPlayWhenReady(true);
+                player.setRepeatMode(Player.REPEAT_MODE_ONE);
+            }
         }
     }
 
@@ -124,40 +168,67 @@ public class BottomPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public int getItemViewType(int position) {
+        String storyUrl = posts.get(position).getUrl();
+        String storyType = Utility.INSTANCE.extractS3URLfileType(storyUrl);
+
         if(position == 0 && modifyFirst){
             return ENLARGED_ITEM;
         }else{
-            return NORMAL_ITEM;
+            Log.d("hee", "getItemViewTypes" + posts.get(position).getUrl());
+            if(Utility.INSTANCE.isImage(storyType)){
+                return NORMAL_ITEM;
+            }else{
+                return VIDEO_ITEM;
+            }
         }
     }
 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        Log.d("recycled",  "Recycler VIEW HOLDER HAS BEEN CREATED! ");
         if(viewType == ENLARGED_ITEM){
             EnlargedBottomPostItemBinding binding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.enlarged_bottom_post_item, parent, false);
 
             return new EnlargedBottomPostViewHolder(binding);
-        }else{
-            BottomPostItemBinding binding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.bottom_post_item, parent, false);
+        }else {
+            if(viewType == NORMAL_ITEM){
+                BottomPostItemBinding binding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.bottom_post_item, parent, false);
 
-            ViewGroup.LayoutParams params = binding.bottomPostItemContainer.getLayoutParams();
-            params.width = squareLength;
-            params.height = squareLength;
+                ViewGroup.LayoutParams params = binding.bottomPostItemContainer.getLayoutParams();
+                params.width = squareLength;
+                params.height = squareLength;
 
-            if(modifyFirst){
-                ViewGroup.MarginLayoutParams viewPagerMarginParams = (ViewGroup.MarginLayoutParams)binding.bottomPostItemContainer.getLayoutParams();
-                viewPagerMarginParams.topMargin = Utility.INSTANCE.dpToPx(130, mContext) - squareLength;
-                binding.bottomPostItemContainer.setLayoutParams(viewPagerMarginParams);
+                if(modifyFirst){
+                    ViewGroup.MarginLayoutParams viewPagerMarginParams = (ViewGroup.MarginLayoutParams)binding.bottomPostItemContainer.getLayoutParams();
+                    viewPagerMarginParams.topMargin = Utility.INSTANCE.dpToPx(130, mContext) - squareLength;
+                    binding.bottomPostItemContainer.setLayoutParams(viewPagerMarginParams);
+                }
+
+                return new BottomPostViewHolder(binding, bottomItemClicked);
+            }else{
+                BottomPostVideoItemBinding binding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.bottom_post_video_item, parent, false);
+
+                ViewGroup.LayoutParams params = binding.bottomPostItemContainer.getLayoutParams();
+                params.width = squareLength;
+                params.height = squareLength;
+
+                if(modifyFirst){
+                    ViewGroup.MarginLayoutParams viewPagerMarginParams = (ViewGroup.MarginLayoutParams)binding.bottomPostItemContainer.getLayoutParams();
+                    viewPagerMarginParams.topMargin = Utility.INSTANCE.dpToPx(130, mContext) - squareLength;
+                    binding.bottomPostItemContainer.setLayoutParams(viewPagerMarginParams);
+                }
+
+                return new BottomPostVideoHolder(binding, bottomItemClicked);
             }
-
-            return new BottomPostViewHolder(binding);
         }
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        holder.itemView.setSelected(selectedPos == position);
+        Log.d("recycled",  "Recycler ITEM has BEEN BOUND! " + holder.toString());
+
+        holder.itemView.setSelected(selectedPos == holder.getLayoutPosition());
 
         String storyUrl = posts.get(position).getUrl();
         String storyType = Utility.INSTANCE.extractS3URLfileType(storyUrl);
@@ -178,60 +249,59 @@ public class BottomPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         .into(viewHolder.binding.bottomPostImage);
             }
 
-        }else{
+        }else if(holder.getItemViewType() == NORMAL_ITEM){
+            Log.d("recycled",  "Recycler VIEW TYPE IS NORMAL ");
+
             BottomPostViewHolder viewHolder = (BottomPostViewHolder) holder;
 
-            if(Utility.INSTANCE.isImage(storyType)){
+            Glide.with(mContext)
+                    .load(storyUrl)
+                    .thumbnail(0.25f)
+                    .override(100, 100)
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                    .into(viewHolder.binding.bottomPostImage);
+        }else{
+            Log.d("recycled",  "Recycler VIEW TYPE IS VIDEO ");
 
-                viewHolder.binding.bottomPlayerViewStory.setVisibility(View.GONE);
-                viewHolder.binding.bottomPostImage.setVisibility(View.VISIBLE);
+            BottomPostVideoHolder viewHolder = (BottomPostVideoHolder) holder;
 
-                Glide.with(mContext)
-                        .load(storyUrl)
-                        .thumbnail(0.25f)
-                        .override(100, 100)
-                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                        .into(viewHolder.binding.bottomPostImage);
-            }else{
-
-                viewHolder.binding.bottomPlayerViewStory.setVisibility(View.VISIBLE);
-                viewHolder.binding.bottomPostImage.setVisibility(View.GONE);
-
-//                viewHolder.binding.bottomPlayerViewStory.setPlayer(player);
-//
-//                MediaItem mediaItem = MediaItem.fromUri(storyUrl);
-//
-//                player.setMediaItem(mediaItem);
-//                player.prepare();
+            if(viewHolder.binding.bottomPlayerViewStory.getPlayer() == null){
+                Log.d("recycled",  "Bottom player view story returned a null player ");
+                viewHolder.binding.bottomPlayerViewStory.setPlayer(viewHolder.player);
             }
 
-        }
+            MediaItem mediaItem = MediaItem.fromUri(storyUrl);
+            viewHolder.player.setMediaItem(mediaItem);
 
-        if(itemClickListener != null){
-            holder.itemView.setOnClickListener(view -> {
-                notifyItemChanged(selectedPos);
-                selectedPos = holder.getLayoutPosition();
-                notifyItemChanged(selectedPos);
+            if(viewHolder.playbackPosition != null){
+                viewHolder.player.seekTo(viewHolder.playbackPosition);
+            }
 
-                itemClickListener.onBottomItemClicked(position);
-            });
+            viewHolder.player.prepare();
         }
 
     }
 
-//    @Override
-//    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
-//        super.onDetachedFromRecyclerView(recyclerView);
-//        player.release();
-//        player = null;
-//    }
 
     //Clear player when StoryBunchFragment is paused
-//    @Override
-//    public void onViewRecycled(@NonNull RecyclerView.ViewHolder holder) {
-//        super.onViewRecycled(holder);
-//        ((BottomPostViewHolder)holder).binding.bottomPlayerViewStory.
-//    }
+    @Override
+    public void onViewRecycled(@NonNull RecyclerView.ViewHolder holder) {
+        Log.d("recycled",  "On View Recycled! " + holder.toString());
+        super.onViewRecycled(holder);
+        if(holder.getItemViewType() == VIDEO_ITEM){
+            //TODO not sure if saving of video playback state works correctly
+            //Also, creating a player per view holder is probably not sustainable in the long term.
+            BottomPostVideoHolder viewHolder = (BottomPostVideoHolder) holder;
+            viewHolder.playbackPosition = viewHolder.player.getCurrentPosition();
+            viewHolder.player.stop();
+        }
+    }
+
+
+
+    public interface BottomItemClicked{
+        void onBottomItemClicked(int clickPosition);
+    }
 
     @Override
     public int getItemCount() {

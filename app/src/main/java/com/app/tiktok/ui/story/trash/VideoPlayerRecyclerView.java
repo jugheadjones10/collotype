@@ -1,4 +1,4 @@
-package com.app.tiktok.ui.story;
+package com.app.tiktok.ui.story.trash;
 
 import android.content.Context;
 import android.graphics.Point;
@@ -129,45 +129,47 @@ public class VideoPlayerRecyclerView  extends RecyclerView {
 
     public void playVideo() {
 
-        int startPosition = ((LinearLayoutManager) getLayoutManager()).findFirstVisibleItemPosition();
-        int endPosition = ((LinearLayoutManager) getLayoutManager()).findLastVisibleItemPosition();
-
-        List<Integer> newVideoPositions = new ArrayList<>();
-        for(int i = startPosition; i <= endPosition; i++){
-            View child = getChildAt(i);
-            if(child != null){
-                BottomPostsAdapter.BottomPostViewHolder holder = (BottomPostsAdapter.BottomPostViewHolder) child.getTag();
-                if(holder.binding.bottomPlayerViewStory.getVisibility() == VISIBLE){
-                    newVideoPositions.add(i);
-                }
-            }
-        }
-
-        Log.d("finger", "New video positions : " + newVideoPositions + "");
-
-        for(int i : videoPositions){
-            if(newVideoPositions.contains(i)){
-                BottomPostsAdapter.BottomPostViewHolder holder = (BottomPostsAdapter.BottomPostViewHolder) getChildAt(i).getTag();
-                if(holder.binding.bottomPlayerViewStory.getPlayer() != null){
-                    newVideoPositions.remove(i);
-                }
-            }
-        }
-
-        Log.d("finger", "New video positions after removal : " + newVideoPositions + "");
-
-
-        for(int i : newVideoPositions){
-            BottomPostsAdapter.BottomPostViewHolder holder = (BottomPostsAdapter.BottomPostViewHolder) getChildAt(i).getTag();
-
-            holder.binding.bottomPlayerViewStory.setPlayer(videoPlayer);
-
-            MediaItem mediaItem = MediaItem.fromUri(posts.get(i).getUrl());
-            videoPlayer.setMediaItem(mediaItem);
-            videoPlayer.prepare();
-        }
-
-        videoPositions.addAll(newVideoPositions);
+//        int startPos = ((LinearLayoutManager) getLayoutManager()).findFirstVisibleItemPosition();
+//        int endPos = ((LinearLayoutManager) getLayoutManager()).findLastVisibleItemPosition();
+//
+//        List<Integer> newVideoPositions = new ArrayList<>();
+//        for(int i = startPos; i <= endPos; i++){
+//            View child = getChildAt(i);
+//            if(child != null){
+//                BottomPostsAdapter.BottomPostViewHolder holder = (BottomPostsAdapter.BottomPostViewHolder) child.getTag();
+//                Log.d("frog", "Withint loop" + holder.binding.bottomPlayerViewStory.isShown());
+//                if(holder.binding.bottomPlayerViewStory.getVisibility() == VISIBLE){
+//                    newVideoPositions.add(i);
+//                }
+//            }
+//        }
+//
+//        Log.d("finger", "New video positions : " + newVideoPositions + "");
+//
+//        for(Integer i : videoPositions){
+//            if(newVideoPositions.contains(i)){
+//                BottomPostsAdapter.BottomPostViewHolder holder = (BottomPostsAdapter.BottomPostViewHolder) getChildAt(i).getTag();
+//                if(holder.binding.bottomPlayerViewStory.getPlayer() != null){
+//                    Log.d("finger", "Player playback state : " + holder.binding.bottomPlayerViewStory.getPlayer().getPlaybackState());
+//                    newVideoPositions.remove(i);
+//                }
+//            }
+//        }
+//
+//        Log.d("finger", "New video positions after removal : " + newVideoPositions + "");
+//
+//        for(int i : newVideoPositions){
+//            BottomPostsAdapter.BottomPostViewHolder holder = (BottomPostsAdapter.BottomPostViewHolder) getChildAt(i).getTag();
+//
+//            holder.binding.bottomPlayerViewStory.setPlayer(videoPlayer);
+//
+//            MediaItem mediaItem = MediaItem.fromUri(posts.get(i).getUrl());
+//            videoPlayer.setMediaItem(mediaItem);
+//
+//            videoPlayer.prepare();
+//        }
+//
+//        videoPositions.addAll(newVideoPositions);
 
     }
 

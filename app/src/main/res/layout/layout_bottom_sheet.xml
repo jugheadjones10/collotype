@@ -61,7 +61,7 @@
 
 <!--        </LinearLayout>-->
 
-        <com.app.tiktok.ui.story.VideoPlayerRecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/thumbnails_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="100dp"
