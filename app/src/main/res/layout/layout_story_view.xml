@@ -17,6 +17,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:use_controller="false">
+
+<!--        <androidx.fragment.app.FragmentContainerView-->
+<!--            android:id="@+id/recommended_fragment"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent">-->
+<!--        </androidx.fragment.app.FragmentContainerView>-->
+
     </com.google.android.exoplayer2.ui.PlayerView>
 
 <!--    android:layout_marginStart="200dp"-->
@@ -205,6 +212,7 @@
                 android:layout_height="28dp"
                 android:layout_marginTop="8dp"
                 android:elevation="10dp"
+                android:visibility="invisible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/image_view_option_share_title"

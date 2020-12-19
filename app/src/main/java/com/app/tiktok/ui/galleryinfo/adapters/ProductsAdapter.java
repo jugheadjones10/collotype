@@ -48,12 +48,8 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.Produc
     public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
 
         Product product = products.get(position);
-        Glide.with(mContext)
-                .load(product.getUrl())
-                .thumbnail(0.25f)
-                .override(100, 100)
-                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                .into(holder.binding.productImage);
+
+        holder.binding.setContext(mContext);
         holder.binding.setProduct(product);
     }
 

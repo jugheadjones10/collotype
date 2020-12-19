@@ -9,8 +9,9 @@ data class Event(
     val id: Long,
     val url: String,
     val title: String,
+    val gallery: Long,
 
     val hosts: ArrayList<Long>,
-    val dateTime: String
+    val datetime: String
 
 ): Parcelable

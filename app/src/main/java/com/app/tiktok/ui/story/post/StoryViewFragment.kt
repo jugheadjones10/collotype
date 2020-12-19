@@ -27,6 +27,8 @@ import com.app.tiktok.model.Gallery
 import com.app.tiktok.model.Post
 import com.app.tiktok.model.Product
 import com.app.tiktok.model.User
+import com.app.tiktok.ui.galleryinfo.GalleryInfoFragment
+import com.app.tiktok.ui.recommended.RecommendedFragment
 import com.app.tiktok.ui.story.StoryBunchFragment
 import com.app.tiktok.ui.story.UtilViewModel
 import com.app.tiktok.utils.*
@@ -38,7 +40,6 @@ import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory
-import com.google.android.exoplayer2.util.MimeTypes
 import com.google.android.material.imageview.ShapeableImageView
 import kotlinx.android.synthetic.main.fragment_story_bunch.*
 import kotlinx.android.synthetic.main.include_price_tag.*
@@ -52,6 +53,7 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
     private lateinit var post: Post
     private lateinit var gallery: Gallery
     private lateinit var storyUrl: String
+    private lateinit var position: String
 
     private var simplePlayer: SimpleExoPlayer? = null
     private val simpleCache = MyApp.simpleCache
@@ -87,11 +89,12 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
     }
 
     companion object {
-        fun newInstance(post: Post, gallery: Gallery) = StoryViewFragment()
+        fun newInstance(post: Post, gallery: Gallery, position: String) = StoryViewFragment()
             .apply {
                 arguments = Bundle().apply {
                     putParcelable(Constants.KEY_POST_DATA, post)
                     putParcelable(Constants.KEY_GALLERY_DATA, gallery)
+                    putString(Constants.KEY_GALLERY_POSITION, position)
                 }
             }
     }
@@ -106,6 +109,7 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
         arguments?.let {
             post = it.getParcelable(Constants.KEY_POST_DATA)!!
             gallery = it.getParcelable(Constants.KEY_GALLERY_DATA)!!
+            position = it.getString(Constants.KEY_GALLERY_POSITION)!!
         }
 
         //Initialize View Model
@@ -459,6 +463,20 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
             post.likesCount.formatNumberAsReadableFormat()
         image_view_option_comment_title?.text =
             post.commentsCount.formatNumberAsReadableFormat()
+
+//        ic_explore_image.setOnClickListener(View.OnClickListener { v ->
+//            val transaction = childFragmentManager.beginTransaction()
+//            val recommendedFragment: Fragment =
+//                RecommendedFragment.newInstance(
+//                    position,
+//                    gallery,
+//                    100
+//                )
+//            transaction.add(R.id.recommended_fragment, recommendedFragment, "RecommendedFragment")
+//            //Do I need the below line?
+//            transaction.addToBackStack(null)
+//            transaction.commit()
+//        })
 
         Glide.with(this)
             .load(user.url)

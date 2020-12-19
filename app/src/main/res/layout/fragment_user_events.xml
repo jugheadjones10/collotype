@@ -8,7 +8,7 @@
     android:layout_height="match_parent"
     tools:context=".ui.user.events.UserEventsFragment">
 
-        <androidx.recyclerview.widget.RecyclerView
+        <com.airbnb.epoxy.EpoxyRecyclerView
             android:id="@+id/user_galleries_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

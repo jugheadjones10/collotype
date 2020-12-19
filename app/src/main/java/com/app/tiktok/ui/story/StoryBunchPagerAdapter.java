@@ -14,18 +14,20 @@ public class StoryBunchPagerAdapter extends FragmentStateAdapter {
 
     private List<Post> posts;
     private Gallery gallery;
+    private String galleryPosition;
 
-    public StoryBunchPagerAdapter(Fragment storyBunchFragment, List<Post> posts, Gallery gallery){
+    public StoryBunchPagerAdapter(Fragment storyBunchFragment, List<Post> posts, Gallery gallery, String galleryPosition){
         super(storyBunchFragment);
         this.posts = posts;
         this.gallery = gallery;
+        this.galleryPosition = galleryPosition;
     }
 
     @NonNull
     @Override
     public Fragment createFragment(int position) {
 //        return BlankFragment.newInstance();
-        return StoryViewFragment.Companion.newInstance(posts.get(position), gallery);
+        return StoryViewFragment.Companion.newInstance(posts.get(position), gallery, galleryPosition);
     }
 
    @Override

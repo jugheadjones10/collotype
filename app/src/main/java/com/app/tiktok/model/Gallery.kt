@@ -14,6 +14,9 @@ data class Gallery(
     val members: ArrayList<Long>,
     val events: ArrayList<Long>,
 
+    val recposts: ArrayList<Long>,
+    val recproducts: ArrayList<Long>,
+
     val followersCount: Long,
 
     val collab: Boolean,

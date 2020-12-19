@@ -37,6 +37,7 @@ import com.app.tiktok.ui.galleryinfo.GalleryInfoFragment;
 import com.app.tiktok.ui.galleryinfo.GalleryInfoRecyclerDataItem;
 import com.app.tiktok.ui.home.GalleriesViewModel;
 import com.app.tiktok.ui.home.HomeFragment;
+import com.app.tiktok.ui.recommended.RecommendedFragment;
 import com.app.tiktok.ui.story.bottomsheet.BottomSheetFragment;
 import com.app.tiktok.ui.user.UserFragment;
 import com.app.tiktok.utils.Constants;
@@ -163,9 +164,7 @@ public class StoryBunchFragment extends Fragment implements BottomPostsAdapter.B
         binding.postsViewPager.setCameraDistance(1000000000000000000000000000f);
         binding.storyBunchParent.setCameraDistance(1000000000000000000000000000f);
 
-
         //Get data from view model
-
         if(gallery.getId() != 6L){
             getPosts();
             //Observe "draggable" from postsViewModel
@@ -178,6 +177,9 @@ public class StoryBunchFragment extends Fragment implements BottomPostsAdapter.B
     }
 
     private void initializeAdvertisement(){
+
+        binding.icExploreImage.setVisibility(View.INVISIBLE);
+
         Glide.with(this)
                 .load(gallery.getUrl())
                 .thumbnail(0.25f)
@@ -200,7 +202,6 @@ public class StoryBunchFragment extends Fragment implements BottomPostsAdapter.B
             injectDataIntoView();
             initializeBottomSheetFragment();
         }
-
     }
 
     @Override
@@ -273,6 +274,10 @@ public class StoryBunchFragment extends Fragment implements BottomPostsAdapter.B
         MarginLayoutParams viewPagerMarginParams = (MarginLayoutParams)binding.postsViewPager.getLayoutParams();
         viewPagerMarginParams.bottomMargin = squareLength;
         binding.postsViewPager.setLayoutParams(viewPagerMarginParams);
+
+        MarginLayoutParams icExploreMarginParams = (MarginLayoutParams)binding.icExploreImage.getLayoutParams();
+        icExploreMarginParams.bottomMargin = squareLength + Utility.INSTANCE.dpToPx(15, requireContext());
+        binding.icExploreImage.setLayoutParams(icExploreMarginParams);
 
         ViewGroup.LayoutParams recyclerViewLayoutParams = binding.layoutBotSheet.thumbnailsRecyclerView.getLayoutParams();
         recyclerViewLayoutParams.height = squareLength;
@@ -449,8 +454,17 @@ public class StoryBunchFragment extends Fragment implements BottomPostsAdapter.B
             groupName.setText(gallery.getName());
         }
 
+
+
         TextView followersCount = inflatedTopBar.findViewById(R.id.followers_count2);
         followersCount.setText(ExtensionsKt.formatNumberAsReadableFormat(gallery.getFollowersCount()));
+
+        binding.icExploreImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goToRecommended();
+            }
+        });
 
     }
 
@@ -464,8 +478,6 @@ public class StoryBunchFragment extends Fragment implements BottomPostsAdapter.B
             transaction.commit();
         }
     }
-
-
 
 
     private void initializeRecyclerView(List<Post> posts){
@@ -526,7 +538,7 @@ public class StoryBunchFragment extends Fragment implements BottomPostsAdapter.B
             public void run() {
                 //Not sure if the asynchronous feature below is required.
                 //Pass in everything first. Later we may need to filter.
-                pagerAdapter = new StoryBunchPagerAdapter(StoryBunchFragment.this, posts, gallery);
+                pagerAdapter = new StoryBunchPagerAdapter(StoryBunchFragment.this, posts, gallery, position);
 
                 binding.postsViewPager.post(new Runnable() {
                     public void run() {
@@ -543,9 +555,17 @@ public class StoryBunchFragment extends Fragment implements BottomPostsAdapter.B
         if(!GalleriesViewModel.forbiddenCollabGalleries.contains(gallery.getId())) {
             Fragment fragment = getChildFragmentManager().findFragmentByTag("GalleryInfoFragment");
             if(fragment == null) {
-                Fragment galleryInfoFragment = GalleryInfoFragment.newInstance(position, gallery, (int)inflatedTopBar.getHeight());
+                Fragment galleryInfoFragment = GalleryInfoFragment.newInstance(position, gallery, inflatedTopBar.getHeight());
                 navigateToFragment(galleryInfoFragment, R.id.detailed_gallery_info, "GalleryInfoFragment");
             }
+        }
+    }
+
+    private void goToRecommended(){
+        Fragment fragment = getChildFragmentManager().findFragmentByTag("RecommendedFragment");
+        if(fragment == null) {
+            Fragment recommendedFragment = RecommendedFragment.newInstance(position, gallery, inflatedTopBar.getHeight());
+            navigateToFragment(recommendedFragment, R.id.detailed_gallery_info, "RecommendedFragment");
         }
     }
 

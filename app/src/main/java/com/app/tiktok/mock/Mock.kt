@@ -64,4 +64,15 @@ class Mock @Inject constructor(private val context: Context) {
 
         return productsDataModelList
     }
+
+    fun loadMockEventsData(): ArrayList<Event>? {
+        val mockData = context.resources.openRawResource(R.raw.events_data)
+        val dataString = mockData.bufferedReader().readText()
+
+        val gson = Gson()
+        val eventsType = object : TypeToken<ArrayList<Event>>() {}.type
+        val eventsDataModelList = gson.fromJson<ArrayList<Event>>(dataString, eventsType)
+
+        return eventsDataModelList
+    }
 }

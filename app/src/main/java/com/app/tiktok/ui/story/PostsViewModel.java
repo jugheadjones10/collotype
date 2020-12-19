@@ -17,9 +17,11 @@ import com.app.tiktok.ui.galleryinfo.models.GalleryInfoEventsRow;
 import com.app.tiktok.ui.galleryinfo.models.GalleryInfoMemberRow;
 import com.app.tiktok.ui.galleryinfo.models.GalleryInfoProductsRow;
 import com.app.tiktok.ui.galleryinfo.GalleryInfoRecyclerDataItem;
+import com.app.tiktok.ui.recommended.GalleryPost;
 import com.app.tiktok.utils.Utility;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Executor;
@@ -38,11 +40,75 @@ public class PostsViewModel extends ViewModel {
     private MutableLiveData<Boolean> setDraggable;
     private MutableLiveData<Boolean> expanding;
 
+    private MutableLiveData<HashMap<String, List<?>>> recommendedData;
     private MutableLiveData<List<List<Post>>> processPosts;
 
     @ViewModelInject
     public PostsViewModel(DataRepository dataRepository){
         this.dataRepository = dataRepository;
+    }
+
+    public LiveData<HashMap<String, List<?>>> getRecommendedData(Gallery gallery, Executor executor) {
+        if (recommendedData == null) {
+
+            executor.execute(new Runnable() {
+                @Override
+                public void run() {
+
+                    HashMap<String, List<?>> finalMap = new HashMap<>();
+
+                    ArrayList<User> hosts = new ArrayList<>(List.of(
+                            getUser(gallery.getMembers().get(0)),
+                            getUser(gallery.getMembers().get(1))
+                    ));
+
+                    List<HydratedEvent> filteredEvents = dataRepository
+                            .getEventsData()
+                            .stream()
+                            .filter(event -> gallery.getEvents().contains(event.getId()))
+                            .map(event -> new HydratedEvent(
+                                    event.getId(),
+                                    event.getUrl(),
+                                    event.getTitle(),
+                                    event.getGallery(),
+                                    hosts,
+                                    event.getDatetime()
+                            ))
+                            .collect(Collectors.toList());
+
+                    finalMap.put("Past Events", filteredEvents.subList(0, filteredEvents.size()/2));
+                    finalMap.put("Upcoming Events", filteredEvents.subList(filteredEvents.size()/2, filteredEvents.size()));
+
+                    List<GalleryPost> filteredPosts = dataRepository
+                            .getPostsData()
+                            .stream()
+                            .filter(post -> gallery.getRecposts().contains(post.getId()))
+                            //Below is another prototype-specific hack
+                            .map(filteredPost -> new GalleryPost(filteredPost, getGallery(getRandomGalleryId())))
+                            .collect(Collectors.toList());
+
+                    int boundary = filteredPosts.size()/2;
+                    if(boundary%2 != 0){
+                        boundary += 1;
+                    }
+                    finalMap.put("Before Product Posts", filteredPosts.subList(0, boundary));
+                    finalMap.put("After Product Posts", filteredPosts.subList(boundary, filteredPosts.size()));
+
+                    List<Product> filteredProducts = dataRepository
+                            .getProductsData()
+                            .stream()
+                            .filter(product -> gallery.getRecproducts().contains(product.getId()))
+                            .collect(Collectors.toList());
+
+                    finalMap.put("Products", filteredProducts);
+
+                    recommendedData.postValue(finalMap);
+                }
+            });
+
+            recommendedData = new MutableLiveData<HashMap<String, List<?>>>();
+        }
+        return recommendedData;
     }
 
     public LiveData<List<Post>> getPosts(long galleryId, Executor executor) {
@@ -72,6 +138,12 @@ public class PostsViewModel extends ViewModel {
             posts = new MutableLiveData<List<Post>>();
         }
         return posts;
+    }
+
+
+    public long getRandomGalleryId() {
+        Random random = new Random();
+        return (long)(random.nextInt(13 - 1) + 1);
     }
 
 //
@@ -144,6 +216,8 @@ public class PostsViewModel extends ViewModel {
                        "Ironman Water Painting",
                        filteredPosts.get(i).getUrl(),
                        125L,
+                       900982232L,
+                       12L,
                        gallery.getMembers().get(0)
                ));
             }
@@ -163,6 +237,7 @@ public class PostsViewModel extends ViewModel {
                     new Random().nextLong(),
                     filteredPosts.get(i).getUrl(),
                     "Water Coloring Session",
+                    1L,
                     (ArrayList<User>) members,
                     "@ 5pm 04.56"
             ));
@@ -325,6 +400,15 @@ public class PostsViewModel extends ViewModel {
 
 
     ////Below are internal Util methods
+    private User getUser(long userId){
+        return dataRepository
+                .getUsersData()
+                .stream()
+                .filter(user -> user.getId() == userId)
+                .collect(Collectors.toList())
+                .get(0);
+    }
+
     private Post getPost(long postId){
         return dataRepository
                 .getPostsData()

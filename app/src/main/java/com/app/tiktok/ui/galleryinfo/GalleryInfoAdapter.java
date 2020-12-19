@@ -1,7 +1,9 @@
 package com.app.tiktok.ui.galleryinfo;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -21,6 +23,7 @@ import com.app.tiktok.ui.galleryinfo.adapters.ProductsAdapter;
 import com.app.tiktok.ui.galleryinfo.models.GalleryInfoEventsRow;
 import com.app.tiktok.ui.galleryinfo.models.GalleryInfoMemberRow;
 import com.app.tiktok.ui.galleryinfo.models.GalleryInfoProductsRow;
+import com.app.tiktok.utils.Utility;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.littlemango.stacklayoutmanager.StackLayoutManager;
@@ -116,6 +119,10 @@ class GalleryInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
             viewHolder.binding.horizontalRecyclerView.setLayoutManager(new LinearLayoutManager(mContext, RecyclerView.HORIZONTAL, false));
             viewHolder.binding.horizontalRecyclerView.setAdapter(new ProductsAdapter(mContext, productsRow.products));
+            viewHolder.binding.horizontalRecyclerView.addItemDecoration(new HorizontalSpaceItemDecoration(
+                    Utility.INSTANCE.dpToPx(8, mContext),
+                    Utility.INSTANCE.dpToPx(12, mContext)
+            ));
 
         }
     }
@@ -135,6 +142,32 @@ class GalleryInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             return ITEM_VIEW_TYPE_PAST_EVENTS;
         }else{
             return ITEM_VIEW_TYPE_PRODUCTS;
+        }
+    }
+
+    public class HorizontalSpaceItemDecoration extends RecyclerView.ItemDecoration {
+
+        private final int horizontalSpaceWidth;
+        private final int endsWidth;
+
+        public HorizontalSpaceItemDecoration(int horizontalSpaceWidth, int endsWidth) {
+            this.horizontalSpaceWidth = horizontalSpaceWidth;
+            this.endsWidth = endsWidth;
+        }
+
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
+                                   RecyclerView.State state) {
+            int position = parent.getChildAdapterPosition(view);
+
+            if(position == 0){
+                outRect.left = endsWidth;
+                outRect.right = horizontalSpaceWidth;
+            }else if(position == parent.getAdapter().getItemCount() - 1){
+                outRect.right = endsWidth;
+            }else{
+                outRect.right = horizontalSpaceWidth;
+            }
         }
     }
 

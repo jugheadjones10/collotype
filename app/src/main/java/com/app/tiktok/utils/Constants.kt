@@ -13,4 +13,5 @@ object Constants {
 
     const val KEY_POST_DATA = "KEY_POST_DATA"
     const val KEY_GALLERY_DATA = "KEY_GALLERY_DATA"
+
 }

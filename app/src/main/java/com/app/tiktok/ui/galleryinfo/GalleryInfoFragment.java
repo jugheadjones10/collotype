@@ -69,19 +69,11 @@ public class GalleryInfoFragment extends Fragment {
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-//        HomeFragment.Companion.getViewPager2().setUserInputEnabled(true);
-//        StoryBunchFragment.getInstance().bottomSheetBehavior.setDraggable(true);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_gallery_info, container, false);
         postsViewModel = new ViewModelProvider(requireActivity()).get(position, PostsViewModel.class);
-
         getGalleryInfo();
 
         return binding.getRoot();

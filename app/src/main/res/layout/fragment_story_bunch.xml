@@ -26,6 +26,16 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <ImageView
+                android:id="@+id/ic_explore_image"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginEnd="15dp"
+                android:elevation="10dp"
+                app:layout_constraintBottom_toBottomOf="@+id/advert"
+                app:layout_constraintEnd_toEndOf="@+id/advert"
+                app:srcCompat="@drawable/ic_explore" />
+
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/posts_view_pager"
                 android:layout_width="match_parent"
@@ -40,7 +50,6 @@
         <include
             android:id="@+id/layout_bot_sheet"
             layout="@layout/layout_bottom_sheet" />
-
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/detailed_gallery_info"

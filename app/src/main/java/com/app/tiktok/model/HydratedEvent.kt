@@ -9,8 +9,9 @@ data class HydratedEvent(
     val id: Long,
     val url: String,
     val title: String,
+    val gallery: Long,
 
     val hosts: ArrayList<User>,
-    val dateTime: String
+    val datetime: String
 
 ): Parcelable

@@ -67,6 +67,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .into(holder.binding.eventImage);
         holder.binding.groupMembers.removeAllViews();
+
         LayoutInflater layoutInflator = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         for(User user: event.getHosts()){
             String profileUrl = user.getUrl();

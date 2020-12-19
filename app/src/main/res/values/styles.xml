@@ -8,6 +8,14 @@
         <item name="statusBarBackground">@android:color/transparent</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowTranslucentStatus">true</item>
+
+        <item name="chipStyle">@style/Widget.App.Chip</item>
+    </style>
+
+    <style name="Widget.App.Chip" parent="Widget.MaterialComponents.Chip.Choice">
+        <item name="chipBackgroundColor">@color/choice_chip_bg</item>
+        <item name="android:textColor">@color/colorBlack</item>
+        <item name="rippleColor">@color/colorSlightGray</item>
     </style>
 
     <style name="TabTextAppearance" parent="TextAppearance.Design.Tab">
@@ -22,6 +30,11 @@
     <style name="RoundedRectangularImageViewShape">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">10%</item>
+    </style>
+
+    <style name="SubtleRoundedRectangularImageViewShape">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">5%</item>
     </style>
 
     <style name="ToolbarWhiteBackArrow" parent="AppTheme">

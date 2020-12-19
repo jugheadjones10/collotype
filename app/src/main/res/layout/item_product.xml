@@ -6,10 +6,12 @@
         <variable
             name="product"
             type="com.app.tiktok.model.Product" />
+        <variable
+            name="context"
+            type="android.content.Context" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_margin="8dp"
         android:layout_width="100dp"
         android:layout_height="wrap_content">
 
@@ -19,6 +21,8 @@
             android:layout_height="100dp"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
+            app:url="@{product.url}"
+            app:context = "@{context}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"

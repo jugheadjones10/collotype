@@ -63,9 +63,6 @@ public class UserFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        HomeFragment.Companion.getViewPager2().setUserInputEnabled(false);
-//        StoryBunchFragment.getInstance().bottomSheetBehavior.setDraggable(false);
-
         //Get Argument
         if(getArguments() != null){
             userData = getArguments().getParcelable(USER_KEY);
@@ -76,15 +73,6 @@ public class UserFragment extends Fragment {
         postsViewModel = new ViewModelProvider(requireActivity()).get(position, PostsViewModel.class);
         navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
     }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        //FIX THIS
-//        StoryBunchFragment.getInstance().bottomSheetBehavior.setDraggable(true);
-//        HomeFragment.Companion.getViewPager2().setUserInputEnabled(true);
-    }
-
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -131,7 +119,7 @@ public class UserFragment extends Fragment {
                         tab.setText("Posts");
                         break;
                     case 1:
-                        tab.setText("Gallery");
+                        tab.setText("Galleries");
                         break;
                     case 2:
                         tab.setText("Events");
@@ -163,7 +151,6 @@ public class UserFragment extends Fragment {
         //Pass in everything first. Later we may need to filter.
         UserPagerAdapter pagerAdapter = new UserPagerAdapter(this, userData.getId());
 
-        binding.bottomSheetPager.setOffscreenPageLimit(1);
         binding.bottomSheetPager.setAdapter(pagerAdapter);
     }
 

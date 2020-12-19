@@ -30,4 +30,9 @@ class DataRepository @Inject constructor(private val mock: Mock) {
         return dataList
     }
 
+    fun getEventsData(): ArrayList<Event>? {
+        val dataList = mock.loadMockEventsData()
+        return dataList
+    }
+
 }

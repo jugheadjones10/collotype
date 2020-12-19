@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="post"
+            type="com.app.tiktok.model.Post" />
+        <variable
+            name="gallery"
+            type="com.app.tiktok.model.Gallery" />
+        <variable
+            name="context"
+            type="android.content.Context" />
+    </data>
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:padding="1dp"
+    android:layout_width="match_parent"
+    android:layout_height="320dp">
+
+    <ImageView
+        android:id="@+id/post_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:adjustViewBounds="true"
+        android:background="@color/colorBlack"
+        android:scaleType="centerCrop"
+        app:context="@{context}"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:url="@{post.url}" />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/gallery_profile"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="5dp"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        app:context="@{context}"
+        app:layout_constraintBottom_toTopOf="@+id/text_view_video_description"
+        app:layout_constraintStart_toStartOf="parent"
+        app:shapeAppearance="@style/RoundedImageViewShape"
+        app:url="@{gallery.url}" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_view_video_description"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:textColor="@color/colorStoryDescription"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_default="wrap"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="@{post.caption}" />
+
+    <TextView
+        android:id="@+id/gallery_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@{gallery.name}"
+        android:textColor="@color/colorStoryDescription"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/date"
+        app:layout_constraintStart_toStartOf="@+id/date" />
+
+    <TextView
+        android:id="@+id/date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="08.15.19"
+        android:textColor="@color/colorStoryDescription"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toTopOf="@+id/text_view_video_description"
+        app:layout_constraintStart_toEndOf="@+id/gallery_profile" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

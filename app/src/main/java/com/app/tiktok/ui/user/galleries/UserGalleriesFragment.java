@@ -17,10 +17,12 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 
 import com.app.tiktok.R;
+import com.app.tiktok.app.MyApp;
 import com.app.tiktok.databinding.FragmentUserGalleriesBinding;
 import com.app.tiktok.ui.user.UserViewModel;
 
 import java.util.List;
+import java.util.concurrent.Executor;
 
 
 public class UserGalleriesFragment extends Fragment {
@@ -67,11 +69,12 @@ public class UserGalleriesFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-//        listenForWidth();
+
     }
 
     private void getUserGalleries(){
-        userViewModel.getUserGalleries(userId).observe(getViewLifecycleOwner(), new Observer<List<UserGallery>>() {
+        Executor executor = MyApp.Companion.getExecutorService();
+        userViewModel.getUserGalleries(userId, executor).observe(getViewLifecycleOwner(), new Observer<List<UserGallery>>() {
             @Override
             public void onChanged(List<UserGallery> userGalleries) {
                 if(userGalleries != null){
