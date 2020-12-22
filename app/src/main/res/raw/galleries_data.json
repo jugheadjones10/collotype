@@ -1,5 +1,6 @@
 [
   {
+    "type": "GALLERY",
     "id": 1,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/captvsironman/collabs/ironman/07.jpg",
     "name": "Iron Man",
@@ -105,6 +106,7 @@
     "followersCount": 1293
   },
   {
+    "type": "GALLERY",
     "id": 2,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/squatteamx/00.jpg",
     "name": "Squat Team X",
@@ -215,6 +217,7 @@
     "followersCount": 1293
   },
   {
+    "type": "GALLERY",
     "id": 3,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/beautifull/01.gif",
     "name": "Beauti Full",
@@ -301,7 +304,56 @@
     "followersCount": 1293
   },
   {
+    "type": "RIVAL-LIVE",
     "id": 4,
+    "url": "",
+    "name": "Live Parkour",
+    "posts": [],
+    "members": [],
+    "events": [],
+    "recposts": [],
+    "recproducts": [],
+    "collab": false,
+    "collaborators": [],
+    "official": true,
+    "followersCount": 1293,
+    "battleTitle": "Rooftop parkour showdown of the kings",
+    "rivalGalleries": [
+      20,
+      21
+    ],
+    "rivalLiveUrls": [
+      "https://collotype.s3.ap-northeast-2.amazonaws.com/live-parkour/Rooftop parkour showdown of the kings/2020-12-21 16-02-31.mp4",
+      "https://collotype.s3.ap-northeast-2.amazonaws.com/live-parkour/Rooftop parkour showdown of the kings/2020-12-21 16-05-01.mp4"
+    ]
+  },
+  {
+    "type": "RIVAL-LIVE",
+    "id": 5,
+    "url": "",
+    "name": "Live Canon",
+    "posts": [],
+    "members": [],
+    "events": [],
+    "recposts": [],
+    "recproducts": [],
+    "collab": false,
+    "collaborators": [],
+    "official": true,
+    "followersCount": 1293,
+    "battleTitle": "Modern canon performance!",
+    "rivalGalleries": [
+      23,
+      22
+    ],
+    "rivalLiveUrls": [
+      "https://collotype.s3.ap-northeast-2.amazonaws.com/live-canon/Modern canon performance!/2020-12-22 19-56-11.mp4",
+      "https://collotype.s3.ap-northeast-2.amazonaws.com/live-canon/Modern canon performance!/2020-12-22 21-19-03.mp4"
+    ]
+  },
+  {
+    "type": "GALLERY",
+    "id": 6,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/fatherandson/01.gif",
     "name": "Father and Son",
     "posts": [
@@ -402,7 +454,8 @@
     "followersCount": 1293
   },
   {
-    "id": 5,
+    "type": "GALLERY",
+    "id": 7,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/applevssamsung/01.JPG",
     "name": "Apple vs Samsung",
     "posts": [
@@ -472,19 +525,18 @@
     ],
     "collab": true,
     "collaborators": [
-      13,
-      14
+      15,
+      16
     ],
     "official": true,
     "followersCount": 1293
   },
   {
-    "id": 6,
-    "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/cokapepsi/Nike Advertisement.JPG",
-    "name": "Coka Pepsi",
-    "posts": [
-      1245790644
-    ],
+    "type": "AD",
+    "id": 8,
+    "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/ad-nike/Nike Advertisement.JPG",
+    "name": "Nike Ad",
+    "posts": [],
     "members": [],
     "events": [],
     "recposts": [],
@@ -495,7 +547,8 @@
     "followersCount": 1293
   },
   {
-    "id": 7,
+    "type": "GALLERY",
+    "id": 9,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/captvsironman/00.jpg",
     "name": "Captain vs Ironman",
     "posts": [
@@ -574,14 +627,15 @@
     ],
     "collab": true,
     "collaborators": [
-      16,
+      18,
       1
     ],
     "official": true,
     "followersCount": 1293
   },
   {
-    "id": 8,
+    "type": "GALLERY",
+    "id": 10,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/kimchiparty/00.jpg",
     "name": "Kimchi Party",
     "posts": [
@@ -692,7 +746,8 @@
     "followersCount": 1293
   },
   {
-    "id": 9,
+    "type": "GALLERY",
+    "id": 11,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/dancingmachine/00.jpg",
     "name": "Dancing Machine",
     "posts": [
@@ -806,7 +861,8 @@
     "followersCount": 1293
   },
   {
-    "id": 10,
+    "type": "GALLERY",
+    "id": 12,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/sweetheart/01.gif",
     "name": "Sweet Heart",
     "posts": [
@@ -909,7 +965,8 @@
     "followersCount": 1293
   },
   {
-    "id": 11,
+    "type": "GALLERY",
+    "id": 13,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/foxaspet/01.gif",
     "name": "Fox as Pet",
     "posts": [
@@ -1010,7 +1067,8 @@
     "followersCount": 1293
   },
   {
-    "id": 12,
+    "type": "GALLERY",
+    "id": 14,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/legomaniacs/01.gif",
     "name": "Lego Maniacs",
     "posts": [
@@ -1120,7 +1178,8 @@
     "followersCount": 1293
   },
   {
-    "id": 13,
+    "type": "GALLERY",
+    "id": 15,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/apple/Apple.png",
     "name": "Apple",
     "posts": [
@@ -1138,7 +1197,8 @@
     "followersCount": 1293
   },
   {
-    "id": 14,
+    "type": "GALLERY",
+    "id": 16,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/applevssamsung/collabs/samsung/samsung.png",
     "name": "Samsung",
     "posts": [
@@ -1156,7 +1216,8 @@
     "followersCount": 1293
   },
   {
-    "id": 15,
+    "type": "GALLERY",
+    "id": 17,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/pepsi/1 (2).png",
     "name": "Pepsi",
     "posts": [
@@ -1174,7 +1235,8 @@
     "followersCount": 1293
   },
   {
-    "id": 16,
+    "type": "GALLERY",
+    "id": 18,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/captainamerica/08.jpg",
     "name": "Captain America",
     "posts": [
@@ -1192,7 +1254,8 @@
     "followersCount": 1293
   },
   {
-    "id": 17,
+    "type": "GALLERY",
+    "id": 19,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/coke/coke.jpg",
     "name": "Coke",
     "posts": [
@@ -1210,6 +1273,81 @@
     "followersCount": 1293
   },
   {
+    "type": "GALLERY",
+    "id": 20,
+    "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/rooftopcats/Rooftop cats.jpg",
+    "name": "Rooftop Cats",
+    "posts": [
+      1743174169
+    ],
+    "members": [
+      3928395640
+    ],
+    "events": [],
+    "recposts": [],
+    "recproducts": [],
+    "collab": false,
+    "collaborators": [],
+    "official": true,
+    "followersCount": 1293
+  },
+  {
+    "type": "GALLERY",
+    "id": 21,
+    "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/theparkourers/The Parkourers.jfif",
+    "name": "The Parkourers",
+    "posts": [
+      533150919
+    ],
+    "members": [
+      3277175771
+    ],
+    "events": [],
+    "recposts": [],
+    "recproducts": [],
+    "collab": false,
+    "collaborators": [],
+    "official": true,
+    "followersCount": 1293
+  },
+  {
+    "type": "GALLERY",
+    "id": 22,
+    "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/guitarmax/Grasso-800x534.png",
+    "name": "Guitar Max",
+    "posts": [
+      2297436817
+    ],
+    "members": [
+      1462567148
+    ],
+    "events": [],
+    "recposts": [],
+    "recproducts": [],
+    "collab": false,
+    "collaborators": [],
+    "official": true,
+    "followersCount": 1293
+  },
+  {
+    "type": "AD",
+    "id": 23,
+    "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/drummerlady/maxresdefault.jpg",
+    "name": "Drummer Lady",
+    "posts": [],
+    "members": [
+      28776563
+    ],
+    "events": [],
+    "recposts": [],
+    "recproducts": [],
+    "collab": false,
+    "collaborators": [],
+    "official": true,
+    "followersCount": 1293
+  },
+  {
+    "type": "GALLERY",
     "id": 136039269,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/dancingmachine/members/Jane Lew/hair design/-5.png",
     "name": "hair design",
@@ -1334,6 +1472,7 @@
     "followersCount": 1293
   },
   {
+    "type": "GALLERY",
     "id": 218355601,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/beautifull/members/Juliet White/Cocktail/01.gif",
     "name": "Cocktail",
@@ -1410,6 +1549,7 @@
     "followersCount": 1293
   },
   {
+    "type": "GALLERY",
     "id": 274803220,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/squatteamx/members/06 Emma Taylor/01 Yoga/01.jpg",
     "name": "01 Yoga",
@@ -1460,6 +1600,7 @@
     "followersCount": 1293
   },
   {
+    "type": "GALLERY",
     "id": 375857928,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/fatherandson/members/03 Hector Brown/03 party/01.png",
     "name": "03 party",
@@ -1509,6 +1650,7 @@
     "followersCount": 1293
   },
   {
+    "type": "GALLERY",
     "id": 375858622,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/beautifull/members/Juliet White/SF party/01.jpg",
     "name": "SF party",
@@ -1643,6 +1785,7 @@
     "followersCount": 1293
   },
   {
+    "type": "GALLERY",
     "id": 570926505,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/ironman/members/Chris White/Flying in the sky/01.gif",
     "name": "Flying in the sky",
@@ -1670,6 +1813,7 @@
     "followersCount": 1293
   },
   {
+    "type": "GALLERY",
     "id": 1088095937,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/beautifull/members/Juliet White/Top model/01.jpg",
     "name": "Top model",
@@ -1728,6 +1872,7 @@
     "followersCount": 1293
   },
   {
+    "type": "GALLERY",
     "id": 1239244417,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/kimchiparty/members/Sara Park/03 Triump/01.jpg",
     "name": "03 Triump",
@@ -1795,6 +1940,7 @@
     "followersCount": 1293
   },
   {
+    "type": "GALLERY",
     "id": 1377240209,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/fatherandson/members/04 Fred Miller/shoes collection/01.jpg",
     "name": "shoes collection",
@@ -1859,6 +2005,7 @@
     "followersCount": 1293
   },
   {
+    "type": "GALLERY",
     "id": 1530309836,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/sweetheart/members/06 Jamie Summer/Cosmetic/01.png",
     "name": "Cosmetic",
@@ -1889,6 +2036,7 @@
     "followersCount": 1293
   },
   {
+    "type": "GALLERY",
     "id": 1855295285,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/squatteamx/members/03 Scarlett park/02 Vintage fashion/01.jpg",
     "name": "02 Vintage fashion",
@@ -1927,6 +2075,7 @@
     "followersCount": 1293
   },
   {
+    "type": "GALLERY",
     "id": 1983352653,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/squatteamx/members/03 Scarlett park/01 Cosmetic/01.png",
     "name": "01 Cosmetic",
@@ -1971,6 +2120,7 @@
     "followersCount": 1293
   },
   {
+    "type": "GALLERY",
     "id": 2087555125,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/dancingmachine/members/Jane Lew/Yoga/01.jpg",
     "name": "Yoga",
@@ -2190,6 +2340,7 @@
     "followersCount": 1293
   },
   {
+    "type": "GALLERY",
     "id": 2088210048,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/dancingmachine/members/Chris White/Snow/01.jpg",
     "name": "Snow",
@@ -2426,6 +2577,7 @@
     "followersCount": 1293
   },
   {
+    "type": "GALLERY",
     "id": 2088561358,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/fatherandson/members/04 Fred Miller/Jazz/01.gif",
     "name": "Jazz",
@@ -2498,6 +2650,7 @@
     "followersCount": 1293
   },
   {
+    "type": "GALLERY",
     "id": 2184649246,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/fatherandson/members/03 Hector Brown/01 Spa travel/01.jpg",
     "name": "01 Spa travel",
@@ -2547,6 +2700,7 @@
     "followersCount": 1293
   },
   {
+    "type": "GALLERY",
     "id": 2641488204,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/fatherandson/members/03 Hector Brown/04 Squash/01.gif",
     "name": "04 Squash",
@@ -2596,6 +2750,7 @@
     "followersCount": 1293
   },
   {
+    "type": "GALLERY",
     "id": 2684274867,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/squatteamx/members/06 Emma Taylor/02 Graphic Design/01.jpg",
     "name": "02 Graphic Design",
@@ -2654,6 +2809,7 @@
     "followersCount": 1293
   },
   {
+    "type": "GALLERY",
     "id": 2786299825,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/dancingmachine/members/Jane Lew/Graphic Design/01.jpg",
     "name": "Graphic Design",
@@ -2838,6 +2994,7 @@
     "followersCount": 1293
   },
   {
+    "type": "GALLERY",
     "id": 2806808017,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/ironman/members/Chris White/Sushi chop chop/01.gif",
     "name": "Sushi chop chop",
@@ -2864,6 +3021,7 @@
     "followersCount": 1293
   },
   {
+    "type": "GALLERY",
     "id": 2841482923,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/dancingmachine/members/Chris White/Motor bike/01.jpg",
     "name": "Motor bike",
@@ -2957,6 +3115,7 @@
     "followersCount": 1293
   },
   {
+    "type": "GALLERY",
     "id": 2864307759,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/dancingmachine/members/Chris White/Bob Markely/01.jpg",
     "name": "Bob Markely",
@@ -3085,6 +3244,7 @@
     "followersCount": 1293
   },
   {
+    "type": "GALLERY",
     "id": 2973202608,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/legomaniacs/members/Peter Law/01 shoes collection/01.jpg",
     "name": "01 shoes collection",
@@ -3137,6 +3297,7 @@
     "followersCount": 1293
   },
   {
+    "type": "GALLERY",
     "id": 3088072152,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/fatherandson/members/03 Hector Brown/02 Snow boarding/01.jpg",
     "name": "02 Snow boarding",
@@ -3279,6 +3440,7 @@
     "followersCount": 1293
   },
   {
+    "type": "GALLERY",
     "id": 3466686393,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/squatteamx/members/03 Scarlett park/03 rainny night/00.jpg",
     "name": "03 rainny night",
@@ -3315,6 +3477,7 @@
     "followersCount": 1293
   },
   {
+    "type": "GALLERY",
     "id": 3781860986,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/beautifull/members/Juliet White/Snow boarding/01.jpg",
     "name": "Snow boarding",
@@ -3484,6 +3647,7 @@
     "followersCount": 1293
   },
   {
+    "type": "GALLERY",
     "id": 3861873603,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/ironman/members/Chris White/K Dance/01.gif",
     "name": "K Dance",
@@ -3511,6 +3675,7 @@
     "followersCount": 1293
   },
   {
+    "type": "GALLERY",
     "id": 3891667409,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/ironman/members/Chris White/Brews up/01.gif",
     "name": "Brews up",
@@ -3538,6 +3703,7 @@
     "followersCount": 1293
   },
   {
+    "type": "GALLERY",
     "id": 3917201298,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/dancingmachine/members/Chris White/Grafittie/01.jpg",
     "name": "Grafittie",

@@ -116,7 +116,6 @@ public class RecommendedFragment extends Fragment implements RecommendedControll
 
     private void getRecommendedData(){
         Executor executor = MyApp.Companion.getExecutorService();
-
         postsViewModel.getRecommendedData(gallery, executor).observe(getViewLifecycleOwner(), new Observer<HashMap<String, List<?>>>() {
             @Override
             public void onChanged(HashMap<String, List<?>> recommendedData) {

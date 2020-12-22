@@ -12,6 +12,15 @@
         <item name="chipStyle">@style/Widget.App.Chip</item>
     </style>
 
+
+    <style name="Widget.App.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/text_input_layout_stroke_color</item>
+        <item name="endIconTint">@color/text_input_layout_stroke_color</item>
+
+        <item name="android:textColorHint">@color/colorWhite</item>
+        <item name="hintTextColor">@color/colorWhite</item>
+    </style>
+
     <style name="Widget.App.Chip" parent="Widget.MaterialComponents.Chip.Choice">
         <item name="chipBackgroundColor">@color/choice_chip_bg</item>
         <item name="android:textColor">@color/colorBlack</item>

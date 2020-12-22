@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.app.tiktok.model.Gallery;
 import com.app.tiktok.model.HydratedEvent;
+import com.app.tiktok.model.HydratedLiveGallery;
 import com.app.tiktok.model.Post;
 import com.app.tiktok.model.Product;
 import com.app.tiktok.model.User;
@@ -17,6 +18,7 @@ import com.app.tiktok.ui.galleryinfo.models.GalleryInfoEventsRow;
 import com.app.tiktok.ui.galleryinfo.models.GalleryInfoMemberRow;
 import com.app.tiktok.ui.galleryinfo.models.GalleryInfoProductsRow;
 import com.app.tiktok.ui.galleryinfo.GalleryInfoRecyclerDataItem;
+import com.app.tiktok.ui.home.GalleriesViewModel;
 import com.app.tiktok.ui.recommended.GalleryPost;
 import com.app.tiktok.utils.Utility;
 
@@ -32,6 +34,7 @@ public class PostsViewModel extends ViewModel {
     private static final String TAG = "hellson";
     private DataRepository dataRepository;
     private MutableLiveData<List<Post>> posts;
+    private MutableLiveData<HydratedLiveGallery> liveGallery;
     private MutableLiveData<List<User>> members;
     private MutableLiveData<List<Gallery>> collaborators;
     private MutableLiveData<List<GalleryInfoRecyclerDataItem>> galleryInfoRecyclerDataItems;
@@ -42,6 +45,7 @@ public class PostsViewModel extends ViewModel {
 
     private MutableLiveData<HashMap<String, List<?>>> recommendedData;
     private MutableLiveData<List<List<Post>>> processPosts;
+    private MutableLiveData<List<User>> randomUsersForLive;
 
     @ViewModelInject
     public PostsViewModel(DataRepository dataRepository){
@@ -143,7 +147,7 @@ public class PostsViewModel extends ViewModel {
 
     public long getRandomGalleryId() {
         Random random = new Random();
-        return (long)(random.nextInt(13 - 1) + 1);
+        return (long)(random.nextInt((int)GalleriesViewModel.maxOfficialGalleryId - 1) + 1);
     }
 
 //
@@ -288,7 +292,6 @@ public class PostsViewModel extends ViewModel {
 
     public LiveData<List<List<Post>>> getProcessPosts(long galleryId, Executor executor) {
         if (processPosts == null) {
-
             executor.execute(new Runnable() {
                 @Override
                 public void run() {
@@ -318,26 +321,57 @@ public class PostsViewModel extends ViewModel {
         return processPosts;
     }
 
-    public LiveData<List<List<Post>>> getProcessPostsSlow(long galleryId, Executor executor) {
-        if (processPosts == null) {
-            List<Post> parentProcessPosts =  dataRepository
-                    .getPostsData()
+    public LiveData<List<User>> getRandomUsers(){
+        if (randomUsersForLive == null) {
+
+            List<User> randomUsers =  dataRepository
+                    .getUsersData()
                     .stream()
-                    .filter(post -> post.getGallery() == galleryId && post.getProcessPosts().size() > 0)
+                    .limit(4)
                     .collect(Collectors.toList());
 
-            List<List<Post>> filteredProcessPosts = new ArrayList<>();
-            for(Post parentProcessPost: parentProcessPosts){
-                List<Post> childrenProcessPosts = new ArrayList<>();
-                for(long childrenProcessPostId: parentProcessPost.getProcessPosts()){
-                    childrenProcessPosts.add(getPost(childrenProcessPostId));
-                }
-                childrenProcessPosts.add(0, parentProcessPost);
-                filteredProcessPosts.add(childrenProcessPosts);
-            }
-            processPosts = new MutableLiveData<List<List<Post>>>(filteredProcessPosts);
+            randomUsersForLive = new MutableLiveData<>(randomUsers);
         }
-        return processPosts;
+        return randomUsersForLive;
+    }
+
+    public LiveData<HydratedLiveGallery> getHyrdratedLiveGallery(Gallery gallery, Executor executor) {
+        if (liveGallery == null) {
+
+            executor.execute(new Runnable() {
+                @Override
+                public void run() {
+
+                    Log.d("heyoo", gallery + "");
+
+                    List<Gallery> rivalGalleries =  dataRepository
+                            .getGalleriesData()
+                            .stream()
+                            .filter(filteredGallery -> gallery.getRivalGalleries().contains(filteredGallery.getId()))
+                            .collect(Collectors.toList());
+
+                    List<Long> rivalMemberIds = new ArrayList<>(List.of(
+                            rivalGalleries.get(0).getMembers().get(0),
+                            rivalGalleries.get(1).getMembers().get(0)
+                    ));
+
+                    List<User> rivalMembers = dataRepository
+                            .getUsersData()
+                            .stream()
+                            .filter(user -> rivalMemberIds.contains(user.getId()))
+                            .collect(Collectors.toList());
+
+                    liveGallery.postValue(new HydratedLiveGallery(
+                            gallery,
+                            (ArrayList<Gallery>) rivalGalleries,
+                            (ArrayList<User>) rivalMembers
+                    ));
+                }
+            });
+
+            liveGallery = new MutableLiveData<>();
+        }
+        return liveGallery;
     }
 
     public LiveData<List<User>> getMembers(long galleryId) {

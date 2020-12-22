@@ -1,19 +1,20 @@
 package com.app.tiktok.ui.main
 
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.app.tiktok.R
 import com.app.tiktok.base.BaseActivity
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.prefill.PreFillType
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
+
 
 @AndroidEntryPoint
 class MainActivity: BaseActivity(), NavController.OnDestinationChangedListener {
@@ -27,10 +28,14 @@ class MainActivity: BaseActivity(), NavController.OnDestinationChangedListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
         bottomNavBar = nav_view
 
-        navController = findNavController(R.id.nav_host_fragment)
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navController = navHostFragment.navController
+
+//        navController = findNavController(R.id.nav_host_fragment)
         nav_view.setupWithNavController(navController)
 
         container.cameraDistance = 1000000000000000000000000000f

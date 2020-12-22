@@ -13,6 +13,8 @@
     <color name="colorLightGray">#F5F5F5</color>
     <color name="colorSlightGray">#E4E4E4</color>
     <color name="colorWhite">#FFFFFF</color>
+    <color name="faintWhite">#50FFFFFF</color>
+
 
     <color name="colorTransparent">#00000000</color>
 

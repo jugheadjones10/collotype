@@ -33,7 +33,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
-        android:id="@+id/group_name2"
+        android:id="@+id/battle_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -61,9 +61,9 @@
         android:layout_height="15dp"
         android:layout_marginStart="8dp"
         android:src="@drawable/ic_to_follow"
-        app:layout_constraintBottom_toBottomOf="@+id/group_name2"
-        app:layout_constraintStart_toEndOf="@+id/group_name2"
-        app:layout_constraintTop_toTopOf="@+id/group_name2">
+        app:layout_constraintBottom_toBottomOf="@+id/battle_title"
+        app:layout_constraintStart_toEndOf="@+id/battle_title"
+        app:layout_constraintTop_toTopOf="@+id/battle_title">
 
     </ImageView>
 

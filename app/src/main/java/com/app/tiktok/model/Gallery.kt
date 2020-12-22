@@ -6,6 +6,8 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class Gallery(
 
+    val type: String,
+
     val id: Long,
     val url: String,
     val name: String,
@@ -22,6 +24,10 @@ data class Gallery(
     val collab: Boolean,
     val collaborators: ArrayList<Long>,
 
-    val official: Boolean
+    val official: Boolean,
+
+    val battleTitle: String?,
+    val rivalGalleries: ArrayList<Long>?,
+    val rivalLiveUrls: ArrayList<String>?
 
 ): Parcelable

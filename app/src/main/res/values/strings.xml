@@ -16,4 +16,10 @@
     <string name="share">Share</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="live_comment_one">That looks awesome!!</string>
+    <string name="live_comment_two">Loving the energy from you two :)</string>
+    <string name="live_comment_three">Hopefully I can learn enough to attain your level of expertise...</string>
+    <string name="live_comment_four">O God!</string>
+
 </resources>

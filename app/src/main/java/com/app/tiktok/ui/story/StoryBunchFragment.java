@@ -7,7 +7,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.MarginLayoutParams;
-import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -20,7 +19,6 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.LayoutManager;
@@ -34,7 +32,6 @@ import com.app.tiktok.model.Post;
 import com.app.tiktok.model.StoriesDataModel;
 import com.app.tiktok.model.User;
 import com.app.tiktok.ui.galleryinfo.GalleryInfoFragment;
-import com.app.tiktok.ui.galleryinfo.GalleryInfoRecyclerDataItem;
 import com.app.tiktok.ui.home.GalleriesViewModel;
 import com.app.tiktok.ui.home.HomeFragment;
 import com.app.tiktok.ui.recommended.RecommendedFragment;
@@ -68,6 +65,7 @@ public class StoryBunchFragment extends Fragment implements BottomPostsAdapter.B
 
     private NavController navController;
     private String position;
+    private Gallery gallery;
 
     private StoryBunchPagerAdapter pagerAdapter;
     private LayoutManager layoutManager;
@@ -76,7 +74,6 @@ public class StoryBunchFragment extends Fragment implements BottomPostsAdapter.B
 
     public BottomSheetBehavior bottomSheetBehavior;
     private BottomPostsAdapter bottomPostsAdapter;
-    private Gallery gallery;
     private List<StoriesDataModel> childrenPosts;
 
     public ConstraintLayout inflatedTopBar;
@@ -156,7 +153,7 @@ public class StoryBunchFragment extends Fragment implements BottomPostsAdapter.B
         position = getArguments().getString(Constants.KEY_GALLERY_POSITION);
 
         //Initialize navController
-        navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
+//        navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
 
         //Initialize View Model
         postsViewModel = new ViewModelProvider(requireActivity()).get(position, PostsViewModel.class);
@@ -165,7 +162,7 @@ public class StoryBunchFragment extends Fragment implements BottomPostsAdapter.B
         binding.storyBunchParent.setCameraDistance(1000000000000000000000000000f);
 
         //Get data from view model
-        if(gallery.getId() != 6L){
+        if(gallery.getId() != GalleriesViewModel.adPageId){
             getPosts();
             //Observe "draggable" from postsViewModel
             initializeNestedScrollViewBehaviour();
@@ -195,7 +192,7 @@ public class StoryBunchFragment extends Fragment implements BottomPostsAdapter.B
         bottomSheetBehavior = BottomSheetBehavior.from(binding.layoutBotSheet.botSheet);
         bottomSheetBehavior.setGestureInsetBottomIgnored(true);
 
-        if(gallery.getId() != 6L){
+        if(gallery.getId() != GalleriesViewModel.adPageId){
             initializeTopBar();
             setBottomSheetHeights();
             initializeBottomSheetBehaviour();
@@ -450,7 +447,7 @@ public class StoryBunchFragment extends Fragment implements BottomPostsAdapter.B
                 });
             }
 
-            TextView groupName = inflatedTopBar.findViewById(R.id.group_name2);
+            TextView groupName = inflatedTopBar.findViewById(R.id.battle_title);
             groupName.setText(gallery.getName());
         }
 
@@ -542,7 +539,6 @@ public class StoryBunchFragment extends Fragment implements BottomPostsAdapter.B
 
                 binding.postsViewPager.post(new Runnable() {
                     public void run() {
-//                        binding.postsViewPager.setOffscreenPageLimit(1);
                         binding.postsViewPager.setAdapter(pagerAdapter);
                         binding.postsViewPager.registerOnPageChangeCallback(viewPagerChangeCallback);
                     }
@@ -552,7 +548,7 @@ public class StoryBunchFragment extends Fragment implements BottomPostsAdapter.B
     }
 
     private void goToDetailedGallery(Gallery gallery){
-        if(!GalleriesViewModel.forbiddenCollabGalleries.contains(gallery.getId())) {
+        if(!GalleriesViewModel.isGalleryForbidden(gallery.getId())) {
             Fragment fragment = getChildFragmentManager().findFragmentByTag("GalleryInfoFragment");
             if(fragment == null) {
                 Fragment galleryInfoFragment = GalleryInfoFragment.newInstance(position, gallery, inflatedTopBar.getHeight());

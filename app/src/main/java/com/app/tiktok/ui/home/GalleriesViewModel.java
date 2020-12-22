@@ -22,14 +22,24 @@ public class GalleriesViewModel extends ViewModel {
         this.dataRepository = dataRepository;
     }
 
-    public static List<Long> forbiddenCollabGalleries = new ArrayList<>(List.of(13L, 14L, 15L, 16L, 17L));
+    public static final long maxOfficialGalleryId = 15L;
+    public static final long adPageId = 8L;
+    public static final long appleVSamsung = 7L;
+
+    public static boolean isGalleryForbidden(long galleryId){
+        if(galleryId >= maxOfficialGalleryId) {
+            return true;
+        }else{
+            return false;
+        }
+    }
 
     public LiveData<List<Gallery>> getGalleries() {
         if (galleries == null) {
             List<Gallery> filteredGalleries = dataRepository
                     .getGalleriesData()
                     .stream()
-                    .filter(gallery -> gallery.getOfficial() && !forbiddenCollabGalleries.contains(gallery.getId()))
+                    .filter(gallery -> gallery.getOfficial() && !isGalleryForbidden(gallery.getId()))
                     .collect(Collectors.toList());
 
             galleries = new MutableLiveData<List<Gallery>>(filteredGalleries);

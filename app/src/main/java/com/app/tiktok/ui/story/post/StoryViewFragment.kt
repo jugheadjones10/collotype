@@ -28,6 +28,7 @@ import com.app.tiktok.model.Post
 import com.app.tiktok.model.Product
 import com.app.tiktok.model.User
 import com.app.tiktok.ui.galleryinfo.GalleryInfoFragment
+import com.app.tiktok.ui.home.GalleriesViewModel
 import com.app.tiktok.ui.recommended.RecommendedFragment
 import com.app.tiktok.ui.story.StoryBunchFragment
 import com.app.tiktok.ui.story.UtilViewModel
@@ -310,7 +311,6 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
             if (!Utility.isImage(storyUrlType)) {
                 setVolumeControl(VolumeState.ON)
             }
-
             restartVideo()
         }
 
@@ -419,7 +419,7 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
             player_view_story.visibility = View.GONE
 
             //Loading image content from url
-            if(post.gallery == 5L){
+            if(post.gallery == GalleriesViewModel.appleVSamsung){
                 post_image.scaleType = ImageView.ScaleType.FIT_CENTER
             }
 

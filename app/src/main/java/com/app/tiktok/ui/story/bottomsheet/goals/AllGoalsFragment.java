@@ -63,7 +63,7 @@ public class AllGoalsFragment extends Fragment {
             galleryId = getArguments().getLong(KEY_GALLERY_ID);
         }
 
-        navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
+//        navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
         postsViewModel = new ViewModelProvider(requireActivity()).get(position, PostsViewModel.class);
     }
 
@@ -82,6 +82,8 @@ public class AllGoalsFragment extends Fragment {
         Log.d("observe", "All Goals Fragment created");
         initializeNestedScrollViewBehaviour();
     }
+
+
 
     @Override
     public void onResume() {
