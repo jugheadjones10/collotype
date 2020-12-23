@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -24,6 +25,7 @@ import com.app.tiktok.databinding.FragmentRivalLiveBinding;
 import com.app.tiktok.model.Gallery;
 import com.app.tiktok.model.HydratedLiveGallery;
 import com.app.tiktok.model.User;
+import com.app.tiktok.ui.home.HomeFragment;
 import com.app.tiktok.ui.main.MainActivity;
 import com.app.tiktok.ui.story.PostsViewModel;
 import com.app.tiktok.ui.story.StoryBunchFragment;
@@ -101,6 +103,7 @@ public class RivalLiveFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        disableTouchTheft(binding.commentsContainerScroll);
         getData();
     }
 
@@ -120,8 +123,10 @@ public class RivalLiveFragment extends Fragment {
         int orientation = this.getResources().getConfiguration().orientation;
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
             MainActivity.Companion.getBottomNavBar().setVisibility(View.GONE);
+            HomeFragment.Companion.getViewPager2().setUserInputEnabled(false);
         }else if(orientation == Configuration.ORIENTATION_PORTRAIT){
             MainActivity.Companion.getBottomNavBar().setVisibility(View.VISIBLE);
+            HomeFragment.Companion.getViewPager2().setUserInputEnabled(true);
         }
 
         if(playerTop != null && playerBottom != null){
@@ -252,6 +257,21 @@ public class RivalLiveFragment extends Fragment {
         binding.volumeControl.animate()
                 .alpha(0f)
                 .setDuration(600).setStartDelay(1000);
+    }
+
+    public static void disableTouchTheft(View view) {
+        view.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                view.getParent().requestDisallowInterceptTouchEvent(true);
+                switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
+                    case MotionEvent.ACTION_UP:
+                        view.getParent().requestDisallowInterceptTouchEvent(false);
+                        break;
+                }
+                return false;
+            }
+        });
     }
 
 }

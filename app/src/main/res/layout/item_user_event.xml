@@ -23,6 +23,8 @@
         android:adjustViewBounds="true"
         android:scaleType="centerCrop"
         app:url = "@{hydratedEvent.url}"
+        app:heightDp="@{250}"
+        app:widthDp="@{125}"
         app:context = "@{context}"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -51,6 +53,7 @@
             app:strokeColor="@color/colorWhite"
             app:url = "@{hydratedEvent.hosts.get(0).url}"
             app:context = "@{context}"
+            app:widthDp="@{25}"
             app:strokeWidth="1dp" />
 
         <com.google.android.material.imageview.ShapeableImageView
@@ -65,6 +68,7 @@
             app:strokeColor="@color/colorWhite"
             app:url = "@{hydratedEvent.hosts.get(1).url}"
             app:context = "@{context}"
+            app:widthDp="@{25}"
             app:strokeWidth="1dp" />
     </LinearLayout>
 

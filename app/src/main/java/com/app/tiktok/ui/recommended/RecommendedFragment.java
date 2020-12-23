@@ -57,22 +57,42 @@ public class RecommendedFragment extends Fragment implements RecommendedControll
 
     }
 
-    @BindingAdapter({"url", "context"})
-    public static void loadImage(ShapeableImageView view, String url, Context context) {
+    @BindingAdapter({"url", "context", "widthDp", "heightDp"})
+    public static void loadImage(ShapeableImageView view, String url, Context context, int widthDp, int heightDp) {
         Glide.with(context)
                 .load(url)
                 .thumbnail(0.25f)
-                .override(Utility.INSTANCE.dpToPx(30, context))
+                .override(Utility.INSTANCE.dpToPx(widthDp, context), Utility.INSTANCE.dpToPx(heightDp, context))
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .into(view);
     }
 
-    @BindingAdapter({"url", "context"})
-    public static void loadImage(ImageView view, String url, Context context) {
+    @BindingAdapter({"url", "context", "widthDp", "heightDp"})
+    public static void loadImage(ImageView view, String url, Context context, int widthDp, int heightDp) {
         Glide.with(context)
                 .load(url)
                 .thumbnail(0.25f)
-                .override(Utility.INSTANCE.dpToPx(30, context))
+                .override(Utility.INSTANCE.dpToPx(widthDp, context), Utility.INSTANCE.dpToPx(heightDp, context))
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                .into(view);
+    }
+
+    @BindingAdapter({"url", "context", "widthDp"})
+    public static void loadImage(ShapeableImageView view, String url, Context context, int widthDp) {
+        Glide.with(context)
+                .load(url)
+                .thumbnail(0.25f)
+                .override(Utility.INSTANCE.dpToPx(widthDp, context))
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                .into(view);
+    }
+
+    @BindingAdapter({"url", "context", "widthDp"})
+    public static void loadImage(ImageView view, String url, Context context, int widthDp) {
+        Glide.with(context)
+                .load(url)
+                .thumbnail(0.25f)
+                .override(Utility.INSTANCE.dpToPx(widthDp, context))
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .into(view);
     }

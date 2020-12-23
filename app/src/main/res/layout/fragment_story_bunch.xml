@@ -34,7 +34,7 @@
                 android:elevation="10dp"
                 app:layout_constraintBottom_toBottomOf="@+id/advert"
                 app:layout_constraintEnd_toEndOf="@+id/advert"
-                app:srcCompat="@drawable/ic_explore" />
+                app:srcCompat="@drawable/ic_explore_sleek" />
 
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/posts_view_pager"

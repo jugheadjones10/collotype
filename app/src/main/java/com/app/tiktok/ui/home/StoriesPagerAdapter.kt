@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.adapter.FragmentViewHolder
 import com.app.tiktok.model.Gallery
+import com.app.tiktok.ui.ad.AdFragment
 import com.app.tiktok.ui.rivallive.RivalLiveFragment
 import com.app.tiktok.ui.story.StoryBunchFragment
 import com.app.tiktok.utils.Constants
@@ -17,7 +18,6 @@ class StoriesPagerAdapter(fragment: Fragment, val dataList: MutableList<Gallery>
     }
 
     override fun createFragment(position: Int): Fragment {
-//        return BlankFragment.newInstance()
         if(dataList[position].type.equals(Constants.TYPE_GALLERY)){
             return StoryBunchFragment.newInstance(dataList[position], Integer.toString(position));
         }else if(dataList[position].type.equals(Constants.TYPE_RIVAL_LIVE)){

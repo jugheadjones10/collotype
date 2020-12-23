@@ -11,25 +11,26 @@
     </data>
 
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="wrap_content"
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/gallery_image"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:padding="1dp"
-            android:adjustViewBounds="true"
-            android:scaleType="centerCrop"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:shapeAppearance="@style/RoundedImageViewShape"
-            app:strokeColor="@color/colorWhite"
-            app:strokeWidth="1dp"
-            app:context="@{context}"
-            app:url="@{gallery.url}" />
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/gallery_image"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:padding="1dp"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:shapeAppearance="@style/RoundedImageViewShape"
+        app:strokeColor="@color/colorWhite"
+        app:strokeWidth="1dp"
+        app:widthDp="@{35}"
+        app:context="@{context}"
+        app:url="@{gallery.url}" />
 
     <TextView
         android:id="@+id/gallery_name"

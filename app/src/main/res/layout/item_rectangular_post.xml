@@ -34,6 +34,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
+        app:heightDp="@{320}"
+        app:widthDp="@{160}"
         app:url="@{post.url}" />
 
     <com.google.android.material.imageview.ShapeableImageView
@@ -44,10 +46,12 @@
         android:adjustViewBounds="true"
         android:scaleType="centerCrop"
         app:context="@{context}"
+        app:widthDp="@{25}"
+        app:url="@{gallery.url}"
         app:layout_constraintBottom_toTopOf="@+id/text_view_video_description"
         app:layout_constraintStart_toStartOf="parent"
         app:shapeAppearance="@style/RoundedImageViewShape"
-        app:url="@{gallery.url}" />
+       />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/text_view_video_description"

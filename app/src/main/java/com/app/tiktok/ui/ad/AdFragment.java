@@ -13,8 +13,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.app.tiktok.R;
+import com.app.tiktok.databinding.FragmentAdBinding;
 import com.app.tiktok.databinding.FragmentRivalLiveBinding;
 import com.app.tiktok.model.Gallery;
+import com.app.tiktok.model.HydratedLiveGallery;
 import com.app.tiktok.ui.rivallive.RivalLiveFragment;
 import com.app.tiktok.ui.story.PostsViewModel;
 import com.app.tiktok.utils.Constants;
@@ -24,8 +26,7 @@ public class AdFragment extends Fragment {
 
     private Gallery gallery;
     private String position;
-    private FragmentRivalLiveBinding binding;
-    private PostsViewModel postsViewModel;
+    private FragmentAdBinding binding;
 
     public AdFragment() {
 
@@ -50,13 +51,12 @@ public class AdFragment extends Fragment {
             gallery = getArguments().getParcelable(Constants.KEY_STORY_DATA);
             position = getArguments().getString(Constants.KEY_GALLERY_POSITION);
         }
-        postsViewModel = new ViewModelProvider(requireActivity()).get(position, PostsViewModel.class);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_rival_live, container, false);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_ad, container, false);
         binding.setContext(requireContext());
 
         return binding.getRoot();
@@ -65,6 +65,8 @@ public class AdFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        getData();
+        binding.setContext(requireContext());
+        binding.setGallery(gallery);
     }
+
 }

@@ -30,6 +30,7 @@ import com.app.tiktok.model.User
 import com.app.tiktok.ui.galleryinfo.GalleryInfoFragment
 import com.app.tiktok.ui.home.GalleriesViewModel
 import com.app.tiktok.ui.recommended.RecommendedFragment
+import com.app.tiktok.ui.rivallive.RivalLiveFragment
 import com.app.tiktok.ui.story.StoryBunchFragment
 import com.app.tiktok.ui.story.UtilViewModel
 import com.app.tiktok.utils.*
@@ -378,6 +379,8 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
                     if(scroll_linear_layout ==  null){
                         val processPostsLayout = layoutInflater.inflate(R.layout.layout_process_posts_scroll, story_view_parent_constraint, false)
                         story_view_parent_constraint.addView(processPostsLayout)
+
+                        RivalLiveFragment.disableTouchTheft(scroll_view)
 
                         for(processPost in processPosts){
 
