@@ -9,7 +9,6 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,7 +54,6 @@ public class BottomSheetFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("morning", "BOttom SHeet wok up");
         instance = this;
         if (getArguments() != null) {
             position = getArguments().getString(KEY_PARENT_POST);
@@ -76,13 +74,11 @@ public class BottomSheetFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initializeContents();
-        Log.d("chill", "Bottom Sheet Fragment ON VIEW CREATED : " + position);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        Log.d("chill", "Bottom Sheet Fragment ON RESUMESD : " + position);
     }
 
     private void initializeContents(){

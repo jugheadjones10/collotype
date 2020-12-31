@@ -6,7 +6,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,13 +13,8 @@ import android.view.ViewGroup;
 
 import com.app.tiktok.R;
 import com.app.tiktok.databinding.FragmentAdBinding;
-import com.app.tiktok.databinding.FragmentRivalLiveBinding;
 import com.app.tiktok.model.Gallery;
-import com.app.tiktok.model.HydratedLiveGallery;
-import com.app.tiktok.ui.rivallive.RivalLiveFragment;
-import com.app.tiktok.ui.story.PostsViewModel;
 import com.app.tiktok.utils.Constants;
-import com.google.android.exoplayer2.SimpleExoPlayer;
 
 public class AdFragment extends Fragment {
 
@@ -36,7 +30,7 @@ public class AdFragment extends Fragment {
         AdFragment rivalLiveFragment = new AdFragment();
 
         Bundle args = new Bundle();
-        args.putParcelable(Constants.KEY_STORY_DATA, gallery);
+        args.putParcelable(Constants.KEY_GALLERY_DATA, gallery);
         args.putString(Constants.KEY_GALLERY_POSITION, position);
         rivalLiveFragment.setArguments(args);
 
@@ -48,7 +42,7 @@ public class AdFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            gallery = getArguments().getParcelable(Constants.KEY_STORY_DATA);
+            gallery = getArguments().getParcelable(Constants.KEY_GALLERY_DATA);
             position = getArguments().getString(Constants.KEY_GALLERY_POSITION);
         }
     }

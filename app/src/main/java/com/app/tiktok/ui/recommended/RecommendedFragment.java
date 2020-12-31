@@ -13,7 +13,6 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -141,7 +140,6 @@ public class RecommendedFragment extends Fragment implements RecommendedControll
             public void onChanged(HashMap<String, List<?>> recommendedData) {
                 if(recommendedData != null){
 
-                    Log.d("gotd", recommendedData.toString());
                     List<HydratedEvent> pastEvents = new ArrayList<>();
                     List<HydratedEvent> upcomingEvents = new ArrayList<>();
                     List<GalleryPost> beforeProductPosts = new ArrayList<>();
@@ -198,7 +196,6 @@ public class RecommendedFragment extends Fragment implements RecommendedControll
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                Log.d("GG", "gig");
                 getParentFragmentManager().popBackStackImmediate();
                 postsViewModel.setEnableInteractions(true);
             }

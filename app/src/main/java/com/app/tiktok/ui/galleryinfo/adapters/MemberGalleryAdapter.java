@@ -18,8 +18,8 @@ import java.util.List;
 
 public class MemberGalleryAdapter extends RecyclerView.Adapter<MemberGalleryAdapter.MemberGalleryViewHolder> {
 
-    private List<Gallery> galleries;
-    private Context mContext;
+    private final List<Gallery> galleries;
+    private final Context mContext;
 
     public MemberGalleryAdapter(Context mContext, List<Gallery> galleries) {
         this.galleries = galleries;

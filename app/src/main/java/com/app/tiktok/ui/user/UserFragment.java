@@ -1,7 +1,6 @@
 package com.app.tiktok.ui.user;
 
 import androidx.activity.OnBackPressedCallback;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -13,20 +12,14 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.app.tiktok.R;
-import com.app.tiktok.databinding.FragmentGalleryInfoBinding;
 import com.app.tiktok.databinding.FragmentUserBinding;
-import com.app.tiktok.model.Gallery;
 import com.app.tiktok.model.Post;
 import com.app.tiktok.model.User;
-import com.app.tiktok.ui.galleryinfo.GalleryInfoFragment;
-import com.app.tiktok.ui.home.HomeFragment;
 import com.app.tiktok.ui.story.PostsViewModel;
-import com.app.tiktok.ui.story.StoryBunchFragment;
 import com.app.tiktok.ui.story.UtilViewModel;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -153,57 +146,4 @@ public class UserFragment extends Fragment {
 
         binding.bottomSheetPager.setAdapter(pagerAdapter);
     }
-
-
-//    @Override
-//    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-//        listenForWidth();
-//    }
-//
-//    private void listenForWidth(){
-//        final ViewTreeObserver observer = binding.userRecyclerView.getViewTreeObserver();
-//        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-//            @Override
-//            public void onGlobalLayout() {
-//                // I don't understand onGlobalLayout. What exactly does it listen for?
-//                int squareLength = binding.userRecyclerView.getWidth()/4;
-//
-//                initializeRecyclerView(squareLength);
-//
-//                ViewTreeObserver innerObserver = binding.userRecyclerView.getViewTreeObserver();
-//                innerObserver.removeOnGlobalLayoutListener(this);
-//            }
-//        });
-//    }
-//
-//    private void initializeRecyclerView(int squareLength){
-//
-//        List<DataItem> dataItems = new ArrayList<>();
-//
-//        //Adding user header to data items;
-//        dataItems.add(0, new UserHeader(userData));
-//
-//        List<List<StoriesDataModel>> userGalleriesList = new ArrayList<>();
-//        for(long galleryId : userData.getGalleries()){
-//
-//            //Adding user galleries to data items
-//            StoriesDataModel parentPost = userViewModel.getParentPostWithGhosts(galleryId);
-//            List<StoriesDataModel> children = userViewModel.getChildrenPosts(galleryId);
-//            dataItems.add(new UserGallery(parentPost, children));
-//
-//            userGalleriesList.add(children);
-//        }
-//
-//        //Taking the first child post of each gallery to add all posts to data items
-//        List<StoriesDataModel> allUserPostsMix = new ArrayList<>();
-//        for(List<StoriesDataModel> gallery : userGalleriesList){
-//            allUserPostsMix.addAll(gallery.subList(0, 4));
-//        }
-//        dataItems.add(1, new AllUserPosts(allUserPostsMix));
-//
-//        Log.d("type", dataItems.toString());
-//
-//        userAdapter = new UserAdapter(getContext(), squareLength, dataItems, storyBunchViewModel, navController);
-//        binding.userRecyclerView.setAdapter(userAdapter);
-//    }
 }

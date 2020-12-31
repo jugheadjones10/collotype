@@ -2,18 +2,17 @@ package com.app.tiktok.utils
 
 import android.content.Context
 import android.util.DisplayMetrics
-import java.lang.Exception
 import java.util.*
 
 object Utility {
     private val suffixes: NavigableMap<Long, String> = TreeMap()
     private fun setSuffixes() {
-        suffixes[1_000L] = "k";
-        suffixes[1_000_000L] = "M";
-        suffixes[1_000_000_000L] = "B";
-        suffixes[1_000_000_000_000L] = "T";
-        suffixes[1_000_000_000_000_000L] = "P";
-        suffixes[1_000_000_000_000_000_000L] = "E";
+        suffixes[1_000L] = "k"
+        suffixes[1_000_000L] = "M"
+        suffixes[1_000_000_000L] = "B"
+        suffixes[1_000_000_000_000L] = "T"
+        suffixes[1_000_000_000_000_000L] = "P"
+        suffixes[1_000_000_000_000_000_000L] = "E"
     }
 
 
@@ -33,14 +32,14 @@ object Utility {
     }
 
     fun pxToDp(px: Int, context: Context): Int {
-        val displayMetrics: DisplayMetrics = context.getResources().getDisplayMetrics()
+        val displayMetrics: DisplayMetrics = context.resources.displayMetrics
         return Math.round(px / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT))
     }
 
     fun dpToPx(dp: Int, context: Context): Int {
         val density: Float = context
-            .getResources()
-            .getDisplayMetrics().density
+            .resources
+            .displayMetrics.density
         return Math.round(dp.toFloat() * density)
     }
 
@@ -50,11 +49,42 @@ object Utility {
 
     fun isImage(storyUrlType: String): Boolean{
         if (storyUrlType.equals("jpg") || storyUrlType.equals("gif") || storyUrlType.equals("jpeg") || storyUrlType.equals("png") || storyUrlType.equals("webp")) {
-            return true;
+            return true
         }else if(storyUrlType.equals("mp4")){
-            return false;
+            return false
         }else{
             throw Exception("Unrecognized file type")
         }
+    }
+
+    /**
+     * This function returns the calculated in-between value for a color
+     * given integers that represent the start and end values in the four
+     * bytes of the 32-bit int. Each channel is separately linearly interpolated
+     * and the resulting calculated values are recombined into the return value.
+     *
+     * @param fraction The fraction from the starting to the ending values
+     * @param startValue A 32-bit int value representing colors in the
+     * separate bytes of the parameter
+     * @param endValue A 32-bit int value representing colors in the
+     * separate bytes of the parameter
+     * @return A value that is calculated to be the linearly interpolated
+     * result, derived by separating the start and end values into separate
+     * color channels and interpolating each one separately, recombining the
+     * resulting values in the same way.
+     */
+    fun interpolateColor(fraction: Float, startValue: Int, endValue: Int): Int {
+        val startA = startValue shr 24 and 0xff
+        val startR = startValue shr 16 and 0xff
+        val startG = startValue shr 8 and 0xff
+        val startB = startValue and 0xff
+        val endA = endValue shr 24 and 0xff
+        val endR = endValue shr 16 and 0xff
+        val endG = endValue shr 8 and 0xff
+        val endB = endValue and 0xff
+        return startA + (fraction * (endA - startA)).toInt() shl 24 or
+                (startR + (fraction * (endR - startR)).toInt() shl 16) or
+                (startG + (fraction * (endG - startG)).toInt() shl 8) or
+                startB + (fraction * (endB - startB)).toInt()
     }
 }

@@ -8,11 +8,8 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -38,7 +35,6 @@ public class AllGoalsFragment extends Fragment {
     private FragmentAllGoalsBinding binding;
     private AllGoalsAdapter allGoalsAdapter;
     private PostsViewModel postsViewModel;
-    private NavController navController;
     private List<List<Post>> mProcessPosts;
 
     public AllGoalsFragment() {
@@ -63,7 +59,6 @@ public class AllGoalsFragment extends Fragment {
             galleryId = getArguments().getLong(KEY_GALLERY_ID);
         }
 
-//        navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
         postsViewModel = new ViewModelProvider(requireActivity()).get(position, PostsViewModel.class);
     }
 
@@ -79,7 +74,6 @@ public class AllGoalsFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        Log.d("observe", "All Goals Fragment created");
         initializeNestedScrollViewBehaviour();
     }
 
@@ -88,7 +82,6 @@ public class AllGoalsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Log.d("feel", "AllGolasFragment RESUME");
         if(mProcessPosts != null && binding.allGoalsRecyclerView.getAdapter() == null){
             initializeRecyclerView(mProcessPosts);
         }
@@ -106,23 +99,17 @@ public class AllGoalsFragment extends Fragment {
         });
     }
 
-
     private void initializeRecyclerView(List<List<Post>> processPosts){
         postsViewModel.getMembers().observe(getViewLifecycleOwner(), new Observer<List<User>>() {
             @Override
             public void onChanged(List<User> members) {
                 if(members != null){
-                    allGoalsAdapter = new AllGoalsAdapter(getContext(), postsViewModel, processPosts, members, navController);
+                    allGoalsAdapter = new AllGoalsAdapter(getContext(), postsViewModel, processPosts, members);
                     binding.allGoalsRecyclerView.setAdapter(allGoalsAdapter);
                 }
             }
         });
     }
-
-    float y1 = 0;
-    float y2 = 0;
-    float dy = 0;
-    String direction;
 
     private void initializeNestedScrollViewBehaviour(){
         binding.allGoalsRecyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
@@ -132,45 +119,10 @@ public class AllGoalsFragment extends Fragment {
                 switch(e.getAction()) {
                     case (MotionEvent.ACTION_DOWN):
                         postsViewModel.setDraggable(false);
-                        y1 = e.getY();
                         break;
-                    case (MotionEvent.ACTION_MOVE): {
-                        y2 = e.getY();
-
-                        dy = y2 - y1;
-
-                        y1 = y2;
-
-                        // Use dx and dy to determine the direction of the move
-                        if (dy > 0)
-                            direction = "down";
-                        else
-                            direction = "up";
-
-//                        Log.d("scroller", direction);
-                        Log.d("cheez", "" + rv.canScrollVertically(-1));
-
-//                        if (direction.equals("up") || (direction.equals("down") && rv.getScrollY() != 0)) {
-//                            Log.d("cheez", "setDraggable false");
-//
-//                            viewModel.setDraggable(false);
-//                        }
-
-//                        if(direction.equals("down") && !rv.canScrollVertically(-1)){
-//                            Log.d("cheez", "setDraggable true");
-//                            viewModel.setDraggable(true);
-//                        }else{
-//
-                            //viewModel.setDraggable(false);
-//                        }
-
-                        break;
-                    }
                     case (MotionEvent.ACTION_CANCEL):
                     case (MotionEvent.ACTION_UP):
-                        Log.d("cancelled", "I got cancelled");
                         postsViewModel.setDraggable(true);
-
                         break;
                 }
                 return false;

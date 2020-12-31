@@ -9,21 +9,5 @@
         android:id="@+id/navigation_home"
         android:name="com.app.tiktok.ui.home.HomeFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" >
-        <action
-            android:id="@+id/action_navigation_home_to_userFragment"
-            app:destination="@id/userFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/userFragment"
-        android:name="com.app.tiktok.ui.user.UserFragment"
-        android:label="UserFragment" >
-        <argument
-            android:name="User"
-            app:argType="com.app.tiktok.model.User" />
-    </fragment>
-    <fragment
-        android:id="@+id/storyBunchFragment"
-        android:name="com.app.tiktok.ui.story.StoryBunchFragment"
-        android:label="StoryBunchFragment" />
+        tools:layout="@layout/fragment_home" />
 </navigation>

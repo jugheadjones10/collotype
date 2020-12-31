@@ -1,6 +1,5 @@
 package com.app.tiktok.ui.rivallive;
 
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -12,7 +11,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -28,22 +26,11 @@ import com.app.tiktok.model.User;
 import com.app.tiktok.ui.home.HomeFragment;
 import com.app.tiktok.ui.main.MainActivity;
 import com.app.tiktok.ui.story.PostsViewModel;
-import com.app.tiktok.ui.story.StoryBunchFragment;
 import com.app.tiktok.utils.Constants;
 import com.bumptech.glide.Glide;
-import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.audio.AudioAttributes;
-import com.google.android.exoplayer2.source.DefaultMediaSourceFactory;
-import com.google.android.exoplayer2.source.MediaSourceFactory;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.ui.DebugTextViewHelper;
-import com.google.android.exoplayer2.util.EventLogger;
-import com.google.android.exoplayer2.util.Util;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -72,7 +59,7 @@ public class RivalLiveFragment extends Fragment {
         RivalLiveFragment rivalLiveFragment = new RivalLiveFragment();
 
         Bundle args = new Bundle();
-        args.putParcelable(Constants.KEY_STORY_DATA, gallery);
+        args.putParcelable(Constants.KEY_GALLERY_DATA, gallery);
         args.putString(Constants.KEY_GALLERY_POSITION, position);
         rivalLiveFragment.setArguments(args);
 
@@ -84,7 +71,7 @@ public class RivalLiveFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            gallery = getArguments().getParcelable(Constants.KEY_STORY_DATA);
+            gallery = getArguments().getParcelable(Constants.KEY_GALLERY_DATA);
             position = getArguments().getString(Constants.KEY_GALLERY_POSITION);
         }
         postsViewModel = new ViewModelProvider(requireActivity()).get(position, PostsViewModel.class);

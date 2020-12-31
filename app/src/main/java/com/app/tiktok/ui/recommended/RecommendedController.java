@@ -35,7 +35,7 @@ class RecommendedController extends EpoxyController {
     ItemChipGroupBindingModel_ itemChipGroup;
 
     Context context;
-    private AdapterCallbacks callbacks;
+    private final AdapterCallbacks callbacks;
     interface AdapterCallbacks{
         void onPastOrUpcomingClicked(String pastOrUpcoming);
     }

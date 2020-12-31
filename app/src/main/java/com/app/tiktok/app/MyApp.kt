@@ -13,7 +13,6 @@ import java.util.concurrent.Executors
 @HiltAndroidApp
 class MyApp: Application() {
     companion object {
-        var simpleCache: SimpleCache? = null
         var context: Context? = null
         var executorService: ExecutorService? = null
     }
@@ -21,14 +20,6 @@ class MyApp: Application() {
     override fun onCreate() {
         super.onCreate()
         executorService = Executors.newFixedThreadPool(6)
-
         context = this
-
-        val leastRecentlyUsedCacheEvictor = LeastRecentlyUsedCacheEvictor(90 * 1024 * 1024)
-        val databaseProvider: DatabaseProvider = ExoDatabaseProvider(this)
-
-        if (simpleCache == null) {
-            simpleCache = SimpleCache(cacheDir, leastRecentlyUsedCacheEvictor, databaseProvider)
-        }
     }
 }

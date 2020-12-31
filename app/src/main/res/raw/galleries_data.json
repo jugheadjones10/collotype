@@ -3,7 +3,7 @@
     "type": "GALLERY",
     "id": 1,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/captvsironman/collabs/ironman/07.jpg",
-    "name": "Iron Man Art",
+    "name": "Iron Man",
     "posts": [
       131333473,
       1323891285,
@@ -319,8 +319,8 @@
     "followersCount": 1293,
     "battleTitle": "Rooftop parkour showdown of the kings",
     "rivalGalleries": [
-      20,
-      21
+      18,
+      19
     ],
     "rivalLiveUrls": [
       "https://collotype.s3.ap-northeast-2.amazonaws.com/live-parkour/Rooftop parkour showdown of the kings/2020-12-21 16-02-31.mp4",
@@ -343,8 +343,8 @@
     "followersCount": 1293,
     "battleTitle": "Modern canon performance!",
     "rivalGalleries": [
-      23,
-      22
+      21,
+      20
     ],
     "rivalLiveUrls": [
       "https://collotype.s3.ap-northeast-2.amazonaws.com/live-canon/Modern canon performance!/2020-12-22 19-56-11.mp4",
@@ -627,7 +627,7 @@
     ],
     "collab": true,
     "collaborators": [
-      18,
+      17,
       1
     ],
     "official": true,
@@ -1193,7 +1193,7 @@
     "recproducts": [],
     "collab": false,
     "collaborators": [],
-    "official": true,
+    "official": false,
     "followersCount": 1293
   },
   {
@@ -1212,31 +1212,12 @@
     "recproducts": [],
     "collab": false,
     "collaborators": [],
-    "official": true,
+    "official": false,
     "followersCount": 1293
   },
   {
     "type": "GALLERY",
     "id": 17,
-    "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/pepsi/1 (2).png",
-    "name": "Pepsi",
-    "posts": [
-      3727445920
-    ],
-    "members": [
-      180021818
-    ],
-    "events": [],
-    "recposts": [],
-    "recproducts": [],
-    "collab": false,
-    "collaborators": [],
-    "official": true,
-    "followersCount": 1293
-  },
-  {
-    "type": "GALLERY",
-    "id": 18,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/captainamerica/08.jpg",
     "name": "Captain America",
     "posts": [
@@ -1250,31 +1231,12 @@
     "recproducts": [],
     "collab": false,
     "collaborators": [],
-    "official": true,
+    "official": false,
     "followersCount": 1293
   },
   {
     "type": "GALLERY",
-    "id": 19,
-    "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/coke/coke.jpg",
-    "name": "Coke",
-    "posts": [
-      1557329881
-    ],
-    "members": [
-      2087423911
-    ],
-    "events": [],
-    "recposts": [],
-    "recproducts": [],
-    "collab": false,
-    "collaborators": [],
-    "official": true,
-    "followersCount": 1293
-  },
-  {
-    "type": "GALLERY",
-    "id": 20,
+    "id": 18,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/rooftopcats/Rooftop cats.jpg",
     "name": "Rooftop Cats",
     "posts": [
@@ -1288,12 +1250,12 @@
     "recproducts": [],
     "collab": false,
     "collaborators": [],
-    "official": true,
+    "official": false,
     "followersCount": 1293
   },
   {
     "type": "GALLERY",
-    "id": 21,
+    "id": 19,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/theparkourers/The Parkourers.jfif",
     "name": "The Parkourers",
     "posts": [
@@ -1307,12 +1269,12 @@
     "recproducts": [],
     "collab": false,
     "collaborators": [],
-    "official": true,
+    "official": false,
     "followersCount": 1293
   },
   {
     "type": "GALLERY",
-    "id": 22,
+    "id": 20,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/guitarmax/Grasso-800x534.png",
     "name": "Guitar Max",
     "posts": [
@@ -1326,15 +1288,17 @@
     "recproducts": [],
     "collab": false,
     "collaborators": [],
-    "official": true,
+    "official": false,
     "followersCount": 1293
   },
   {
-    "type": "AD",
-    "id": 23,
+    "type": "GALLERY",
+    "id": 21,
     "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/drummerlady/maxresdefault.jpg",
     "name": "Drummer Lady",
-    "posts": [],
+    "posts": [
+      804351014
+    ],
     "members": [
       28776563
     ],
@@ -1343,7 +1307,7 @@
     "recproducts": [],
     "collab": false,
     "collaborators": [],
-    "official": true,
+    "official": false,
     "followersCount": 1293
   },
   {
@@ -3780,6 +3744,25 @@
       4109685893,
       2645673252,
       2758239937
+    ],
+    "events": [],
+    "recposts": [],
+    "recproducts": [],
+    "collab": false,
+    "collaborators": [],
+    "official": false,
+    "followersCount": 1293
+  },
+  {
+    "type": "GALLERY",
+    "url": "https://collotype.s3.ap-northeast-2.amazonaws.com/coke/coke.jpg",
+    "posts": [
+      1557329881,
+      3727445920
+    ],
+    "members": [
+      2087423911,
+      180021818
     ],
     "events": [],
     "recposts": [],

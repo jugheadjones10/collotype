@@ -22,17 +22,6 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
 
-<!--    <androidx.appcompat.widget.AppCompatImageView-->
-<!--        android:id="@+id/image_view_add_icon"-->
-<!--        android:layout_width="40dp"-->
-<!--        android:layout_height="40dp"-->
-<!--        android:elevation="6dp"-->
-<!--        android:background="@android:color/transparent"-->
-<!--        app:srcCompat="@drawable/ic_add_icon_dark"-->
-<!--        app:layout_constraintStart_toStartOf="@+id/nav_view"-->
-<!--        app:layout_constraintEnd_toEndOf="@+id/nav_view"-->
-<!--        app:layout_constraintTop_toTopOf="@+id/nav_view"-->
-<!--        app:layout_constraintBottom_toBottomOf="@+id/nav_view"/>-->
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_fragment"

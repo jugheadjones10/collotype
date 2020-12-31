@@ -1,7 +1,6 @@
 package com.app.tiktok.ui.story;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -18,7 +17,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.LayoutManager;
@@ -29,10 +27,8 @@ import com.app.tiktok.app.MyApp;
 import com.app.tiktok.databinding.FragmentStoryBunchBinding;
 import com.app.tiktok.model.Gallery;
 import com.app.tiktok.model.Post;
-import com.app.tiktok.model.StoriesDataModel;
 import com.app.tiktok.model.User;
 import com.app.tiktok.ui.galleryinfo.GalleryInfoFragment;
-import com.app.tiktok.ui.home.GalleriesViewModel;
 import com.app.tiktok.ui.home.HomeFragment;
 import com.app.tiktok.ui.recommended.RecommendedFragment;
 import com.app.tiktok.ui.story.bottomsheet.BottomSheetFragment;
@@ -54,16 +50,9 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class StoryBunchFragment extends Fragment implements BottomPostsAdapter.BottomItemClicked {
 
-    float y1 = 0;
-    float y2 = 0;
-    float dy = 0;
-    String direction;
-
     public FragmentStoryBunchBinding binding;
 
     private PostsViewModel postsViewModel;
-
-    private NavController navController;
     private String position;
     private Gallery gallery;
 
@@ -74,15 +63,13 @@ public class StoryBunchFragment extends Fragment implements BottomPostsAdapter.B
 
     public BottomSheetBehavior bottomSheetBehavior;
     private BottomPostsAdapter bottomPostsAdapter;
-    private List<StoriesDataModel> childrenPosts;
-
     public ConstraintLayout inflatedTopBar;
 
     public static StoryBunchFragment newInstance(Gallery gallery, String position) {
         StoryBunchFragment storyBunchFragment = new StoryBunchFragment();
 
         Bundle args = new Bundle();
-        args.putParcelable(Constants.KEY_STORY_DATA, gallery);
+        args.putParcelable(Constants.KEY_GALLERY_DATA, gallery);
         args.putString(Constants.KEY_GALLERY_POSITION, position);
         storyBunchFragment.setArguments(args);
 
@@ -99,19 +86,11 @@ public class StoryBunchFragment extends Fragment implements BottomPostsAdapter.B
         @Override
         public void onPageSelected(int position) {
             super.onPageSelected(position);
-            Log.d("infinite", "OnPageChangeCallback");
             binding.layoutBotSheet.thumbnailsRecyclerView.smoothScrollToPosition(position);
 
-//            This thing crashes if recycler view hasn't loaded yet/5555
             binding.layoutBotSheet.thumbnailsRecyclerView.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    //DOES THIS CHECK ACTUALLY HAVE ANY EFFECT
-//                    if(binding.layoutBotSheet.thumbnailsRecyclerView.findViewHolderForAdapterPosition(position) != null ) {
-//                        View view = binding.layoutBotSheet.thumbnailsRecyclerView.findViewHolderForAdapterPosition(position).itemView;
-//                        view.callOnClick();
-//                    }
-
                     if(binding.layoutBotSheet.thumbnailsRecyclerView.findViewHolderForAdapterPosition(position) != null ) {
                         View view = binding.layoutBotSheet.thumbnailsRecyclerView.findViewHolderForAdapterPosition(position).itemView;
                         bottomPostsAdapter.notifyItemChanged(bottomPostsAdapter.getSelectedPos());
@@ -126,12 +105,7 @@ public class StoryBunchFragment extends Fragment implements BottomPostsAdapter.B
 
     @Override
     public void onBottomItemClicked(int clickPosition) {
-        Log.d("recycled",  "Recycler ITEM has been CLICKED ! " + clickPosition);
         binding.postsViewPager.setCurrentItem(clickPosition, false);
-    }
-
-    public interface OnBottomItemClickListener{
-        void onBottomItemClicked(int position);
     }
 
     @Override
@@ -144,45 +118,19 @@ public class StoryBunchFragment extends Fragment implements BottomPostsAdapter.B
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_story_bunch, container, false);
-
-        Log.d("lifecyclecheck", "StoryBunchFragment onCreateView");
         instance = this;
 
         //Get Arguments
-        gallery = getArguments().getParcelable(Constants.KEY_STORY_DATA);
+        gallery = getArguments().getParcelable(Constants.KEY_GALLERY_DATA);
         position = getArguments().getString(Constants.KEY_GALLERY_POSITION);
-
-        //Initialize navController
-//        navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
 
         //Initialize View Model
         postsViewModel = new ViewModelProvider(requireActivity()).get(position, PostsViewModel.class);
 
-        binding.postsViewPager.setCameraDistance(1000000000000000000000000000f);
-        binding.storyBunchParent.setCameraDistance(1000000000000000000000000000f);
-
-        //Get data from view model
-        if(gallery.getId() != GalleriesViewModel.adPageId){
-            getPosts();
-            //Observe "draggable" from postsViewModel
-            initializeNestedScrollViewBehaviour();
-        }else{
-            initializeAdvertisement();
-        }
+        getPosts();
+        initializeNestedScrollViewBehaviour();
 
         return binding.getRoot();
-    }
-
-    private void initializeAdvertisement(){
-
-        binding.icExploreImage.setVisibility(View.INVISIBLE);
-
-        Glide.with(this)
-                .load(gallery.getUrl())
-                .thumbnail(0.25f)
-                .override(250, 450)
-                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                .into(binding.advert);
     }
 
     @Override
@@ -192,19 +140,16 @@ public class StoryBunchFragment extends Fragment implements BottomPostsAdapter.B
         bottomSheetBehavior = BottomSheetBehavior.from(binding.layoutBotSheet.botSheet);
         bottomSheetBehavior.setGestureInsetBottomIgnored(true);
 
-        if(gallery.getId() != GalleriesViewModel.adPageId){
-            initializeTopBar();
-            setBottomSheetHeights();
-            initializeBottomSheetBehaviour();
-            injectDataIntoView();
-            initializeBottomSheetFragment();
-        }
+        initializeTopBar();
+        setBottomSheetHeights();
+        initializeBottomSheetBehaviour();
+        injectDataIntoView();
+        initializeBottomSheetFragment();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d("grin", "StoryBunchFragment destroyed at position : " + position);
         binding.layoutBotSheet.thumbnailsRecyclerView.setAdapter(null);
     }
 
@@ -216,7 +161,6 @@ public class StoryBunchFragment extends Fragment implements BottomPostsAdapter.B
             @Override
             public void onChanged(List<Post> posts) {
                 if(posts != null){
-                    Log.d("gruel", "View Pager getting initiazlied at  : " + position);
                     initializeRecyclerView(posts);
                     initializeViewPager(posts);
                 }
@@ -229,7 +173,6 @@ public class StoryBunchFragment extends Fragment implements BottomPostsAdapter.B
             @Override
             public void onChanged(Boolean draggable) {
                 if(draggable != null){
-                    Log.d("findingnemo", "Draggable property in StoryBunchFragment : " + draggable);
                     bottomSheetBehavior.setDraggable(draggable);
                 }
             }
@@ -239,9 +182,6 @@ public class StoryBunchFragment extends Fragment implements BottomPostsAdapter.B
             @Override
             public void onChanged(Boolean enableInteractions) {
                 if(enableInteractions != null){
-                    Log.d("findingnemo", "Enable interactions property in StoryBunchFragment : " + enableInteractions);
-
-                    Log.d("hey", getChildFragmentManager().getBackStackEntryCount() + "");
                     //TODO better way to get around the below hack? Prevent touch events on fragment from getting intercepted.
                     if(getChildFragmentManager().getBackStackEntryCount() == 0) {
                         HomeFragment.Companion.getViewPager2().setUserInputEnabled(enableInteractions);
@@ -286,7 +226,6 @@ public class StoryBunchFragment extends Fragment implements BottomPostsAdapter.B
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 if(newState == BottomSheetBehavior.STATE_COLLAPSED){
-                    Log.d("frog", "Bottom sheet sate collapsed");
                     HomeFragment.Companion.getViewPager2().setUserInputEnabled(true);
 
                     ViewGroup.LayoutParams recyclerViewLayoutParams = binding.layoutBotSheet.thumbnailsRecyclerView.getLayoutParams();
@@ -296,10 +235,6 @@ public class StoryBunchFragment extends Fragment implements BottomPostsAdapter.B
                     ViewGroup.LayoutParams recyclerViewLayoutParams = binding.layoutBotSheet.thumbnailsRecyclerView.getLayoutParams();
                     recyclerViewLayoutParams.height = 0;
                     binding.layoutBotSheet.thumbnailsRecyclerView.setLayoutParams(recyclerViewLayoutParams);
-//                    if(newState == BottomSheetBehavior.STATE_DRAGGING){
-//
-//                        postsViewModel.setExpanding(true);
-//                    }
                 }
             }
 
@@ -451,8 +386,6 @@ public class StoryBunchFragment extends Fragment implements BottomPostsAdapter.B
             groupName.setText(gallery.getName());
         }
 
-
-
         TextView followersCount = inflatedTopBar.findViewById(R.id.followers_count2);
         followersCount.setText(ExtensionsKt.formatNumberAsReadableFormat(gallery.getFollowersCount()));
 
@@ -465,7 +398,6 @@ public class StoryBunchFragment extends Fragment implements BottomPostsAdapter.B
 
     }
 
-
     private void initializeBottomSheetFragment(){
         if(getChildFragmentManager().findFragmentByTag("BottomSheetFragment") == null) {
             Fragment bottomSheetFragment = BottomSheetFragment.newInstance(position, gallery);
@@ -475,7 +407,6 @@ public class StoryBunchFragment extends Fragment implements BottomPostsAdapter.B
             transaction.commit();
         }
     }
-
 
     private void initializeRecyclerView(List<Post> posts){
         layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL ,false);
@@ -503,11 +434,8 @@ public class StoryBunchFragment extends Fragment implements BottomPostsAdapter.B
             @Override
             public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
                 if (e.getAction() == MotionEvent.ACTION_DOWN) {
-                    Log.d("findingnemo", "Bottom Recycler view DOWN ");
-
                     HomeFragment.Companion.getViewPager2().setUserInputEnabled(false);
                 }else if(e.getAction() == MotionEvent.ACTION_UP){
-                    Log.d("findingnemo", "Bottom Recycler view UP ");
                     //This clause prevents home fragment view pager 2 from getting disabled if user clicks on recycler view items
                     if(bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED){
                         HomeFragment.Companion.getViewPager2().setUserInputEnabled(true);
@@ -529,8 +457,6 @@ public class StoryBunchFragment extends Fragment implements BottomPostsAdapter.B
     }
 
     private void initializeViewPager(List<Post> posts){
-        Log.d("lag", "IN view pager intitaize");
-        
         new Thread(new Runnable() {
             public void run() {
                 //Not sure if the asynchronous feature below is required.
@@ -548,7 +474,7 @@ public class StoryBunchFragment extends Fragment implements BottomPostsAdapter.B
     }
 
     private void goToDetailedGallery(Gallery gallery){
-        if(!GalleriesViewModel.isGalleryForbidden(gallery.getId())) {
+        if(gallery.getOfficial()){
             Fragment fragment = getChildFragmentManager().findFragmentByTag("GalleryInfoFragment");
             if(fragment == null) {
                 Fragment galleryInfoFragment = GalleryInfoFragment.newInstance(position, gallery, inflatedTopBar.getHeight());
@@ -568,49 +494,16 @@ public class StoryBunchFragment extends Fragment implements BottomPostsAdapter.B
     private void transitionBottomSheetBackgroundColor(float slideOffset) {
         int colorFrom = getResources().getColor(R.color.colorTransparent);
         int colorTo = getResources().getColor(R.color.colorBlack);
-        binding.layoutBotSheet.botSheet.setBackgroundColor(interpolateColor(slideOffset, colorFrom, colorTo));
+        binding.layoutBotSheet.botSheet.setBackgroundColor(Utility.INSTANCE.interpolateColor(slideOffset, colorFrom, colorTo));
     }
 
     private void navigateToFragment(Fragment fragment, int fragmentHost, String fragmentTag){
-
         postsViewModel.setEnableInteractions(false);
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         transaction.add(fragmentHost, fragment, fragmentTag);
 
-        //Do I need the below line?
         transaction.addToBackStack(null);
         transaction.commit();
-    }
-
-    /**
-     * This function returns the calculated in-between value for a color
-     * given integers that represent the start and end values in the four
-     * bytes of the 32-bit int. Each channel is separately linearly interpolated
-     * and the resulting calculated values are recombined into the return value.
-     *
-     * @param fraction The fraction from the starting to the ending values
-     * @param startValue A 32-bit int value representing colors in the
-     * separate bytes of the parameter
-     * @param endValue A 32-bit int value representing colors in the
-     * separate bytes of the parameter
-     * @return A value that is calculated to be the linearly interpolated
-     * result, derived by separating the start and end values into separate
-     * color channels and interpolating each one separately, recombining the
-     * resulting values in the same way.
-     */
-    private int interpolateColor(float fraction, int startValue, int endValue) {
-        int startA = (startValue >> 24) & 0xff;
-        int startR = (startValue >> 16) & 0xff;
-        int startG = (startValue >> 8) & 0xff;
-        int startB = startValue & 0xff;
-        int endA = (endValue >> 24) & 0xff;
-        int endR = (endValue >> 16) & 0xff;
-        int endG = (endValue >> 8) & 0xff;
-        int endB = endValue & 0xff;
-        return ((startA + (int) (fraction * (endA - startA))) << 24) |
-                ((startR + (int) (fraction * (endR - startR))) << 16) |
-                ((startG + (int) (fraction * (endG - startG))) << 8) |
-                ((startB + (int) (fraction * (endB - startB))));
     }
 
 }

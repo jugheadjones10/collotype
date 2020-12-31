@@ -11,15 +11,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.app.tiktok.R;
 import com.app.tiktok.databinding.ItemProductBinding;
 import com.app.tiktok.model.Product;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.List;
 
 public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ProductViewHolder> {
 
-    private List<Product> products;
-    private Context mContext;
+    private final List<Product> products;
+    private final Context mContext;
 
     public ProductsAdapter(Context mContext, List<Product> events) {
         this.products = events;

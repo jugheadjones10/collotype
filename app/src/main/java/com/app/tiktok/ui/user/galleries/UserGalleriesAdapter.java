@@ -1,7 +1,6 @@
 package com.app.tiktok.ui.user.galleries;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -18,7 +17,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.app.tiktok.R;
 import com.app.tiktok.databinding.LayoutUserGalleryBinding;
 import com.app.tiktok.model.User;
-import com.app.tiktok.ui.home.HomeFragmentDirections;
 import com.app.tiktok.ui.story.BottomPostsAdapter;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -28,10 +26,10 @@ import java.util.List;
 
 class UserGalleriesAdapter extends RecyclerView.Adapter<UserGalleriesAdapter.UserGalleryViewHolder> {
 
-    private List<UserGallery> userGalleries;
-    private Context mContext;
-    private int squareLength;
-    private NavController navController;
+    private final List<UserGallery> userGalleries;
+    private final Context mContext;
+    private final int squareLength;
+    private final NavController navController;
 
     RecyclerView.RecycledViewPool viewPool;
 
@@ -71,14 +69,6 @@ class UserGalleriesAdapter extends RecyclerView.Adapter<UserGalleriesAdapter.Use
                     .into(view);
             viewHolder.binding.groupMembers.addView(view);
 
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    HomeFragmentDirections.ActionNavigationHomeToUserFragment action =
-                            HomeFragmentDirections.actionNavigationHomeToUserFragment(user);
-                    navController.navigate(action);
-                }
-            });
         }
 
         Glide.with(mContext)
@@ -140,14 +130,12 @@ class UserGalleriesAdapter extends RecyclerView.Adapter<UserGalleriesAdapter.Use
 
         @Override
         public boolean onDown(MotionEvent e) {
-            Log.d("mama", "onDown");
             targetRecyclerView.requestDisallowInterceptTouchEvent(true);
             return super.onDown(e);
         }
 
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            Log.d("mama", "onFling");
             if(Math.abs(velocityY) > Math.abs(velocityX)){
                 targetRecyclerView.requestDisallowInterceptTouchEvent(false);
             }
@@ -156,7 +144,6 @@ class UserGalleriesAdapter extends RecyclerView.Adapter<UserGalleriesAdapter.Use
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            Log.d("mama", "onScroll");
             if(Math.abs(distanceY) > Math.abs(distanceX)){
                 targetRecyclerView.requestDisallowInterceptTouchEvent(false);
             }

@@ -4,12 +4,10 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
-import com.app.tiktok.R;
 import com.app.tiktok.utils.Utility;
 import com.bumptech.glide.annotation.GlideExtension;
 import com.bumptech.glide.annotation.GlideOption;
 import com.bumptech.glide.request.BaseRequestOptions;
-import com.bumptech.glide.request.RequestOptions;
 
 @GlideExtension
 public final class MyGlideExtension {

@@ -1,7 +1,6 @@
 package com.app.tiktok.ui.story.bottomsheet.goals;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -11,7 +10,6 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.core.view.GestureDetectorCompat;
 import androidx.databinding.DataBindingUtil;
-import androidx.navigation.NavController;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -32,21 +30,19 @@ import java.util.List;
 
 class AllGoalsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
-    private List<List<Post>> processPosts;
-    private List<User> members;
-    private Context mContext;
-    private int squareLength;
-    private NavController navController;
-    private PostsViewModel postsViewModel;
+    private final List<List<Post>> processPosts;
+    private final List<User> members;
+    private final Context mContext;
+    private final int squareLength;
+    private final PostsViewModel postsViewModel;
 
     RecycledViewPool viewPool;
 
-    public AllGoalsAdapter(Context mContext, PostsViewModel postsViewModel, List<List<Post>> processPosts, List<User> members, NavController navController){
+    public AllGoalsAdapter(Context mContext, PostsViewModel postsViewModel, List<List<Post>> processPosts, List<User> members){
         this.mContext = mContext;
         this.squareLength = mContext.getResources().getDisplayMetrics().widthPixels/4;
         this.processPosts = processPosts;
         this.members = members;
-        this.navController = navController;
         this.postsViewModel = postsViewModel;
         viewPool = new RecyclerView.RecycledViewPool();
     }
@@ -93,20 +89,8 @@ class AllGoalsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             });
         }
 
-//        LinearLayoutManager layoutManager = new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL ,false){
-//            @Override
-//            public boolean checkLayoutParams(RecyclerView.LayoutParams lp) {
-//                // force height of viewHolder here, this will override layout_height from xml
-//                lp.width = squareLength;
-//                lp.height = squareLength;
-//
-//                return true;
-//            }
-//        };
-
         goalsViewHolder.binding.setCaption(processPostsRow.get(0).getProcessTitle());
         goalsViewHolder.binding.setPeriod("2021.11.21 ~ 2021.12.27");
-//        goalsViewHolder.binding.goalsRecyclerView.setLayoutManager(layoutManager);
 
         GestureListener gestureListener = new GestureListener(goalsViewHolder.binding.goalsRecyclerView);
         GestureDetectorCompat myGestureListener = new GestureDetectorCompat(mContext, gestureListener);
@@ -127,15 +111,10 @@ class AllGoalsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                     case (MotionEvent.ACTION_DOWN):
                         postsViewModel.setDraggable(false);
                         break;
-                    case (MotionEvent.ACTION_MOVE): {
-                        break;
-                    }
                     case (MotionEvent.ACTION_CANCEL):
                     case (MotionEvent.ACTION_UP):
                         postsViewModel.setDraggable(true);
-//                        viewModel.setDraggable(true);
-                        Log.d("mama", "onUp");
-                        //goalsViewHolder.binding.goalsRecyclerView.requestDisallowInterceptTouchEvent(false);
+
                         break;
                 }
                 return false;
@@ -153,7 +132,6 @@ class AllGoalsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         });
 
 
-        Log.d("process", processPosts.toString());
         BottomPostsAdapter bottomPostsAdapter = new BottomPostsAdapter(processPostsRow, mContext, true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL ,false);
         goalsViewHolder.binding.goalsRecyclerView.setLayoutManager(layoutManager);
@@ -181,14 +159,12 @@ class AllGoalsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
         @Override
         public boolean onDown(MotionEvent e) {
-            Log.d("mama", "onDown");
             targetRecyclerView.requestDisallowInterceptTouchEvent(true);
             return super.onDown(e);
         }
 
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            Log.d("mama", "onFling");
             if(Math.abs(velocityY) > Math.abs(velocityX)){
                 targetRecyclerView.requestDisallowInterceptTouchEvent(false);
             }
@@ -197,7 +173,6 @@ class AllGoalsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            Log.d("mama", "onScroll");
             if(Math.abs(distanceY) > Math.abs(distanceX)){
                 targetRecyclerView.requestDisallowInterceptTouchEvent(false);
             }

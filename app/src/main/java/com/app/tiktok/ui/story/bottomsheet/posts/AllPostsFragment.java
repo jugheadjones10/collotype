@@ -10,7 +10,6 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -27,18 +26,12 @@ import java.util.List;
 
 import kotlin.jvm.functions.Function1;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link AllPostsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class AllPostsFragment extends Fragment {
 
     private static final String KEY_PARENT_POST = "KEY_PARENT_POST";
 
     private String position;
     private FragmentAllPostsBinding binding;
-    private List<Post> childrenPosts;
     private PostsViewModel postsViewModel;
     private int squareLength;
 
@@ -109,95 +102,19 @@ public class AllPostsFragment extends Fragment {
         binding.allPostsRecyclerView.setLayoutManager(spannedGridLayoutManager);
         binding.allPostsRecyclerView.setAdapter(allPostsAdapter);
 
-
-//        LayoutInflater layoutInflator = getLayoutInflater();
-//
-//        for (int i = 0; i < posts.size(); i++) {
-//            String postUrl = posts.get(i).getUrl();
-//
-//            ImageView view = (ImageView)layoutInflator.inflate(R.layout.include_bottom_sheet_grid_image, binding.postsGridLayout, false);
-//
-//            ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
-//
-//            if(i % 7 == 0){
-//                GridLayout.LayoutParams gridLayoutParams = new GridLayout.LayoutParams();
-//                gridLayoutParams.rowSpec = GridLayout.spec(GridLayout.UNDEFINED, 2);
-//                gridLayoutParams.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 2);
-//                gridLayoutParams.height = squareLength*2;
-//                gridLayoutParams.width = squareLength*2;
-//
-//                view.setLayoutParams(gridLayoutParams);
-//            }else{
-//                layoutParams.height = squareLength;
-//                layoutParams.width = squareLength;
-//
-//                view.setLayoutParams(layoutParams);
-//            }
-//
-//            Glide.get(getContext()).setMemoryCategory(MemoryCategory.HIGH);
-//            Glide.with(this)
-//                    .load(postUrl)
-//                    .thumbnail(0.25f)
-//                    .override(100, 100)
-//                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-//                    .into(view);
-//
-//            binding.postsGridLayout.addView(view);
-//        }
     }
-
-    float y1 = 0;
-    float y2 = 0;
-    float dy = 0;
-    String direction;
 
     private void initializeNestedScrollViewBehaviour(){
         binding.allPostsRecyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
             @Override
             public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
-
                 switch(e.getAction()) {
                     case (MotionEvent.ACTION_DOWN):
                         postsViewModel.setDraggable(false);
-                        y1 = e.getY();
                         break;
-                    case (MotionEvent.ACTION_MOVE): {
-                        y2 = e.getY();
-
-                        dy = y2 - y1;
-
-                        y1 = y2;
-
-                        // Use dx and dy to determine the direction of the move
-                        if (dy > 0)
-                            direction = "down";
-                        else
-                            direction = "up";
-
-//                        Log.d("scroller", direction);
-                        Log.d("cheez", "" + rv.canScrollVertically(-1));
-
-//                        if (direction.equals("up") || (direction.equals("down") && rv.getScrollY() != 0)) {
-//                            Log.d("cheez", "setDraggable false");
-//
-//                            viewModel.setDraggable(false);
-//                        }
-
-//                        if(direction.equals("down") && !rv.canScrollVertically(-1)){
-//                            Log.d("cheez", "setDraggable true");
-//                            viewModel.setDraggable(true);
-//                        }else{
-//
-                        //viewModel.setDraggable(false);
-//                        }
-
-                        break;
-                    }
                     case (MotionEvent.ACTION_CANCEL):
                     case (MotionEvent.ACTION_UP):
-                        Log.d("cancelled", "I got cancelled");
                         postsViewModel.setDraggable(true);
-
                         break;
                 }
                 return false;

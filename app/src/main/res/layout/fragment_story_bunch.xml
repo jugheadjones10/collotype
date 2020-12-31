@@ -16,24 +16,13 @@
             android:layout_height="match_parent">
 
             <ImageView
-                android:id="@+id/advert"
-                android:adjustViewBounds="true"
-                android:scaleType="centerCrop"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
                 android:id="@+id/ic_explore_image"
                 android:layout_width="28dp"
                 android:layout_height="28dp"
                 android:layout_marginEnd="15dp"
                 android:elevation="10dp"
-                app:layout_constraintBottom_toBottomOf="@+id/advert"
-                app:layout_constraintEnd_toEndOf="@+id/advert"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:srcCompat="@drawable/ic_explore_sleek" />
 
             <androidx.viewpager2.widget.ViewPager2

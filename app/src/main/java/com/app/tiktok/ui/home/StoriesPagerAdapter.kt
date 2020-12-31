@@ -12,18 +12,17 @@ import com.app.tiktok.utils.Constants
 
 class StoriesPagerAdapter(fragment: Fragment, val dataList: MutableList<Gallery> = mutableListOf()) : FragmentStateAdapter(fragment) {
 
-
     override fun getItemCount(): Int {
         return dataList.size
     }
 
     override fun createFragment(position: Int): Fragment {
         if(dataList[position].type.equals(Constants.TYPE_GALLERY)){
-            return StoryBunchFragment.newInstance(dataList[position], Integer.toString(position));
+            return StoryBunchFragment.newInstance(dataList[position], Integer.toString(position))
         }else if(dataList[position].type.equals(Constants.TYPE_RIVAL_LIVE)){
-            return RivalLiveFragment.newInstance(dataList[position], Integer.toString(position));
+            return RivalLiveFragment.newInstance(dataList[position], Integer.toString(position))
         }else{
-            return AdFragment.newInstance(dataList[position], Integer.toString(position));
+            return AdFragment.newInstance(dataList[position], Integer.toString(position))
         }
     }
 }

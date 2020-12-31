@@ -11,8 +11,8 @@ import com.app.tiktok.ui.story.bottomsheet.posts.AllPostsFragment;
 
 class BottomSheetPagerAdapter extends FragmentStateAdapter {
 
-    private Gallery gallery;
-    private String galleryPosition;
+    private final Gallery gallery;
+    private final String galleryPosition;
 
     public BottomSheetPagerAdapter(Fragment fragment, String galleryPosition, Gallery gallery){
         super(fragment);
@@ -27,10 +27,8 @@ class BottomSheetPagerAdapter extends FragmentStateAdapter {
         switch(position) {
             case 0:
                 return AllPostsFragment.newInstance(galleryPosition);
-//                return BlankFragment.newInstance();
             case 1:
-//                return BlankFragment.newInstance();
-            return AllGoalsFragment.newInstance(galleryPosition, gallery.getId());
+                return AllGoalsFragment.newInstance(galleryPosition, gallery.getId());
             case 2:
                 return BlankFragment.newInstance();
             case 3:

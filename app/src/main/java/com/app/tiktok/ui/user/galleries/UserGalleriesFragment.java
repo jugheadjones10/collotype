@@ -89,7 +89,6 @@ public class UserGalleriesFragment extends Fragment {
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                // I don't understand onGlobalLayout. What exactly does it listen for?
                 int squareLength = binding.userGalleriesRecyclerView.getWidth()/4;
 
                 initializeRecyclerView(squareLength, userGalleries);

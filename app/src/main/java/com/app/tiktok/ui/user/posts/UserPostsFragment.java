@@ -11,11 +11,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import android.util.Log;
-import android.view.GestureDetector;
+
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import com.app.tiktok.R;
@@ -89,26 +86,6 @@ public class UserPostsFragment extends Fragment {
                 if(userPosts != null){
 
                     updateController(userPosts);
-
-//                    GestureListener gestureListener = new GestureListener(binding.userPostsRecyclerView);
-//                    GestureDetectorCompat myGestureListener = new GestureDetectorCompat(getContext(), gestureListener);
-//                    binding.userPostsRecyclerView.setOnTouchListener(new View.OnTouchListener() {
-//                        @Override
-//                        public boolean onTouch(View v, MotionEvent event) {
-//                            myGestureListener.onTouchEvent(event);
-//                            return false;
-//                        }
-//                    });
-//
-//                    CarouselLayoutManager layoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL, false);
-//                    layoutManager.setMaxVisibleItems(2);
-//                    layoutManager.setPostLayoutListener(new CarouselZoomPostLayoutListener());
-//                    binding.userPostsRecyclerView.addOnScrollListener(new CenterScrollListener());
-//
-//                    binding.userPostsRecyclerView.setLayoutManager(layoutManager);
-//                    UserPostsAdapterAlt userPostsAdapter = new UserPostsAdapterAlt(getContext(), userPosts);
-//                    binding.userPostsRecyclerView.scrollToPosition(userPosts.size()/2);
-//                    binding.userPostsRecyclerView.setAdapter(userPostsAdapter);
                 }
             }
         });
@@ -116,38 +93,5 @@ public class UserPostsFragment extends Fragment {
 
     private void updateController(List<GalleryPost> posts) {
         controller.setControllerData(posts);
-    }
-
-    class GestureListener extends GestureDetector.SimpleOnGestureListener{
-        RecyclerView targetRecyclerView;
-
-        GestureListener(RecyclerView targetRecyclerView){
-            this.targetRecyclerView = targetRecyclerView;
-        }
-
-        @Override
-        public boolean onDown(MotionEvent e) {
-            Log.d("mama", "onDown");
-            targetRecyclerView.requestDisallowInterceptTouchEvent(true);
-            return super.onDown(e);
-        }
-
-        @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            Log.d("mama", "onFling");
-            if(Math.abs(velocityY) > Math.abs(velocityX)){
-                targetRecyclerView.requestDisallowInterceptTouchEvent(false);
-            }
-            return super.onFling(e1, e2, velocityX, velocityY);
-        }
-
-        @Override
-        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            Log.d("mama", "onScroll");
-            if(Math.abs(distanceY) > Math.abs(distanceX)){
-                targetRecyclerView.requestDisallowInterceptTouchEvent(false);
-            }
-            return super.onScroll(e1, e2, distanceX, distanceY);
-        }
     }
 }

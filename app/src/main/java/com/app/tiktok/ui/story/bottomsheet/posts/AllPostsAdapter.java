@@ -18,8 +18,8 @@ import java.util.List;
 
 class AllPostsAdapter extends RecyclerView.Adapter<AllPostsAdapter.PostViewHolder>{
 
-    private List<Post> posts;
-    private Context mContext;
+    private final List<Post> posts;
+    private final Context mContext;
     private final static int ITEM_LARGE_POST = 0;
     private final static int ITEM_SMALL_POST = 1;
 

@@ -12,4 +12,5 @@ import com.app.tiktok.R;
         R.layout.item_chip_group
 })
 interface EpoxyConfig {
+
 }

@@ -58,36 +58,17 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
     private lateinit var position: String
 
     private var simplePlayer: SimpleExoPlayer? = null
-    private val simpleCache = MyApp.simpleCache
-    private var cacheDataSourceFactory: CacheDataSourceFactory? = null
     private var toPlayVideoPosition: Int = -1
 
     private var playWhenReady = true
     private var currentWindow = 0
     private var playbackPosition: Long = 0
-    private var playbackStateListener: PlaybackStateListener? = null
 
     var parent: StoryBunchFragment? = null
 
     private var volumeState: VolumeState? = null
     private enum class VolumeState {
         ON, OFF
-    }
-
-    class PlaybackStateListener : Player.EventListener {
-        override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-            val stateString: String
-            stateString = when (playbackState) {
-                ExoPlayer.STATE_IDLE -> "ExoPlayer.STATE_IDLE      -"
-                ExoPlayer.STATE_BUFFERING -> "ExoPlayer.STATE_BUFFERING -"
-                ExoPlayer.STATE_READY -> "ExoPlayer.STATE_READY     -"
-                ExoPlayer.STATE_ENDED -> "ExoPlayer.STATE_ENDED     -"
-                else -> "UNKNOWN_STATE             -"
-            }
-            Log.d(
-                "StoryViewFragment", "changed state to $stateString"
-            )
-        }
     }
 
     companion object {
@@ -100,7 +81,6 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
                 }
             }
     }
-
 
     private val utilViewModel by activityViewModels<UtilViewModel>()
     private lateinit var postViewModel: PostViewModel
@@ -124,20 +104,11 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        Log.d("fuhh", "StoryViewFragment onViewCreated");
-
         if(parentFragment is StoryBunchFragment){
             parent = parentFragment as StoryBunchFragment
         }
 
-        playbackStateListener =
-            PlaybackStateListener()
-
-        post_image.cameraDistance = 1000000000000000000000000000f
-        story_view_parent_constraint.cameraDistance = 1000000000000000000000000000f
-
         options_container.setOnClickListener {
-            Log.d("volume", "options container on click listener")
             toggleVolume()
         }
 
@@ -149,7 +120,6 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
             false
         })
 
-        //This thing not working
         if(parent?.inflatedTopBar?.translationY != 0f){
             gestureListener!!.moveBottomsOff()
         }
@@ -191,7 +161,7 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
                     start()
                 }
 
-                ValueAnimator.ofFloat(parentFragment!!.squareLength?.toFloat(), 0f).apply {
+                ValueAnimator.ofFloat(parentFragment.squareLength.toFloat(), 0f).apply {
                     duration = 600
                     start()
                     addUpdateListener { updatedAnimation ->
@@ -199,9 +169,9 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
                         // same type as the animation. In this case, you can use the
                         // float value in the translationX property.
 
-                        val viewPagerMarginParams = parentFragment?.posts_view_pager.getLayoutParams() as ViewGroup.MarginLayoutParams
+                        val viewPagerMarginParams = parentFragment.posts_view_pager.layoutParams as ViewGroup.MarginLayoutParams
                         viewPagerMarginParams.bottomMargin = (updatedAnimation.animatedValue as Float).toInt()
-                        parentFragment?.posts_view_pager.setLayoutParams(viewPagerMarginParams)
+                        parentFragment.posts_view_pager.layoutParams = viewPagerMarginParams
                     }
                 }
 
@@ -220,17 +190,16 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
                     start()
                 }
 
-                ValueAnimator.ofFloat(0f, parentFragment!!.squareLength?.toFloat()).apply {
+                ValueAnimator.ofFloat(0f, parentFragment!!.squareLength.toFloat()).apply {
                     duration = 600
                     start()
                     addUpdateListener { updatedAnimation ->
                         // You can use the animated value in a property that uses the
                         // same type as the animation. In this case, you can use the
                         // float value in the translationX property.
-
-                        val viewPagerMarginParams = parentFragment?.posts_view_pager.getLayoutParams() as ViewGroup.MarginLayoutParams
+                        val viewPagerMarginParams = parentFragment.posts_view_pager.layoutParams as ViewGroup.MarginLayoutParams
                         viewPagerMarginParams.bottomMargin = (updatedAnimation.animatedValue as Float).toInt()
-                        parentFragment?.posts_view_pager.setLayoutParams(viewPagerMarginParams)
+                        parentFragment.posts_view_pager.layoutParams = viewPagerMarginParams
                     }
                 }
             }
@@ -295,12 +264,8 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
                     .into(post_image)
             }
 
-            Log.d("holyshit", " " + view.isSelected);
-
-            (view.getParent() as LinearLayout).dispatchSetSelected(false)
+            (view.parent as LinearLayout).dispatchSetSelected(false)
             view.isSelected = true
-
-            Log.d("holyshit", "after " + view.isSelected);
 
             text_view_video_description.setTextOrHide(value = processCaption)
         }
@@ -321,15 +286,12 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
 
     private fun setData() {
 
-        //Own self is added so it is displayed at the bottom
-        Log.d("lag", "Setting data in story view fragment")
-
         if(post.products.size > 0){
             //Adding drag functionality
             options_container.setOnDragListener(dragListen)
 
             val binding: IncludePriceTagBinding = IncludePriceTagBinding.inflate(
-                getLayoutInflater(),
+                layoutInflater,
                 options_container,
                 false
             )
@@ -385,7 +347,7 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
                         for(processPost in processPosts){
 
                             val binding: ItemProcessPostBinding = ItemProcessPostBinding.inflate(
-                                getLayoutInflater(),
+                                layoutInflater,
                                 scroll_linear_layout,
                                 false
                             )
@@ -422,7 +384,7 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
             player_view_story.visibility = View.GONE
 
             //Loading image content from url
-            if(post.gallery == GalleriesViewModel.appleVSamsung){
+            if(post.gallery == PrototypeExceptions.appleVSamsung){
                 post_image.scaleType = ImageView.ScaleType.FIT_CENTER
             }
 
@@ -443,7 +405,6 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
         }
 
         //image_view_group_pic?.loadCenterCropImageFromUrl(storiesDataModel?.storyThumbUrl)
-
         text_view_video_description.setTextOrHide(value = post.caption)
 
         var user: User
@@ -467,19 +428,6 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
         image_view_option_comment_title?.text =
             post.commentsCount.formatNumberAsReadableFormat()
 
-//        ic_explore_image.setOnClickListener(View.OnClickListener { v ->
-//            val transaction = childFragmentManager.beginTransaction()
-//            val recommendedFragment: Fragment =
-//                RecommendedFragment.newInstance(
-//                    position,
-//                    gallery,
-//                    100
-//                )
-//            transaction.add(R.id.recommended_fragment, recommendedFragment, "RecommendedFragment")
-//            //Do I need the below line?
-//            transaction.addToBackStack(null)
-//            transaction.commit()
-//        })
 
         Glide.with(this)
             .load(user.url)
@@ -513,23 +461,11 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
     private fun prepareVideoPlayer() {
         simplePlayer = SimpleExoPlayer.Builder(requireContext())
             .build()
-//        cacheDataSourceFactory = CacheDataSourceFactory(simpleCache,
-//            DefaultHttpDataSourceFactory(
-//                Util.getUserAgent(context,
-//                    "exo"))
-//        )
     }
 
-    private val playerCallback: Player.EventListener? = object : Player.EventListener {
-        override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-            logError("onPlayerStateChanged playbackState: $playbackState")
-        }
-    }
 
     private fun  prepareMedia(linkUrl: String) {
         logError("prepareMedia linkUrl: $linkUrl")
-
-//        val uri = Uri.parse(linkUrl)
 
         val mediaItem =
             MediaItem.fromUri(linkUrl)
@@ -541,15 +477,6 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
         simplePlayer?.prepare()
 
         toPlayVideoPosition = -1
-    }
-
-    private fun setArtwork(drawable: Drawable, playerView: PlayerView) {
-        playerView.useArtwork = true
-        playerView.defaultArtwork = drawable
-    }
-
-    private fun playVideo() {
-        simplePlayer?.playWhenReady = true
     }
 
     private fun restartVideo() {
@@ -608,10 +535,10 @@ class StoryViewFragment : Fragment(R.layout.fragment_story_view) {
                 Glide.with(this).load(R.drawable.ic_volume_on).into(volume_control)
             }
             volume_control.animate().cancel()
-            volume_control.setAlpha(1f)
+            volume_control.alpha = 1f
             volume_control.animate()
                 .alpha(0f)
-                .setDuration(600).setStartDelay(1000)
+                .setDuration(600).startDelay = 1000
         }
     }
 }

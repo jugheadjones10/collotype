@@ -21,8 +21,8 @@ import java.util.List;
 
 public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewHolder> {
 
-    private List<HydratedEvent> events;
-    private Context mContext;
+    private final List<HydratedEvent> events;
+    private final Context mContext;
 
     public EventsAdapter(Context mContext, List<HydratedEvent> events) {
         this.events = events;

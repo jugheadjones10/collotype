@@ -22,10 +22,5 @@ public final class MyGlideModule extends AppGlideModule {
 
         builder.setMemoryCache(new LruResourceCache(customMemoryCacheSize));
         builder.setBitmapPool(new LruBitmapPool(customBitmapPoolSize));
-//        MemorySizeCalculator calculator = new MemorySizeCalculator.Builder(context)
-//                .setMemoryCacheScreens(2)
-//                .build();
-//
-//        builder.setMemoryCache(new LruResourceCache(calculator.getMemoryCacheSize()));
     }
 }

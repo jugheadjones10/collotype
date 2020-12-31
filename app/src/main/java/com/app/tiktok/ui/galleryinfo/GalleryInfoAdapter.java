@@ -32,14 +32,14 @@ import java.util.List;
 
 class GalleryInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
-    private int ITEM_VIEW_TYPE_MEMBERS = 0;
-    private int ITEM_VIEW_TYPE_UPCOMING_EVENTS = 1;
-    private int ITEM_VIEW_TYPE_PAST_EVENTS = 2;
-    private int ITEM_VIEW_TYPE_PRODUCTS = 3;
+    private final int ITEM_VIEW_TYPE_MEMBERS = 0;
+    private final int ITEM_VIEW_TYPE_UPCOMING_EVENTS = 1;
+    private final int ITEM_VIEW_TYPE_PAST_EVENTS = 2;
+    private final int ITEM_VIEW_TYPE_PRODUCTS = 3;
 
-    private List<GalleryInfoRecyclerDataItem> dataItems;
-    private Context mContext;
-    private NavController navController;
+    private final List<GalleryInfoRecyclerDataItem> dataItems;
+    private final Context mContext;
+    private final NavController navController;
 
     public GalleryInfoAdapter(Context mContext, List<GalleryInfoRecyclerDataItem> dataItems, NavController navController){
         this.mContext = mContext;

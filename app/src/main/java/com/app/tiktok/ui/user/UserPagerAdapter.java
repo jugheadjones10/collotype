@@ -11,7 +11,7 @@ import com.app.tiktok.ui.user.posts.UserPostsFragment;
 
 class UserPagerAdapter extends FragmentStateAdapter {
 
-    private long userId;
+    private final long userId;
 
     public UserPagerAdapter(Fragment fragment, long userId){
         super(fragment);

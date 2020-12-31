@@ -13,7 +13,6 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,10 +56,6 @@ public class GalleryInfoFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        HomeFragment.Companion.getViewPager2().setUserInputEnabled(false);
-//        StoryBunchFragment.getInstance().bottomSheetBehavior.setDraggable(false);
-//        Log.d("frog", "Draggability of bottom sheet fragment"  + StoryBunchFragment.getInstance().bottomSheetBehavior.isDraggable())
-
         if (getArguments() != null) {
             position = getArguments().getString(POSITION_KEY);
             gallery = getArguments().getParcelable(GALLERY_KEY);
@@ -87,7 +82,6 @@ public class GalleryInfoFragment extends Fragment {
     }
 
     private void getGalleryInfo(){
-        Log.d("hoo", "Within GalleryInfoFragment... gallery members  : " + gallery.getMembers() + "");
         postsViewModel.getFakeGalleryInfoData(gallery).observe(getViewLifecycleOwner(), new Observer<List<GalleryInfoRecyclerDataItem>>() {
             @Override
             public void onChanged(List<GalleryInfoRecyclerDataItem> recyclerDataItems) {
@@ -109,7 +103,6 @@ public class GalleryInfoFragment extends Fragment {
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                Log.d("GG", "gig");
                 getParentFragmentManager().popBackStackImmediate();
                 postsViewModel.setEnableInteractions(true);
             }

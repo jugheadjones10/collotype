@@ -12,9 +12,9 @@ import java.util.List;
 
 public class StoryBunchPagerAdapter extends FragmentStateAdapter {
 
-    private List<Post> posts;
-    private Gallery gallery;
-    private String galleryPosition;
+    private final List<Post> posts;
+    private final Gallery gallery;
+    private final String galleryPosition;
 
     public StoryBunchPagerAdapter(Fragment storyBunchFragment, List<Post> posts, Gallery gallery, String galleryPosition){
         super(storyBunchFragment);
@@ -26,7 +26,6 @@ public class StoryBunchPagerAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-//        return BlankFragment.newInstance();
         return StoryViewFragment.Companion.newInstance(posts.get(position), gallery, galleryPosition);
     }
 

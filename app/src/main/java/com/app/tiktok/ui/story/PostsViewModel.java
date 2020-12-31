@@ -1,7 +1,5 @@
 package com.app.tiktok.ui.story;
 
-import android.util.Log;
-
 import androidx.hilt.lifecycle.ViewModelInject;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -18,8 +16,8 @@ import com.app.tiktok.ui.galleryinfo.models.GalleryInfoEventsRow;
 import com.app.tiktok.ui.galleryinfo.models.GalleryInfoMemberRow;
 import com.app.tiktok.ui.galleryinfo.models.GalleryInfoProductsRow;
 import com.app.tiktok.ui.galleryinfo.GalleryInfoRecyclerDataItem;
-import com.app.tiktok.ui.home.GalleriesViewModel;
 import com.app.tiktok.ui.recommended.GalleryPost;
+import com.app.tiktok.utils.PrototypeExceptions;
 import com.app.tiktok.utils.Utility;
 
 import java.util.ArrayList;
@@ -32,7 +30,7 @@ import java.util.stream.Collectors;
 public class PostsViewModel extends ViewModel {
 
     private static final String TAG = "hellson";
-    private DataRepository dataRepository;
+    private final DataRepository dataRepository;
     private MutableLiveData<List<Post>> posts;
     private MutableLiveData<HydratedLiveGallery> liveGallery;
     private MutableLiveData<List<User>> members;
@@ -41,7 +39,6 @@ public class PostsViewModel extends ViewModel {
 
     private MutableLiveData<Boolean> enableInteractions;
     private MutableLiveData<Boolean> setDraggable;
-    private MutableLiveData<Boolean> expanding;
 
     private MutableLiveData<HashMap<String, List<?>>> recommendedData;
     private MutableLiveData<List<List<Post>>> processPosts;
@@ -133,7 +130,6 @@ public class PostsViewModel extends ViewModel {
                     }
 
                     List<Post> finalPosts = bringVideoPostsToFront(filteredPosts);
-//                   applyGallerySpecificOrderingExceptions(finalPosts, galleryId);
 
                     posts.postValue(finalPosts);
                 }
@@ -144,40 +140,13 @@ public class PostsViewModel extends ViewModel {
         return posts;
     }
 
-
     public long getRandomGalleryId() {
         Random random = new Random();
-        return (long)(random.nextInt((int)GalleriesViewModel.maxOfficialGalleryId - 1) + 1);
+        return (long)(random.nextInt((int) PrototypeExceptions.maxOfficialGalleryId - 1) + 1);
     }
-
-//
-//    private List<Post> applyGallerySpecificOrderingExceptions(List<Post> posts, long galleryId){
-//        //If gallery is ironman
-//        if(galleryId == 5){
-//            List<Post> postsWithProcess = new ArrayList<>();
-//            List<Post> childrenPostsCopy = new ArrayList<>(posts);
-//
-//            for(Post post : posts){
-//                if(post.getProcessPosts().size() > 0){
-//                    childrenPostsCopy.remove(post);
-//                    postsWithProcess.add(post);
-//                }
-//            }
-//
-//            List<Post> finalPosts = new ArrayList<Post>(postsWithProcess);
-//            finalPosts.addAll(childrenPostsCopy);
-//            return finalPosts;
-        //If gallery is apple vs samsung
-//        }
-//        else if(galleryId == 5){
-//
-//        }
-
-//    }
 
     public LiveData<List<GalleryInfoRecyclerDataItem>> getFakeGalleryInfoData(Gallery gallery) {
         if (galleryInfoRecyclerDataItems == null) {
-            Log.d("hoo", "getFakeGalleryInfoData list was null ");
 
             List<GalleryInfoRecyclerDataItem> finalList = new ArrayList<>();
 
@@ -189,7 +158,6 @@ public class PostsViewModel extends ViewModel {
                     .collect(Collectors.toList());
 
             for (int i = 0; i < members.size(); i++) {
-                Log.d(TAG, "getFakeGalleryInfoData: " + members.get(i).getUsername());
                 if(i < 2) {
                     GalleryInfoMemberRow memberRow = new GalleryInfoMemberRow(
                             members.get(i),
@@ -342,8 +310,6 @@ public class PostsViewModel extends ViewModel {
                 @Override
                 public void run() {
 
-                    Log.d("heyoo", gallery + "");
-
                     List<Gallery> rivalGalleries =  dataRepository
                             .getGalleriesData()
                             .stream()
@@ -375,10 +341,7 @@ public class PostsViewModel extends ViewModel {
     }
 
     public LiveData<List<User>> getMembers(long galleryId) {
-        Log.d("hoo", "getFakeGalleryInfoData MEMBER list was run but did not register as null ");
-        Log.d("hoo", "Members " + members);
         if (members == null) {
-            Log.d("hoo", "getFakeGalleryInfoData MEMBER list was null ");
             List<User> filteredMembers =  dataRepository
                     .getUsersData()
                     .stream()

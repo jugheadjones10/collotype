@@ -24,11 +24,11 @@ import java.util.List;
 
 class UserEventsAdapter extends RecyclerView.Adapter<UserEventsAdapter.UserEventViewHolder>{
 
-    private List<UserGallery> userEvents;
-    private Context mContext;
-    private UtilViewModel utilViewModel;
-    private NavController navController;
-    private long userId;
+    private final List<UserGallery> userEvents;
+    private final Context mContext;
+    private final UtilViewModel utilViewModel;
+    private final NavController navController;
+    private final long userId;
 
     RecyclerView.RecycledViewPool viewPool;
 

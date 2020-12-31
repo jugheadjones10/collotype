@@ -1,57 +1,32 @@
 package com.app.tiktok.ui.story;
 
 import android.content.Context;
-import android.graphics.PixelFormat;
-import android.net.Uri;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.app.tiktok.R;
-import com.app.tiktok.app.MyApp;
 import com.app.tiktok.databinding.BottomPostItemBinding;
 import com.app.tiktok.databinding.BottomPostVideoItemBinding;
 import com.app.tiktok.databinding.EnlargedBottomPostItemBinding;
 import com.app.tiktok.model.Post;
-import com.app.tiktok.model.StoriesDataModel;
-import com.app.tiktok.ui.story.StoryBunchFragment;
 import com.app.tiktok.utils.Utility;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.MemoryCategory;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.source.ProgressiveMediaSource;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
-import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory;
-import com.google.android.exoplayer2.upstream.cache.SimpleCache;
-import com.google.android.exoplayer2.util.MimeTypes;
-import com.google.android.exoplayer2.util.Util;
 
 import java.util.List;
 
-import static com.app.tiktok.utils.ExtensionsKt.logError;
-
 public class BottomPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<Post> posts;
-    private Context mContext;
+    private final List<Post> posts;
+    private final Context mContext;
 
     public void setSelectedPos(int selectedPos) {
         this.selectedPos = selectedPos;
@@ -64,7 +39,7 @@ public class BottomPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private int selectedPos = RecyclerView.NO_POSITION;
 
     private boolean modifyFirst = false;
-    private int squareLength;
+    private final int squareLength;
 
 //    protected SimpleExoPlayer player;
     private BottomItemClicked bottomItemClicked;
@@ -174,7 +149,6 @@ public class BottomPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         if(position == 0 && modifyFirst){
             return ENLARGED_ITEM;
         }else{
-            Log.d("hee", "getItemViewTypes" + posts.get(position).getUrl());
             if(Utility.INSTANCE.isImage(storyType)){
                 return NORMAL_ITEM;
             }else{
@@ -186,7 +160,6 @@ public class BottomPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        Log.d("recycled",  "Recycler VIEW HOLDER HAS BEEN CREATED! ");
         if(viewType == ENLARGED_ITEM){
             EnlargedBottomPostItemBinding binding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.enlarged_bottom_post_item, parent, false);
 
@@ -226,7 +199,6 @@ public class BottomPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        Log.d("recycled",  "Recycler ITEM has BEEN BOUND! " + holder.toString());
 
         holder.itemView.setSelected(selectedPos == holder.getLayoutPosition());
 
@@ -250,7 +222,6 @@ public class BottomPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             }
 
         }else if(holder.getItemViewType() == NORMAL_ITEM){
-            Log.d("recycled",  "Recycler VIEW TYPE IS NORMAL ");
 
             BottomPostViewHolder viewHolder = (BottomPostViewHolder) holder;
 
@@ -261,12 +232,10 @@ public class BottomPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                     .into(viewHolder.binding.bottomPostImage);
         }else{
-            Log.d("recycled",  "Recycler VIEW TYPE IS VIDEO ");
 
             BottomPostVideoHolder viewHolder = (BottomPostVideoHolder) holder;
 
             if(viewHolder.binding.bottomPlayerViewStory.getPlayer() == null){
-                Log.d("recycled",  "Bottom player view story returned a null player ");
                 viewHolder.binding.bottomPlayerViewStory.setPlayer(viewHolder.player);
             }
 
@@ -286,7 +255,6 @@ public class BottomPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     //Clear player when StoryBunchFragment is paused
     @Override
     public void onViewRecycled(@NonNull RecyclerView.ViewHolder holder) {
-        Log.d("recycled",  "On View Recycled! " + holder.toString());
         super.onViewRecycled(holder);
         if(holder.getItemViewType() == VIDEO_ITEM){
             //TODO not sure if saving of video playback state works correctly
