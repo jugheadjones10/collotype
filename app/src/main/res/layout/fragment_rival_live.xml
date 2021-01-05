@@ -21,6 +21,12 @@
         android:layout_height="match_parent"
         app:layoutDescription="@xml/fragment_rival_live_xml_constraintlayout2_scene">
 
+        <View
+            android:id="@+id/click_scapegoat"
+            android:layout_width="0dp"
+            android:layout_height="0dp"/>
+
+
         <com.google.android.exoplayer2.ui.PlayerView
             android:id="@+id/live_stream_top"
             android:layout_width="0dp"
@@ -32,6 +38,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:resize_mode="zoom"
+            app:surface_type="texture_view"
             app:use_controller="false">
 
         </com.google.android.exoplayer2.ui.PlayerView>
@@ -47,6 +54,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/live_stream_top"
             app:resize_mode="zoom"
+            app:surface_type="texture_view"
             app:use_controller="false" />
 
         <View
@@ -183,8 +191,8 @@
             android:layout_height="80dp"
             android:layout_marginStart="15dp"
             android:layout_marginBottom="8dp"
-            app:layout_constraintEnd_toEndOf="@id/guideline5"
             app:layout_constraintBottom_toTopOf="@+id/comment_text_field"
+            app:layout_constraintEnd_toEndOf="@id/guideline5"
             app:layout_constraintStart_toStartOf="parent">
 
             <LinearLayout
@@ -250,6 +258,16 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.5" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.75"/>
+
+
+
 
     </androidx.constraintlayout.motion.widget.MotionLayout>
 </layout>

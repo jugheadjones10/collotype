@@ -143,7 +143,7 @@ public class UserFragment extends Fragment {
     private void initializeViewPager(){
         //Pass in everything first. Later we may need to filter.
         UserPagerAdapter pagerAdapter = new UserPagerAdapter(this, userData.getId());
-
+        binding.bottomSheetPager.setOffscreenPageLimit(1);
         binding.bottomSheetPager.setAdapter(pagerAdapter);
     }
 }

@@ -1,12 +1,13 @@
 package com.app.tiktok.ui.main
 
 import android.content.pm.ActivityInfo
+import android.content.res.Configuration
+import android.hardware.SensorManager
 import android.os.Bundle
-import android.view.View
+import android.util.Log
+import android.view.OrientationEventListener
 import androidx.activity.viewModels
 import androidx.navigation.NavController
-import androidx.navigation.NavDestination
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.app.tiktok.R
@@ -27,7 +28,6 @@ class MainActivity: BaseActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
         bottomNavBar = nav_view
 
@@ -35,6 +35,7 @@ class MainActivity: BaseActivity(){
         navController = navHostFragment.navController
         nav_view.setupWithNavController(navController)
 
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     }
 
     override fun onSupportNavigateUp(): Boolean {

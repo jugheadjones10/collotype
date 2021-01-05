@@ -11,6 +11,9 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -51,6 +54,7 @@ public class RivalLiveFragment extends Fragment {
     private enum  VolumeState {
         ON, OFF
     }
+
     public RivalLiveFragment() {
 
     }
@@ -69,7 +73,7 @@ public class RivalLiveFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setRetainInstance(true);
         if (getArguments() != null) {
             gallery = getArguments().getParcelable(Constants.KEY_GALLERY_DATA);
             position = getArguments().getString(Constants.KEY_GALLERY_POSITION);
@@ -105,16 +109,7 @@ public class RivalLiveFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        requireActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER); // Make to run your application only in portrait mode
-
-        int orientation = this.getResources().getConfiguration().orientation;
-        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            MainActivity.Companion.getBottomNavBar().setVisibility(View.GONE);
-            HomeFragment.Companion.getViewPager2().setUserInputEnabled(false);
-        }else if(orientation == Configuration.ORIENTATION_PORTRAIT){
-            MainActivity.Companion.getBottomNavBar().setVisibility(View.VISIBLE);
-            HomeFragment.Companion.getViewPager2().setUserInputEnabled(true);
-        }
+        requireActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
 
         if(playerTop != null && playerBottom != null){
             toggleVolume();
@@ -126,7 +121,7 @@ public class RivalLiveFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        requireActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT); // Make to run your application only in portrait mode
+        requireActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         if(playerTop != null && playerBottom != null){
             toggleVolume();
@@ -139,6 +134,39 @@ public class RivalLiveFragment extends Fragment {
     public void onStop() {
         super.onStop();
         releasePlayer();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            MainActivity.Companion.getBottomNavBar().setVisibility(View.GONE);
+            HomeFragment.Companion.getViewPager2().setUserInputEnabled(false);
+
+            //For some reason the following requires async to work properly
+            final Handler handler = new Handler(Looper.getMainLooper());
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    binding.clickScapegoat.performClick();
+                }
+            }, 100);
+
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            MainActivity.Companion.getBottomNavBar().setVisibility(View.VISIBLE);
+            HomeFragment.Companion.getViewPager2().setUserInputEnabled(true);
+
+            final Handler handler = new Handler(Looper.getMainLooper());
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    binding.clickScapegoat.performClick();
+                }
+            }, 100);
+
+        }
+
     }
 
     private void initializePlayers(){
@@ -192,6 +220,7 @@ public class RivalLiveFragment extends Fragment {
                 }
             }
         });
+        
         postsViewModel.getRandomUsers().observe(getViewLifecycleOwner(), new Observer<List<User>>() {
             @Override
             public void onChanged(List<User> users) {
